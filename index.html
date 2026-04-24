@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WVEZ Solutions</title>
+  <meta name="description" content="Hard Problems. EZ Solutions. Automation studio based in Chicago.">
+
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+  <style>
+    /* ===========================================================
+       WVEZ SOLUTIONS — v2 naked rebuild
+       Rules: no scroll, no borders, no fades, instant snap,
+       pixel art as only color, hard symmetry, black text only.
+       =========================================================== */
+
+    :root {
+      --bg: #ffffff;
+      --fg: #000000;
+      --muted: #888888;
+      --font: "IBM Plex Mono", monospace;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--font);
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      image-rendering: pixelated;
+    }
+
+    img { image-rendering: pixelated; }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    /* ===========================================================
+       TOP NAV — fixed, symmetric
+       =========================================================== */
+    nav.top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      z-index: 100;
+      background: var(--bg);
+    }
+
+    .brand {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    /* ===========================================================
+       HAMBURGER BUTTON
+       =========================================================== */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      padding: 0.4rem;
+      cursor: pointer;
+    }
+    .hamburger span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--fg);
+    }
+    .hamburger:hover span { background: var(--muted); }
+
+    /* ===========================================================
+       SIDEBAR
+       =========================================================== */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      display: none;
+    }
+    .sidebar-overlay.open { display: block; }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 13rem;
+      height: 100vh;
+      background: var(--bg);
+      border-left: 1px solid var(--fg);
+      z-index: 160;
+      display: flex;
+      flex-direction: column;
+      padding: 4rem 2rem 2rem;
+      transform: translateX(100%);
+      transition: transform 0.12s steps(4);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar-close {
+      position: absolute;
+      top: 0.9rem;
+      right: 1.25rem;
+      font-size: 1.4rem;
+      font-weight: 300;
+      line-height: 1;
+      color: var(--fg);
+      padding: 0.2rem 0.3rem;
+    }
+    .sidebar-close:hover { color: var(--muted); }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+    .sidebar-nav button {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
+    .sidebar-nav button:hover,
+    .sidebar-nav button.active { color: var(--fg); }
+
+    /* ===========================================================
+       SECTION SWITCHER — one section visible at a time
+       =========================================================== */
+    main {
+      position: fixed;
+      top: 3.25rem;
+      left: 0;
+      right: 0;
+      bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    section.panel {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    section.panel.active { display: flex; }
+
+    /* ===========================================================
+       HERO & 3D MODEL
+       =========================================================== */
+    .wvez-3d-hero {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 200px;
+      height: 200px;
+    }
+
+    .wvez-3d-hero model-viewer {
+      width: min(480px, 90vw);
+      height: min(480px, 80vh);
+      outline: none;
+      background-color: transparent;
+      --poster-color: transparent;
+      /* suppress any default chrome from model-viewer */
+      --progress-bar-color: transparent;
+      --progress-mask: transparent;
+    }
+
+    @media (max-width: 768px) {
+      .wvez-3d-hero model-viewer {
+        width: 90vw;
+        height: 60vw;
+      }
+    }
+
+    /* ===========================================================
+       ABOUT — two-column layout
+       =========================================================== */
+    .about-columns {
+      display: flex;
+      max-width: 860px;
+      width: 100%;
+      text-align: left;
+      align-items: center;
+    }
+    .about-col {
+      flex: 1;
+      padding: 0 2.5rem;
+    }
+    .about-col:first-child { padding-left: 0; }
+    .about-col:last-child  { padding-right: 0; }
+    .about-col p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .about-col p:last-child { margin-bottom: 0; }
+    .about-divider {
+      width: 1px;
+      background: var(--fg);
+      flex-shrink: 0;
+      opacity: 0.15;
+      align-self: stretch;
+    }
+
+    /* ===========================================================
+       SERVICES / CONTACT — centered text
+       =========================================================== */
+    .panel-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .panel-body {
+      max-width: 620px;
+      width: 100%;
+    }
+
+    .panel-body p {
+      font-size: 0.85rem;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .panel-body p:last-child { margin-bottom: 0; }
+
+    .service-item {
+      margin-bottom: 1.75rem;
+      text-align: left;
+    }
+    .service-item:last-child { margin-bottom: 0; }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 4rem;
+      row-gap: 1rem;
+      max-width: 560px;
+      width: 100%;
+    }
+    .photo-item {
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--fg);
+      cursor: pointer;
+      padding: 0.3rem 0;
+      text-align: left;
+      transition: color 0.08s steps(2);
+    }
+    .photo-item:hover { color: var(--muted); }
+    .service-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 0.45rem;
+    }
+    .service-desc {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    #contact .tagline-big {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin-bottom: 2rem;
+    }
+    #contact .email {
+      font-size: 1.35rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      display: inline-block;
+      padding-bottom: 2px;
+    }
+    #contact .email:hover { color: var(--muted); }
+    #contact .loc {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 1.5rem;
+    }
+
+    /* ===========================================================
+       VENTURES — Coleman pattern
+       =========================================================== */
+    #ventures {
+      padding: 0;
+    }
+
+    .ventures-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .venture-slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10rem;
+      text-align: center;
+    }
+    .venture-slide.active { display: flex; }
+
+    .venture-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .venture-cat {
+      font-size: 0.62rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+    }
+
+    .venture-icon-btn {
+      display: block;
+      cursor: pointer;
+      padding: 0;
+      background: none;
+      position: relative;
+    }
+
+    .venture-icon {
+      height: 180px;
+      width: auto;
+      display: block;
+      transition: transform 0.12s steps(3);
+    }
+    .venture-icon-btn:hover .venture-icon {
+      transform: scale(1.08);
+    }
+
+    .venture-desc {
+      max-width: 520px;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      margin-top: 1.75rem;
+      color: #222;
+    }
+    .venture-desc a {
+      border-bottom: 1px solid var(--fg);
+      padding-bottom: 1px;
+    }
+
+    .click-cue {
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 1.25rem;
+      font-style: italic;
+    }
+
+    /* ===========================================================
+       GLOBAL ARROWS — always visible, fixed sides
+       =========================================================== */
+    .global-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      z-index: 80;
+    }
+    .global-nav:hover { color: var(--fg); }
+    .global-nav.left  { left: 0; }
+    .global-nav.right { right: 0; }
+
+    .global-nav .venture-label {
+      display: none;
+      line-height: 1.3;
+    }
+    .global-nav.show-labels .venture-label { display: block; }
+
+    .global-nav .triangle {
+      font-size: 0.75rem;
+      letter-spacing: 0;
+    }
+
+    .global-nav.edge-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ===========================================================
+       9-DOT PROGRESS INDICATOR — always visible
+       =========================================================== */
+    .progress-dots {
+      position: fixed;
+      bottom: 2.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.75rem;
+      z-index: 80;
+    }
+    .progress-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--muted);
+      opacity: 0.35;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      display: block;
+    }
+    .progress-dot.active { opacity: 1; background: var(--fg); }
+
+    /* ===========================================================
+       HOVER PREVIEW — XL pixel workflow, instant snap
+       =========================================================== */
+    .hover-preview {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
+      z-index: 200;
+      max-width: 85vw;
+      max-height: 75vh;
+    }
+    .hover-preview.visible { display: block; }
+    .hover-preview img {
+      display: block;
+      max-width: 100%;
+      max-height: 75vh;
+      width: auto;
+      height: auto;
+      image-rendering: pixelated;
+    }
+
+    /* ===========================================================
+       PHOTO HOVER PREVIEW — behind text, reduced opacity
+       =========================================================== */
+    .photo-hover-preview {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      display: none;
+      z-index: 5;
+      width: 90vw;
+      max-width: 1100px;
+      max-height: 78vh;
+      opacity: 0.35;
+    }
+    .photo-hover-preview.visible { display: block; }
+    .photo-hover-preview img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      image-rendering: auto;
+    }
+
+    #photography { z-index: 10; position: absolute; }
+    #photography .photo-grid { position: relative; z-index: 10; }
+    #photography .panel-label { position: relative; z-index: 10; }
+
+    /* ===========================================================
+       PHOTO VIEWER — fullscreen, arrows, caption
+       =========================================================== */
+    .photo-view {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .photo-view.open { display: flex; }
+    .photo-close {
+      position: fixed;
+      top: 1rem;
+      right: 1.5rem;
+      z-index: 601;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 300;
+      color: var(--fg);
+      padding: 0.4rem 0.6rem;
+    }
+    .photo-close:hover { color: var(--muted); }
+    .photo-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 601;
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .photo-nav:hover { color: var(--fg); }
+    .photo-nav.prev { left: 0.5rem; }
+    .photo-nav.next { right: 0.5rem; }
+    .photo-frame {
+      max-width: 85vw;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block;
+      image-rendering: auto;
+    }
+    .photo-caption {
+      margin-top: 1rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ===========================================================
+       EXPANDED PORTFOLIO VIEW
+       =========================================================== */
+    .project-view {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      display: none;
+      flex-direction: column;
+    }
+    .project-view.open { display: flex; }
+
+    .project-close {
+      position: fixed;
+      top: 1rem;
+      right: 1.5rem;
+      z-index: 601;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 300;
+      color: var(--fg);
+      padding: 0.4rem 0.6rem;
+    }
+    .project-close:hover { color: var(--muted); }
+
+    .project-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 601;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 1rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .project-nav:hover { color: var(--fg); }
+    .project-nav.prev { left: 0.5rem; }
+    .project-nav.next { right: 0.5rem; }
+    .project-nav .triangle {
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      letter-spacing: 0;
+    }
+
+    .project-header {
+      flex-shrink: 0;
+      padding: 1.25rem 6rem 0.75rem;
+      text-align: center;
+    }
+    .project-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+    .project-meta {
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .project-frame {
+      flex: 1;
+      width: 100%;
+      border: 0;
+      background: var(--bg);
+    }
+
+    /* ===========================================================
+       FOOTER — minimal, fixed bottom
+       =========================================================== */
+    footer.foot {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.55rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      z-index: 50;
+      background: var(--bg);
+    }
+
+    /* ===========================================================
+       MOBILE
+       =========================================================== */
+    @media (max-width: 768px) {
+      html, body { overflow-y: auto; height: auto; }
+      main {
+        position: static;
+        min-height: calc(100vh - 3.25rem - 2.5rem);
+      }
+      section.panel { position: relative; inset: auto; min-height: 70vh; padding: 3rem 1.25rem; }
+
+      .about-columns { flex-direction: column; }
+      .about-divider { display: none; }
+      .about-col { padding: 0; }
+      .about-col + .about-col { margin-top: 2rem; }
+
+      .photo-grid { grid-template-columns: 1fr; column-gap: 0; }
+
+      .venture-slide { padding: 3rem 1rem; position: relative; inset: auto; }
+
+      .global-nav {
+        position: static;
+        transform: none;
+        flex-direction: row;
+        gap: 0.5rem;
+        padding: 0.5rem;
+      }
+      .global-nav .venture-label { display: none !important; }
+
+      .global-nav-row {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+      }
+
+      .venture-icon { height: 130px; }
+      .hover-preview { display: none !important; }
+
+      nav.top { padding: 0 1rem; }
+      .brand { font-size: 0.65rem; letter-spacing: 0.15em; }
+
+      #hero h1 { font-size: 2rem; }
+      .project-header { padding: 2.5rem 1rem 0.5rem; }
+      .project-close { font-size: 1.6rem; top: 0.5rem; right: 0.75rem; }
+
+      .progress-dots { bottom: 3.25rem; }
+
+      .sidebar { width: 11rem; }
+    }
+
+    @media (pointer: coarse) {
+      .hover-preview { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP NAV -->
+  <nav class="top">
+    <div class="brand">wvez solutions</div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- SIDEBAR OVERLAY (click outside to close) -->
+  <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar" aria-label="Site navigation">
+    <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">&times;</button>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <button data-goto="0">Home</button>
+      <button data-goto="1">About</button>
+      <button data-goto="2">Ventures</button>
+      <button data-goto="7">Services</button>
+      <button data-goto="8">Photography</button>
+      <button data-goto="9">Contact</button>
+    </nav>
+  </div>
+
+  <!-- GLOBAL LEFT ARROW -->
+  <button class="global-nav left" id="global-prev" aria-label="Previous">
+    <span class="venture-label">Previous</span>
+    <span class="venture-label">Venture</span>
+    <span class="triangle">&#9664;</span>
+  </button>
+
+  <!-- GLOBAL RIGHT ARROW -->
+  <button class="global-nav right" id="global-next" aria-label="Next">
+    <span class="venture-label">Next</span>
+    <span class="venture-label">Venture</span>
+    <span class="triangle">&#9654;</span>
+  </button>
+
+  <main>
+
+    <section class="panel active" id="hero">
+      <div class="wvez-3d-hero">
+        <model-viewer
+          src="logo (1).glb"
+          alt="WVEZ Solutions logo"
+          auto-rotate
+          rotation-per-second="45deg"
+          auto-rotate-delay="0"
+          disable-zoom
+          interaction-prompt="none"
+          shadow-intensity="0"
+          exposure="1"
+          camera-orbit="0deg 90deg auto">
+        </model-viewer>
+      </div>
+    </section>
+
+    <section class="panel" id="about">
+      <div class="panel-label">About</div>
+      <div class="about-columns">
+        <div class="about-col">
+          <p>Hello. I'm Warner, running WVEZ Solutions out of Chicago.</p>
+          <p>I design and build automation systems, data pipelines, and web applications for businesses, creators, and students.</p>
+          <p>I also ship my own products. Problems I care about, or things I find cool.</p>
+        </div>
+        <div class="about-divider"></div>
+        <div class="about-col">
+          <p>Everything on this site was built by me. Backend to frontend, scraper to deploy. No templates, no AI wrappers.</p>
+          <p>I love building technical problem solvers, and learning through every step of the process.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="ventures">
+      <div class="ventures-stage">
+
+        <div class="venture-slide active"
+             data-external="https://jobze.io"
+             data-preview="pixel/875_pixel.png">
+          <div class="venture-title">JOBZE</div>
+          <div class="venture-cat">Job search assistant</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/875_pixel.png" class="venture-icon" alt="JOBZE">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Slack-based job search community with a built-in assistant that researches roles, rewrites resumes per position, runs interview prep, and logs everything. No tab switching, no copy-paste. In beta at <a href="https://jobze.io" target="_blank" rel="noopener">jobze.io</a>.</div>
+        </div>
+
+        <div class="venture-slide"
+             data-url="https://jobze.io/WVEZ%20REVAMP%20RECON.html"
+             data-title="WVEZ RECON"
+             data-meta="Competitive intelligence"
+             data-preview="pixel/recon_pixel.png">
+          <div class="venture-title">RECON</div>
+          <div class="venture-cat">Competitive intelligence</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/willis_pixel.png" class="venture-icon" alt="RECON">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Pulls live inventory and pricing from competitor stores on a schedule, compares side by side, and delivers reports showing exactly where a business is winning or losing on price. Built for a real client. Runs without anyone lifting a finger.</div>
+        </div>
+
+        <div class="venture-slide"
+             data-url="https://jobze.io/WVEZ%20REVAMP%20FLIPPR.html"
+             data-title="WVEZ FLIPPR"
+             data-meta="Resale arbitrage"
+             data-preview="pixel/flippr_pixel.png">
+          <div class="venture-title">FLIPPR</div>
+          <div class="venture-cat">Resale arbitrage</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/aon_pixel.png" class="venture-icon" alt="FLIPPR">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Scans eBay every five minutes across 35+ product categories, pulls real sold comps, calculates net profit after fees and shipping, and only sends a buy alert when the math guarantees money. Started reselling sneakers in middle school. Automated the whole thing.</div>
+        </div>
+
+        <div class="venture-slide"
+             data-url="https://jobze.io/WVEZ%20CRP.html"
+             data-title="WVEZ Content Recipe"
+             data-meta="Content auditing"
+             data-preview="pixel/crp_pixel.png">
+          <div class="venture-title">Content Recipe</div>
+          <div class="venture-cat">Content auditing</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/crain_pixel.png" class="venture-icon" alt="Content Recipe">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Scrapes a creator's Instagram, runs AI analysis on every video's first 10 seconds, and delivers a full engagement breakdown showing exactly which content types drive growth. Built to turn gut-feel posting into data-backed strategy.</div>
+        </div>
+
+        <div class="venture-slide"
+             data-external="https://warner-wvez.github.io/wrestling-dashboard/"
+             data-preview="pixel/wrestling_pixel.png">
+          <div class="venture-title">Wrestling Dashboard</div>
+          <div class="venture-cat">Match tracking</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/tribune_pixel.png" class="venture-icon" alt="Wrestling Dashboard">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Tracks match results, card history, and title lineages across promotions in a single filterable view. No digging through fan wikis or Wikipedia tables. Built for anyone who wants to see the data, not just the narrative. <a href="https://github.com/warner-wvez/wrestling-dashboard" target="_blank" rel="noopener">Source on GitHub</a>.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="panel" id="services">
+      <div class="panel-label">What I Solve</div>
+      <div class="panel-body">
+        <div class="service-item">
+          <div class="service-title">You're doing it manually. Every day.</div>
+          <div class="service-desc">Copying data between tabs, sending the same follow-ups, running reports by hand. That's a workflow waiting to be built. I automate the repetitive work around how you actually operate, not around a template.</div>
+        </div>
+        <div class="service-item">
+          <div class="service-title">You don't know what they're charging.</div>
+          <div class="service-desc">Competitors shift pricing and inventory while you're not looking. I build scrapers and monitoring pipelines tailored to the metrics you care about, delivered on the schedule you want. No checking in, no guessing.</div>
+        </div>
+        <div class="service-item">
+          <div class="service-title">Your tools don't talk to each other.</div>
+          <div class="service-desc">Five platforms and none of them share data. If it has an API or a webhook, I can connect it. I map integrations to how your team already works, so nothing has to change on your end. You stop being the middleman.</div>
+        </div>
+        <div class="service-item">
+          <div class="service-title">Your online presence doesn't match your brand.</div>
+          <div class="service-desc">You've outgrown the template. I craft the HTML and CSS for landing pages, dashboards, and internal tools built around your identity, not a theme.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="photography">
+      <div class="panel-label">Photography</div>
+      <div class="photo-grid">
+        <button class="photo-item" data-src="photos/purple%20flower.jpg" data-name="purple flower">purple flower</button>
+        <button class="photo-item" data-src="photos/yellow%20flower.jpg" data-name="yellow flower">yellow flower</button>
+        <button class="photo-item" data-src="photos/pink%20flowers.jpg" data-name="pink flowers">pink flowers</button>
+        <button class="photo-item" data-src="photos/red%26whiteflower.jpg" data-name="red & white flower">red & white flower</button>
+        <button class="photo-item" data-src="photos/violet%20flower.jpg" data-name="violet flower">violet flower</button>
+        <button class="photo-item" data-src="photos/pink%20flowers%20%232.jpg" data-name="pink flowers #2">pink flowers #2</button>
+        <button class="photo-item" data-src="photos/red%20flower.jpg" data-name="red flower">red flower</button>
+        <button class="photo-item" data-src="photos/purple%20flower%20%232.jpg" data-name="purple flower #2">purple flower #2</button>
+        <button class="photo-item" data-src="photos/white%20flowers%20%232.jpg" data-name="white flowers #2">white flowers #2</button>
+        <button class="photo-item" data-src="photos/white%20flowers.jpg" data-name="white flowers">white flowers</button>
+        <button class="photo-item" data-src="photos/island.jpg" data-name="island">island</button>
+        <button class="photo-item" data-src="photos/one%20point.jpg" data-name="one point">one point</button>
+        <button class="photo-item" data-src="photos/round.jpg" data-name="round">round</button>
+        <button class="photo-item" data-src="photos/shadows.jpg" data-name="shadows">shadows</button>
+        <button class="photo-item" data-src="photos/shine.jpg" data-name="shine">shine</button>
+        <button class="photo-item" data-src="photos/sky.jpg" data-name="sky">sky</button>
+        <button class="photo-item" data-src="photos/split.jpg" data-name="split">split</button>
+        <button class="photo-item" data-src="photos/superhero%20building.jpg" data-name="superhero building">superhero building</button>
+        <button class="photo-item" data-src="photos/this%20hurt%20my%20eyes.jpg" data-name="this hurt my eyes">this hurt my eyes</button>
+      </div>
+    </section>
+
+    <section class="panel" id="contact">
+      <div class="panel-label">Contact</div>
+      <div class="panel-body">
+        <div class="tagline-big">Got a hard problem?<br>I have an EZ solution.</div>
+        <a href="mailto:warner@wvez.org" class="email">warner@wvez.org</a>
+        <div class="loc">Chicago, IL</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 9-DOT PROGRESS INDICATOR — always visible -->
+  <div class="progress-dots" id="progress-dots" role="tablist" aria-label="Page navigation">
+    <button class="progress-dot active" data-state="0" aria-label="Home"></button>
+    <button class="progress-dot" data-state="1" aria-label="About"></button>
+    <button class="progress-dot" data-state="2" aria-label="Venture 1: JOBZE"></button>
+    <button class="progress-dot" data-state="3" aria-label="Venture 2: RECON"></button>
+    <button class="progress-dot" data-state="4" aria-label="Venture 3: FLIPPR"></button>
+    <button class="progress-dot" data-state="5" aria-label="Venture 4: Content Recipe"></button>
+    <button class="progress-dot" data-state="6" aria-label="Venture 5: Wrestling Dashboard"></button>
+    <button class="progress-dot" data-state="7" aria-label="Services"></button>
+    <button class="progress-dot" data-state="8" aria-label="Photography"></button>
+    <button class="progress-dot" data-state="9" aria-label="Contact"></button>
+  </div>
+
+  <footer class="foot">
+    &copy; WVEZ Solutions LLC &middot; Chicago
+  </footer>
+
+  <div class="hover-preview" id="hover-preview">
+    <img id="hover-preview-img" src="" alt="">
+  </div>
+
+  <div class="photo-hover-preview" id="photo-hover-preview">
+    <img id="photo-hover-preview-img" src="" alt="">
+  </div>
+
+  <div class="photo-view" id="photo-view" aria-hidden="true">
+    <button class="photo-close" id="photo-close" aria-label="Close">&times;</button>
+    <button class="photo-nav prev" id="photo-prev" aria-label="Previous photo">
+      <span class="triangle">&#9664;</span>
+    </button>
+    <button class="photo-nav next" id="photo-next" aria-label="Next photo">
+      <span class="triangle">&#9654;</span>
+    </button>
+    <img class="photo-frame" id="photo-frame" src="" alt="">
+    <div class="photo-caption" id="photo-caption"></div>
+  </div>
+
+  <div class="project-view" id="project-view" aria-hidden="true">
+    <button class="project-close" id="project-close" aria-label="Close">&times;</button>
+    <button class="project-nav prev" id="project-prev" aria-label="Previous project">
+      <span>Previous</span><span>project</span>
+      <span class="triangle">&#9664;</span>
+    </button>
+    <button class="project-nav next" id="project-next" aria-label="Next project">
+      <span>Next</span><span>project</span>
+      <span class="triangle">&#9654;</span>
+    </button>
+    <div class="project-header">
+      <div class="project-title" id="project-title"></div>
+      <div class="project-meta" id="project-meta"></div>
+    </div>
+    <iframe class="project-frame" id="project-frame" src="about:blank" title="Project"></iframe>
+  </div>
+
+  <script>
+    /* ==========================================================
+       10-STATE NAVIGATION MAP
+       States 0-9 in order: Home, About, V1, V2, V3, V4, V5, Services, Photography, Contact
+       ========================================================== */
+    const STATE_MAP = [
+      { panel: 'hero',        venture: -1 },  // 0 Home
+      { panel: 'about',       venture: -1 },  // 1 About
+      { panel: 'ventures',    venture:  0 },  // 2 Venture 1 — JOBZE
+      { panel: 'ventures',    venture:  1 },  // 3 Venture 2 — RECON
+      { panel: 'ventures',    venture:  2 },  // 4 Venture 3 — FLIPPR
+      { panel: 'ventures',    venture:  3 },  // 5 Venture 4 — Content Recipe
+      { panel: 'ventures',    venture:  4 },  // 6 Venture 5 — Wrestling Dashboard
+      { panel: 'services',    venture: -1 },  // 7 Services
+      { panel: 'photography', venture: -1 },  // 8 Photography
+      { panel: 'contact',     venture: -1 },  // 9 Contact
+    ];
+
+    const TOTAL_STATES = STATE_MAP.length;
+
+    let currentState = 0;
+
+    const panels        = document.querySelectorAll('section.panel');
+    const slides        = document.querySelectorAll('.venture-slide');
+    const progressDots  = document.querySelectorAll('.progress-dot');
+    const globalPrev    = document.getElementById('global-prev');
+    const globalNext    = document.getElementById('global-next');
+    const sidebarBtns   = document.querySelectorAll('#sidebar-nav button');
+
+    /* ----------------------------------------------------------
+       navigateTo — single entry point for all navigation
+       ---------------------------------------------------------- */
+    function navigateTo(stateIndex) {
+      if (stateIndex < 0 || stateIndex >= TOTAL_STATES) return;
+      currentState = stateIndex;
+      const { panel, venture } = STATE_MAP[stateIndex];
+      const isVenture = venture >= 0;
+
+      // Show correct panel
+      panels.forEach(p => p.classList.toggle('active', p.id === panel));
+
+      // Show correct venture slide when inside ventures
+      if (isVenture) {
+        slides.forEach((s, i) => s.classList.toggle('active', i === venture));
+        hidePreview();
+      }
+
+      // Arrow visibility: hide at edges
+      globalPrev.classList.toggle('edge-hidden', stateIndex === 0);
+      globalNext.classList.toggle('edge-hidden', stateIndex === TOTAL_STATES - 1);
+
+      // Venture labels on arrows only while in venture states
+      globalPrev.classList.toggle('show-labels', isVenture);
+      globalNext.classList.toggle('show-labels', isVenture);
+
+      // Sync progress dots
+      progressDots.forEach((d, i) => d.classList.toggle('active', i === stateIndex));
+
+      // Sync sidebar active state
+      sidebarBtns.forEach(b => {
+        const g = parseInt(b.dataset.goto);
+        // Ventures button (goto=2) is active for states 2-6
+        const active = (g === stateIndex) || (g === 2 && stateIndex >= 2 && stateIndex <= 6);
+        b.classList.toggle('active', active);
+      });
+    }
+
+    // Arrow clicks
+    globalPrev.addEventListener('click', () => navigateTo(currentState - 1));
+    globalNext.addEventListener('click', () => navigateTo(currentState + 1));
+
+    // Progress dot clicks
+    progressDots.forEach(d => {
+      d.addEventListener('click', () => navigateTo(parseInt(d.dataset.state)));
+    });
+
+    // Sidebar item clicks
+    sidebarBtns.forEach(b => {
+      b.addEventListener('click', () => {
+        navigateTo(parseInt(b.dataset.goto));
+        closeSidebar();
+      });
+    });
+
+    /* ==========================================================
+       SIDEBAR — hamburger open / close
+       ========================================================== */
+    const hamburger      = document.getElementById('hamburger');
+    const sidebar        = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarClose   = document.getElementById('sidebar-close');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      sidebarOverlay.classList.add('open');
+      hamburger.setAttribute('aria-expanded', 'true');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      sidebarOverlay.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    }
+
+    hamburger.addEventListener('click', openSidebar);
+    sidebarClose.addEventListener('click', closeSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    /* ==========================================================
+       HOVER PREVIEW — instant snap in/out
+       ========================================================== */
+    const hoverPreview    = document.getElementById('hover-preview');
+    const hoverPreviewImg = document.getElementById('hover-preview-img');
+
+    function showPreview(src) {
+      hoverPreviewImg.src = src;
+      hoverPreview.classList.add('visible');
+    }
+    function hidePreview() {
+      hoverPreview.classList.remove('visible');
+    }
+
+    document.querySelectorAll('.venture-icon-btn').forEach(btn => {
+      const slide = btn.closest('.venture-slide');
+      const src = slide.dataset.preview;
+      btn.addEventListener('mouseenter', () => showPreview(src));
+      btn.addEventListener('mouseleave', hidePreview);
+    });
+
+    /* ==========================================================
+       OPEN VENTURE — JOBZE opens external; others load iframe
+       ========================================================== */
+    const projectView  = document.getElementById('project-view');
+    const projectClose = document.getElementById('project-close');
+    const projectPrev  = document.getElementById('project-prev');
+    const projectNext  = document.getElementById('project-next');
+    const projectFrame = document.getElementById('project-frame');
+    const projectTitle = document.getElementById('project-title');
+    const projectMeta  = document.getElementById('project-meta');
+
+    function openVenture(slideIndex) {
+      const slide = slides[slideIndex];
+      if (slide.dataset.external) {
+        window.open(slide.dataset.external, '_blank', 'noopener');
+        return;
+      }
+      projectTitle.textContent = slide.dataset.title || '';
+      projectMeta.textContent  = slide.dataset.meta  || '';
+      projectFrame.src = slide.dataset.url;
+      projectView.classList.add('open');
+      projectView.setAttribute('aria-hidden', 'false');
+      hidePreview();
+    }
+
+    function closeVenture() {
+      projectView.classList.remove('open');
+      projectView.setAttribute('aria-hidden', 'true');
+      projectFrame.src = 'about:blank';
+    }
+
+    document.querySelectorAll('[data-action="open-venture"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const slide = btn.closest('.venture-slide');
+        const idx   = Array.from(slides).indexOf(slide);
+        openVenture(idx);
+      });
+    });
+
+    projectClose.addEventListener('click', closeVenture);
+
+    function stepProject(dir) {
+      // currentState is already a venture state (2-6); find the next with an iframe
+      const ventureOffset = currentState - 2; // 0-4
+      let i = ventureOffset;
+      for (let step = 0; step < slides.length; step++) {
+        i = (i + dir + slides.length) % slides.length;
+        if (!slides[i].dataset.external) {
+          navigateTo(2 + i);
+          openVenture(i);
+          return;
+        }
+      }
+    }
+    projectPrev.addEventListener('click', () => stepProject(-1));
+    projectNext.addEventListener('click', () => stepProject(1));
+
+    /* ==========================================================
+       PHOTOGRAPHY — hover preview + fullscreen cycling
+       ========================================================== */
+    const photoItems   = document.querySelectorAll('.photo-item');
+    const photoView    = document.getElementById('photo-view');
+    const photoClose   = document.getElementById('photo-close');
+    const photoPrev    = document.getElementById('photo-prev');
+    const photoNext    = document.getElementById('photo-next');
+    const photoFrame   = document.getElementById('photo-frame');
+    const photoCaption = document.getElementById('photo-caption');
+
+    let currentPhotoIndex = 0;
+
+    const photoHoverPreview    = document.getElementById('photo-hover-preview');
+    const photoHoverPreviewImg = document.getElementById('photo-hover-preview-img');
+
+    function showPhotoPreview(src) {
+      photoHoverPreviewImg.src = src;
+      photoHoverPreview.classList.add('visible');
+    }
+    function hidePhotoPreview() {
+      photoHoverPreview.classList.remove('visible');
+    }
+
+    photoItems.forEach(item => {
+      item.addEventListener('mouseenter', () => showPhotoPreview(item.dataset.src));
+      item.addEventListener('mouseleave', hidePhotoPreview);
+    });
+
+    photoItems.forEach((item, i) => {
+      item.addEventListener('click', () => {
+        currentPhotoIndex = i;
+        openPhoto();
+        hidePhotoPreview();
+      });
+    });
+
+    function openPhoto() {
+      const item = photoItems[currentPhotoIndex];
+      photoFrame.src = item.dataset.src;
+      photoCaption.textContent = item.dataset.name;
+      photoView.classList.add('open');
+      photoView.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePhoto() {
+      photoView.classList.remove('open');
+      photoView.setAttribute('aria-hidden', 'true');
+      photoFrame.src = '';
+    }
+
+    function stepPhoto(dir) {
+      currentPhotoIndex = (currentPhotoIndex + dir + photoItems.length) % photoItems.length;
+      openPhoto();
+    }
+
+    photoClose.addEventListener('click', closePhoto);
+    photoPrev.addEventListener('click',  () => stepPhoto(-1));
+    photoNext.addEventListener('click',  () => stepPhoto(1));
+
+    /* ==========================================================
+       KEYBOARD
+       ========================================================== */
+    document.addEventListener('keydown', e => {
+      if (photoView.classList.contains('open')) {
+        if (e.key === 'Escape')          closePhoto();
+        else if (e.key === 'ArrowLeft')  stepPhoto(-1);
+        else if (e.key === 'ArrowRight') stepPhoto(1);
+        return;
+      }
+      if (projectView.classList.contains('open')) {
+        if (e.key === 'Escape')          closeVenture();
+        else if (e.key === 'ArrowLeft')  stepProject(-1);
+        else if (e.key === 'ArrowRight') stepProject(1);
+        return;
+      }
+      if (e.key === 'ArrowLeft')  navigateTo(currentState - 1);
+      if (e.key === 'ArrowRight') navigateTo(currentState + 1);
+    });
+  </script>
+
+</body>
+</html>
