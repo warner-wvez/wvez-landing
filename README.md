@@ -7,7 +7,6 @@ Live at [wvez.org](https://wvez.org). Vanilla HTML/CSS/JS. IBM Plex Mono through
 ## Contents
 
 - `index.html` — landing page
-- `Headshot.jpg` — founder headshot
 - Brand assets (favicons, manifest)
 
 ## Status
