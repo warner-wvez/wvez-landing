@@ -389,6 +389,35 @@
     }
 
     /* ===========================================================
+       CONTACT — tightened spacing + social icon row
+       =========================================================== */
+    #contact .email {
+      margin-top: 1.1rem;
+    }
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.4rem;
+      margin-top: 1.4rem;
+    }
+    .social-icon {
+      display: inline-flex;
+      width: 28px;
+      height: 28px;
+      opacity: 0.9;
+      transition: opacity 0.12s steps(2);
+    }
+    .social-icon:hover { opacity: 0.55; }
+    .social-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: pixelated;
+      display: block;
+    }
+
+    /* ===========================================================
        VENTURES — Coleman pattern
        =========================================================== */
     #ventures {
@@ -1073,7 +1102,17 @@
       <div class="panel-body">
         <div class="tagline-big">Got a hard problem?<br>I have an EZ solution.</div>
         <a href="mailto:warner@wvez.org" class="email">warner@wvez.org</a>
-        <div class="loc">Chicago, IL</div>
+        <div class="social-icons">
+          <a href="https://www.linkedin.com/in/warner-varnado-549b391a2" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
+            <img src="pixel/Linkedin_pixel.png" alt="LinkedIn">
+          </a>
+          <a href="https://github.com/warner-wvez" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
+            <img src="pixel/github_pixel.png" alt="GitHub">
+          </a>
+          <a href="https://x.com/WarnerVeeEZ" target="_blank" rel="noopener" class="social-icon" aria-label="X">
+            <img src="pixel/X_pixel.png" alt="X">
+          </a>
+        </div>
       </div>
     </section>
 
