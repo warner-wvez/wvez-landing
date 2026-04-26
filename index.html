@@ -305,6 +305,57 @@
       transition: color 0.08s steps(2);
     }
     .photo-item:hover { color: var(--muted); }
+
+    /* ===========================================================
+       PHOTOGRAPHY — two-column layout (stills + proof)
+       =========================================================== */
+    .photo-layout {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 3.5rem;
+      width: 100%;
+      max-width: 900px;
+    }
+    .photo-col { display: flex; flex-direction: column; }
+    .photo-col-stills { flex: 0 0 auto; }
+    .photo-col-proof  { flex: 0 0 auto; min-width: 180px; }
+    .photo-divider {
+      width: 1px;
+      align-self: stretch;
+      background: var(--fg);
+      opacity: 0.15;
+      flex-shrink: 0;
+    }
+    .photo-sublabel {
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+      text-align: left;
+    }
+    .proof-list {
+      display: flex;
+      flex-direction: column;
+      row-gap: 1rem;
+      width: 100%;
+    }
+    .proof-item {
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--fg);
+      cursor: pointer;
+      padding: 0.3rem 0;
+      text-align: left;
+      background: none;
+      border: none;
+      transition: color 0.08s steps(2);
+    }
+    .proof-item:hover { color: var(--muted); }
     .service-title {
       font-size: 0.9rem;
       font-weight: 500;
@@ -590,6 +641,65 @@
     }
 
     /* ===========================================================
+       VIDEO VIEWER — fullscreen, arrows, caption (mirrors photo viewer)
+       =========================================================== */
+    .video-view {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .video-view.open { display: flex; }
+    .video-frame {
+      max-width: 85vw;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block;
+      background: #000;
+    }
+    .video-close {
+      position: fixed;
+      top: 1rem;
+      right: 1.5rem;
+      z-index: 601;
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 300;
+      color: var(--fg);
+      padding: 0.4rem 0.6rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .video-close:hover { color: var(--muted); }
+    .video-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 601;
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .video-nav:hover { color: var(--fg); }
+    .video-nav.prev { left: 0.5rem; }
+    .video-nav.next { right: 0.5rem; }
+    .video-caption {
+      margin-top: 1rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ===========================================================
        EXPANDED PORTFOLIO VIEW
        =========================================================== */
     .project-view {
@@ -702,6 +812,9 @@
       .about-col + .about-col { margin-top: 2rem; }
 
       .photo-grid { grid-template-columns: 1fr; column-gap: 0; }
+      .photo-layout { flex-direction: column; gap: 2.25rem; align-items: stretch; }
+      .photo-divider { display: none; }
+      .photo-col-proof { min-width: 0; }
 
       .venture-slide { padding: 3rem 1rem; position: relative; inset: auto; }
 
@@ -915,26 +1028,43 @@
 
     <section class="panel" id="photography">
       <div class="panel-label">Photography</div>
-      <div class="photo-grid">
-        <button class="photo-item" data-src="photos/purple%20flower.jpg" data-name="purple flower">purple flower</button>
-        <button class="photo-item" data-src="photos/yellow%20flower.jpg" data-name="yellow flower">yellow flower</button>
-        <button class="photo-item" data-src="photos/pink%20flowers.jpg" data-name="pink flowers">pink flowers</button>
-        <button class="photo-item" data-src="photos/red%26whiteflower.jpg" data-name="red & white flower">red & white flower</button>
-        <button class="photo-item" data-src="photos/violet%20flower.jpg" data-name="violet flower">violet flower</button>
-        <button class="photo-item" data-src="photos/pink%20flowers%20%232.jpg" data-name="pink flowers #2">pink flowers #2</button>
-        <button class="photo-item" data-src="photos/red%20flower.jpg" data-name="red flower">red flower</button>
-        <button class="photo-item" data-src="photos/purple%20flower%20%232.jpg" data-name="purple flower #2">purple flower #2</button>
-        <button class="photo-item" data-src="photos/white%20flowers%20%232.jpg" data-name="white flowers #2">white flowers #2</button>
-        <button class="photo-item" data-src="photos/white%20flowers.jpg" data-name="white flowers">white flowers</button>
-        <button class="photo-item" data-src="photos/island.jpg" data-name="island">island</button>
-        <button class="photo-item" data-src="photos/one%20point.jpg" data-name="one point">one point</button>
-        <button class="photo-item" data-src="photos/round.jpg" data-name="round">round</button>
-        <button class="photo-item" data-src="photos/shadows.jpg" data-name="shadows">shadows</button>
-        <button class="photo-item" data-src="photos/shine.jpg" data-name="shine">shine</button>
-        <button class="photo-item" data-src="photos/sky.jpg" data-name="sky">sky</button>
-        <button class="photo-item" data-src="photos/split.jpg" data-name="split">split</button>
-        <button class="photo-item" data-src="photos/superhero%20building.jpg" data-name="superhero building">superhero building</button>
-        <button class="photo-item" data-src="photos/this%20hurt%20my%20eyes.jpg" data-name="this hurt my eyes">this hurt my eyes</button>
+      <div class="photo-layout">
+        <div class="photo-col photo-col-stills">
+          <div class="photo-sublabel">Stills</div>
+          <div class="photo-grid">
+            <button class="photo-item" data-src="photos/purple%20flower.jpg" data-name="purple flower">purple flower</button>
+            <button class="photo-item" data-src="photos/yellow%20flower.jpg" data-name="yellow flower">yellow flower</button>
+            <button class="photo-item" data-src="photos/pink%20flowers.jpg" data-name="pink flowers">pink flowers</button>
+            <button class="photo-item" data-src="photos/red%26whiteflower.jpg" data-name="red & white flower">red & white flower</button>
+            <button class="photo-item" data-src="photos/violet%20flower.jpg" data-name="violet flower">violet flower</button>
+            <button class="photo-item" data-src="photos/pink%20flowers%20%232.jpg" data-name="pink flowers #2">pink flowers #2</button>
+            <button class="photo-item" data-src="photos/red%20flower.jpg" data-name="red flower">red flower</button>
+            <button class="photo-item" data-src="photos/purple%20flower%20%232.jpg" data-name="purple flower #2">purple flower #2</button>
+            <button class="photo-item" data-src="photos/white%20flowers%20%232.jpg" data-name="white flowers #2">white flowers #2</button>
+            <button class="photo-item" data-src="photos/white%20flowers.jpg" data-name="white flowers">white flowers</button>
+            <button class="photo-item" data-src="photos/island.jpg" data-name="island">island</button>
+            <button class="photo-item" data-src="photos/one%20point.jpg" data-name="one point">one point</button>
+            <button class="photo-item" data-src="photos/round.jpg" data-name="round">round</button>
+            <button class="photo-item" data-src="photos/shadows.jpg" data-name="shadows">shadows</button>
+            <button class="photo-item" data-src="photos/shine.jpg" data-name="shine">shine</button>
+            <button class="photo-item" data-src="photos/sky.jpg" data-name="sky">sky</button>
+            <button class="photo-item" data-src="photos/split.jpg" data-name="split">split</button>
+            <button class="photo-item" data-src="photos/superhero%20building.jpg" data-name="superhero building">superhero building</button>
+            <button class="photo-item" data-src="photos/this%20hurt%20my%20eyes.jpg" data-name="this hurt my eyes">this hurt my eyes</button>
+          </div>
+        </div>
+        <div class="photo-divider"></div>
+        <div class="photo-col photo-col-proof">
+          <div class="photo-sublabel">Proof</div>
+          <div class="proof-list">
+            <button class="proof-item" data-src="proof/purple%20flower%20proof.mp4" data-name="purple flower proof">purple flower proof</button>
+            <button class="proof-item" data-src="proof/Yellow%20Flower%20Proof.mp4" data-name="Yellow Flower Proof">Yellow Flower Proof</button>
+            <button class="proof-item" data-src="proof/pink%20flower%20proof.mp4" data-name="pink flower proof">pink flower proof</button>
+            <button class="proof-item" data-src="proof/more%20proof.mp4" data-name="more proof">more proof</button>
+            <button class="proof-item" data-src="proof/more%20proof%20%232.mp4" data-name="more proof #2">more proof #2</button>
+            <button class="proof-item" data-src="proof/more%20proof%20%233.mp4" data-name="more proof #3">more proof #3</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -985,6 +1115,18 @@
     </button>
     <img class="photo-frame" id="photo-frame" src="" alt="">
     <div class="photo-caption" id="photo-caption"></div>
+  </div>
+
+  <div class="video-view" id="video-view" aria-hidden="true">
+    <button class="video-close" id="video-close" aria-label="Close">&times;</button>
+    <button class="video-nav prev" id="video-prev" aria-label="Previous video">
+      <span class="triangle">&#9664;</span>
+    </button>
+    <button class="video-nav next" id="video-next" aria-label="Next video">
+      <span class="triangle">&#9654;</span>
+    </button>
+    <video class="video-frame" id="video-frame" controls playsinline></video>
+    <div class="video-caption" id="video-caption"></div>
   </div>
 
   <div class="project-view" id="project-view" aria-hidden="true">
@@ -1250,9 +1392,60 @@
     photoNext.addEventListener('click',  () => stepPhoto(1));
 
     /* ==========================================================
+       PROOF VIDEOS — fullscreen cycling viewer
+       ========================================================== */
+    const proofItems   = document.querySelectorAll('.proof-item');
+    const videoView    = document.getElementById('video-view');
+    const videoClose   = document.getElementById('video-close');
+    const videoPrev    = document.getElementById('video-prev');
+    const videoNext    = document.getElementById('video-next');
+    const videoFrame   = document.getElementById('video-frame');
+    const videoCaption = document.getElementById('video-caption');
+
+    let currentVideoIndex = 0;
+
+    proofItems.forEach((item, i) => {
+      item.addEventListener('click', () => {
+        currentVideoIndex = i;
+        openVideo();
+      });
+    });
+
+    function openVideo() {
+      const item = proofItems[currentVideoIndex];
+      videoFrame.src = item.dataset.src;
+      videoCaption.textContent = item.dataset.name;
+      videoView.classList.add('open');
+      videoView.setAttribute('aria-hidden', 'false');
+      videoFrame.play().catch(() => {});
+    }
+
+    function closeVideo() {
+      videoView.classList.remove('open');
+      videoView.setAttribute('aria-hidden', 'true');
+      videoFrame.pause();
+      videoFrame.src = '';
+    }
+
+    function stepVideo(dir) {
+      currentVideoIndex = (currentVideoIndex + dir + proofItems.length) % proofItems.length;
+      openVideo();
+    }
+
+    videoClose.addEventListener('click', closeVideo);
+    videoPrev.addEventListener('click',  () => stepVideo(-1));
+    videoNext.addEventListener('click',  () => stepVideo(1));
+
+    /* ==========================================================
        KEYBOARD
        ========================================================== */
     document.addEventListener('keydown', e => {
+      if (videoView.classList.contains('open')) {
+        if (e.key === 'Escape')          closeVideo();
+        else if (e.key === 'ArrowLeft')  stepVideo(-1);
+        else if (e.key === 'ArrowRight') stepVideo(1);
+        return;
+      }
       if (photoView.classList.contains('open')) {
         if (e.key === 'Escape')          closePhoto();
         else if (e.key === 'ArrowLeft')  stepPhoto(-1);
