@@ -279,12 +279,6 @@
     }
     .panel-body p:last-child { margin-bottom: 0; }
 
-    .service-item {
-      margin-bottom: 1.75rem;
-      text-align: left;
-    }
-    .service-item:last-child { margin-bottom: 0; }
-
     .photo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -356,15 +350,69 @@
       transition: color 0.08s steps(2);
     }
     .proof-item:hover { color: var(--muted); }
-    .service-title {
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 0.45rem;
+
+    /* ===========================================================
+       SERVICES — paired service menu
+       =========================================================== */
+    .service-menu {
+      width: 100%;
+      max-width: 620px;
+      display: grid;
+      grid-template-columns: max-content 1.25rem max-content;
+      column-gap: 0.75rem;
+      row-gap: 1.25rem;
+      justify-content: center;
+      margin: 0 auto;
     }
-    .service-desc {
+
+    .service-menu-header,
+    .service-menu-row {
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-column: 1 / -1;
+      align-items: baseline;
+    }
+
+    .service-menu-header {
+      margin-bottom: 0.75rem;
+    }
+
+    .service-menu-header .service-menu-label:first-child {
+      grid-column: 1;
+    }
+
+    .service-menu-header .service-menu-label:last-child {
+      grid-column: 3;
+    }
+
+    .service-menu-label {
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .service-menu-line {
+      font-family: var(--font);
       font-size: 0.78rem;
-      line-height: 1.6;
-      color: #333;
+      font-weight: 500;
+      letter-spacing: 0.045em;
+      line-height: 1.35;
+      color: var(--fg);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .service-menu-connector {
+      font-family: var(--font);
+      font-size: 0.72rem;
+      font-weight: 400;
+      letter-spacing: 0;
+      color: var(--muted);
+      opacity: 0.7;
+      text-align: center;
     }
 
     #contact .tagline-big {
@@ -475,6 +523,10 @@
       display: block;
       transition: transform 0.12s steps(3);
     }
+    .venture-icon-875   { height: 180px; }
+    .venture-icon-willis { height: 180px; }
+    .venture-icon-aon   { height: 180px; }
+    .venture-icon-crain { height: 180px; }
     .venture-icon-btn:hover .venture-icon {
       transform: scale(1.08);
     }
@@ -845,6 +897,42 @@
       .photo-divider { display: none; }
       .photo-col-proof { min-width: 0; }
 
+      .service-menu {
+        max-width: 420px;
+        grid-template-columns: 1fr;
+        column-gap: 0;
+        row-gap: 1rem;
+      }
+
+      .service-menu-header {
+        display: none;
+      }
+
+      .service-menu-row {
+        grid-template-columns: 1fr;
+        row-gap: 0.25rem;
+        padding-bottom: 0.55rem;
+      }
+
+      .service-menu-connector {
+        display: none;
+      }
+
+      .service-menu-row .service-menu-line:first-child {
+        color: var(--muted);
+        font-size: 0.62rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        white-space: normal;
+      }
+
+      .service-menu-row .service-menu-line:last-child {
+        font-size: 0.82rem;
+        letter-spacing: 0.045em;
+        color: var(--fg);
+        white-space: normal;
+      }
+
       .venture-slide { padding: 3rem 1rem; position: relative; inset: auto; }
 
       .global-nav {
@@ -864,6 +952,10 @@
       }
 
       .venture-icon { height: 130px; }
+      .venture-icon-875   { height: 130px; }
+      .venture-icon-willis { height: 130px; }
+      .venture-icon-aon   { height: 130px; }
+      .venture-icon-crain { height: 130px; }
       .hover-preview { display: none !important; }
 
       nav.top { padding: 0 1rem; }
@@ -951,12 +1043,12 @@
         <div class="about-col">
           <p>Hello. I'm Warner, running WVEZ Solutions out of Chicago.</p>
           <p>I design and build automation systems, data pipelines, and web applications for businesses, creators, and students.</p>
-          <p>I also ship my own products. Problems I care about, or things I find cool.</p>
+          <p>I also ship my own stuff. Things I care about or find cool.</p>
         </div>
         <div class="about-divider"></div>
         <div class="about-col">
-          <p>Everything on this site was built by me. Backend to frontend, scraper to deploy. No templates, no AI wrappers.</p>
-          <p>I love building technical problem solvers, and learning through every step of the process.</p>
+          <p>Everything on this site was built by me. Backend to frontend, scraper to deploy. No templates, wrappers, or worries about tokens.</p>
+          <p>I love building technical problem solvers and learning through every step of the process.</p>
         </div>
       </div>
     </section>
@@ -966,14 +1058,14 @@
 
         <div class="venture-slide active"
              data-external="https://jobze.io"
-             data-preview="pixel/875_pixel.png">
+             data-preview="pixel/875_pixelv3.png">
           <div class="venture-title">JOBZE</div>
           <div class="venture-cat">Job search assistant</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/875_pixel.png" class="venture-icon" alt="JOBZE">
+            <img src="pixel/875_pixelv3.png" class="venture-icon venture-icon-875" alt="JOBZE">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Slack-based job search community with a built-in assistant that researches roles, rewrites resumes per position, runs interview prep, and logs everything. No tab switching, no copy-paste. In beta at <a href="https://jobze.io" target="_blank" rel="noopener">jobze.io</a>.</div>
+          <div class="venture-desc"> Slack-based job-suite. In beta at <a href="https://jobze.io" target="_blank" rel="noopener">jobze.io</a>.</div>
         </div>
 
         <div class="venture-slide"
@@ -984,10 +1076,10 @@
           <div class="venture-title">RECON</div>
           <div class="venture-cat">Competitive intelligence</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/willis_pixel.png" class="venture-icon" alt="RECON">
+            <img src="pixel/willis_pixelv3.png" class="venture-icon venture-icon-willis" alt="RECON">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Pulls live inventory and pricing from competitor stores on a schedule, compares side by side, and delivers reports showing exactly where a business is winning or losing on price. Built for a real client. Runs without anyone lifting a finger.</div>
+          <div class="venture-desc">Pulls live inventory & pricing from competitor stores custon hourly schedule, compares profits and losses on items side by side, and delivers reports showing where a business is winning or losing on price. Built for business.</div>
         </div>
 
         <div class="venture-slide"
@@ -998,10 +1090,10 @@
           <div class="venture-title">FLIPPR</div>
           <div class="venture-cat">Resale arbitrage</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/aon_pixel.png" class="venture-icon" alt="FLIPPR">
+            <img src="pixel/aon_pixelv3.png" class="venture-icon venture-icon-aon" alt="FLIPPR">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scans eBay every five minutes across 35+ product categories, pulls real sold comps, calculates net profit after fees and shipping, and only sends a buy alert when the math guarantees money. Started reselling sneakers in middle school. Automated the whole thing.</div>
+          <div class="venture-desc">Scans eBay every 5min across 35+ product categories, pulls real sold comps, calculates net profit after fees & shipping. Only sends buy alert when code guarantees money. Now automated.</div>
         </div>
 
         <div class="venture-slide"
@@ -1012,10 +1104,10 @@
           <div class="venture-title">Content Recipe</div>
           <div class="venture-cat">Content auditing</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/crain_pixel.png" class="venture-icon" alt="Content Recipe">
+            <img src="pixel/crain_pixelv3.png" class="venture-icon venture-icon-crain" alt="Content Recipe">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scrapes a creator's Instagram, runs AI analysis on every video's first 10 seconds, and delivers a full engagement breakdown showing exactly which content types drive growth. Built to turn gut-feel posting into data-backed strategy.</div>
+          <div class="venture-desc">Scrapes creator's Instagram, TikTok, YouTube, or any social. Runs analysis on every video's first 10 seconds & delivers a full engagement breakdown showing exactly which content types drive growth. Built to turn gut-feel posting into data-backed strategy.</div>
         </div>
 
         <div class="venture-slide"
@@ -1035,22 +1127,59 @@
 
     <section class="panel" id="services">
       <div class="panel-label">What I Solve</div>
-      <div class="panel-body">
-        <div class="service-item">
-          <div class="service-title">You're doing it manually. Every day.</div>
-          <div class="service-desc">Copying data between tabs, sending the same follow-ups, running reports by hand. That's a workflow waiting to be built. I automate the repetitive work around how you actually operate, not around a template.</div>
+
+      <div class="service-menu">
+        <div class="service-menu-header">
+          <div class="service-menu-label">Need</div>
+          <div class="service-menu-label">I Build</div>
         </div>
-        <div class="service-item">
-          <div class="service-title">You don't know what they're charging.</div>
-          <div class="service-desc">Competitors shift pricing and inventory while you're not looking. I build scrapers and monitoring pipelines tailored to the metrics you care about, delivered on the schedule you want. No checking in, no guessing.</div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">save time</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">automations</div>
         </div>
-        <div class="service-item">
-          <div class="service-title">Your tools don't talk to each other.</div>
-          <div class="service-desc">Five platforms and none of them share data. If it has an API or a webhook, I can connect it. I map integrations to how your team already works, so nothing has to change on your end. You stop being the middleman.</div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">track competitors</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">scrapers + monitors</div>
         </div>
-        <div class="service-item">
-          <div class="service-title">Your online presence doesn't match your brand.</div>
-          <div class="service-desc">You've outgrown the template. I craft the HTML and CSS for landing pages, dashboards, and internal tools built around your identity, not a theme.</div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">see the numbers</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">dashboards</div>
+        </div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">launch something</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">landing pages</div>
+        </div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">look more legit</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">brand revamps</div>
+        </div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">make the brand memorable</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">logo systems</div>
+        </div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">add motion / depth</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">3D web assets</div>
+        </div>
+
+        <div class="service-menu-row">
+          <div class="service-menu-line">turn an idea into product</div>
+          <div class="service-menu-connector">&rarr;</div>
+          <div class="service-menu-line">front-to-back MVP</div>
         </div>
       </div>
     </section>
