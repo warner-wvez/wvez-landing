@@ -591,7 +591,7 @@
     }
 
     /* ===========================================================
-       9-DOT PROGRESS INDICATOR — always visible
+       10-DOT PROGRESS INDICATOR — always visible
        =========================================================== */
     .progress-dots {
       position: fixed;
@@ -664,7 +664,7 @@
       image-rendering: auto;
     }
 
-    #photography { z-index: 10; position: absolute; }
+    #photography { z-index: 10; }
     #photography .photo-grid { position: relative; z-index: 10; }
     #photography .panel-label { position: relative; z-index: 10; }
 
@@ -936,20 +936,12 @@
       .venture-slide { padding: 3rem 1rem; position: relative; inset: auto; }
 
       .global-nav {
-        position: static;
+        top: auto;
+        bottom: 2.9rem;
         transform: none;
-        flex-direction: row;
-        gap: 0.5rem;
-        padding: 0.5rem;
+        padding: 0.5rem 1rem;
       }
       .global-nav .venture-label { display: none !important; }
-
-      .global-nav-row {
-        display: flex;
-        justify-content: center;
-        gap: 2rem;
-        margin-top: 1.5rem;
-      }
 
       .venture-icon { height: 130px; }
       .venture-icon-875   { height: 130px; }
@@ -1247,7 +1239,7 @@
 
   </main>
 
-  <!-- 9-DOT PROGRESS INDICATOR — always visible -->
+  <!-- 10-DOT PROGRESS INDICATOR — always visible -->
   <div class="progress-dots" id="progress-dots" role="tablist" aria-label="Page navigation">
     <button class="progress-dot active" data-state="0" aria-label="Home"></button>
     <button class="progress-dot" data-state="1" aria-label="About"></button>
@@ -1358,8 +1350,11 @@
       // Show correct venture slide when inside ventures
       if (isVenture) {
         slides.forEach((s, i) => s.classList.toggle('active', i === venture));
-        hidePreview();
       }
+
+      // Clear any hover previews left behind by the previous panel
+      hidePreview();
+      hidePhotoPreview();
 
       // Arrow visibility: hide at edges
       globalPrev.classList.toggle('edge-hidden', stateIndex === 0);
@@ -1539,6 +1534,7 @@
     function openPhoto() {
       const item = photoItems[currentPhotoIndex];
       photoFrame.src = item.dataset.src;
+      photoFrame.alt = item.dataset.name;
       photoCaption.textContent = item.dataset.name;
       photoView.classList.add('open');
       photoView.setAttribute('aria-hidden', 'false');
@@ -1547,7 +1543,7 @@
     function closePhoto() {
       photoView.classList.remove('open');
       photoView.setAttribute('aria-hidden', 'true');
-      photoFrame.src = '';
+      photoFrame.removeAttribute('src');
     }
 
     function stepPhoto(dir) {
@@ -1592,7 +1588,8 @@
       videoView.classList.remove('open');
       videoView.setAttribute('aria-hidden', 'true');
       videoFrame.pause();
-      videoFrame.src = '';
+      videoFrame.removeAttribute('src');
+      videoFrame.load();
     }
 
     function stepVideo(dir) {
@@ -1608,6 +1605,10 @@
        KEYBOARD
        ========================================================== */
     document.addEventListener('keydown', e => {
+      if (sidebar.classList.contains('open')) {
+        if (e.key === 'Escape') closeSidebar();
+        return;
+      }
       if (videoView.classList.contains('open')) {
         if (e.key === 'Escape')          closeVideo();
         else if (e.key === 'ArrowLeft')  stepVideo(-1);
