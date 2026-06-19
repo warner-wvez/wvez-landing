@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WVEZ RECON: Inventory Surveillance Engine</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  .hero-tag { font-family: var(--sans); font-size: 11px; font-style: italic; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; opacity: 0.8; }
+:root{
+  --bg:#000;--s1:hsl(0,0%,5%);--s2:hsl(0,0%,8%);
+  --border:hsl(0,0%,18%);--border2:hsl(0,0%,28%);
+  --fg:#fff;--muted:hsl(0,0%,62%);--dim:hsl(0,0%,36%);
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Mono',monospace;--r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:var(--mono);color:var(--fg);-webkit-font-smoothing:antialiased;padding-bottom:120px;position:relative}
+
+/* texture overlay */
+body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.07;z-index:0;pointer-events:none}
+
+/* background video */
+#bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:0;pointer-events:none;filter:grayscale(100%) brightness(0.3) contrast(1.3);opacity:0.5}
+.hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{position:relative;z-index:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* util */
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+.sec-h{margin-bottom:28px}
+.sec-h h2{font-size:clamp(22px,3.5vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:9px}
+.sec-h p{font-size:13.5px;color:var(--muted);margin-top:9px;line-height:1.75;max-width:560px}
+
+/* HERO */
+.hero{padding:72px 40px 0;max-width:1160px;margin:0 auto;animation:fadeUp .7s ease both}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:36px;position:relative}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.hero-logo{width:90px;height:90px;border-radius:50%;object-fit:cover}
+.hero-title{font-size:clamp(44px,6.5vw,74px);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.8;max-width:490px;margin-top:12px}
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-shrink:0;align-self:flex-end}
+.stat{padding:13px 20px;border-right:1px solid var(--border);text-align:center;min-width:80px}
+.stat:last-child{border-right:none}
+.sn{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.sl{font-size:7.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin-top:4px}
+
+/* FLOW / INTERACTIVE WORKFLOW BUILDER */
+.flow-sec{max-width:1160px;margin:0 auto;padding:0 40px}
+.wf-shell{position:relative;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(11,11,11,.92),rgba(4,4,4,.96))}
+.wf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--border)}
+.wf-head-l{display:flex;align-items:center;gap:12px;min-width:0}
+.wf-badge-active{display:inline-flex;align-items:center;gap:7px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#6de18d;border:1px solid rgba(109,225,141,.4);background:rgba(109,225,141,.1);border-radius:40px;padding:4px 11px;white-space:nowrap}
+.wf-badge-active::before{content:'';width:5px;height:5px;border-radius:50%;background:#6de18d;box-shadow:0 0 8px #6de18d;animation:pulse 2s infinite}
+.wf-head-ttl{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-head-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.wf-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:34px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+.wf-btn:hover{color:var(--fg);border-color:var(--fg)}
+.wf-btn svg{width:13px;height:13px;stroke-width:2.2}
+.wf-add{color:#6de18d;border-color:rgba(109,225,141,.45);background:rgba(109,225,141,.08)}
+.wf-add:hover{color:#aaffc4;border-color:#6de18d;background:rgba(109,225,141,.16)}
+.wf-add:disabled{opacity:.45;cursor:default;color:var(--dim);border-color:var(--border);background:transparent}
+.wf-legend{display:flex;flex-wrap:wrap;gap:6px;padding:11px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.25)}
+.wf-legend button{font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px solid var(--border);border-radius:40px;padding:4px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+.wf-legend button:hover{color:var(--fg);border-color:var(--border2)}
+.wf-canvas{position:relative;background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.05),rgba(0,0,0,0) 60%),#060606}
+.wf-spatial{position:relative;width:100%;aspect-ratio:1800/860;height:auto}
+.wf-spatial::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.11) .8px,transparent .8px);background-size:18px 18px;opacity:.32;pointer-events:none}
+.wf-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+.wf-line{fill:none;stroke:rgba(188,198,214,.4);stroke-width:2.2;stroke-linecap:round}
+.wf-line.strong{stroke:rgba(225,231,240,.6)}
+.wf-line.dash{stroke-dasharray:5 5;opacity:.7}
+.wf-node{position:absolute;z-index:2;transform:translate(-50%,-50%);width:96px;padding:6px;border:1px solid var(--border2);border-radius:9px;background:rgba(17,17,17,.95);box-shadow:0 8px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;animation:wfPop .3s cubic-bezier(.34,1.32,.5,1) both}
+@keyframes wfPop{from{opacity:0;transform:translate(-50%,-50%) scale(.74)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.wf-node.is-mini{width:34px;height:34px;padding:0;border-radius:50%;justify-content:center}
+.wf-node.is-mini .wf-kind,.wf-node.is-mini .wf-name{display:none}
+.wf-node.is-mini .wf-icon{width:20px;height:20px;border:none;background:transparent}
+.wf-icon{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1px solid;display:flex;align-items:center;justify-content:center}
+.wf-icon svg{width:12px;height:12px;stroke-width:2}
+.wf-kind{font-size:6px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);line-height:1}
+.wf-name{font-size:8px;font-weight:600;line-height:1.18;letter-spacing:-.01em;color:var(--fg);white-space:normal}
+.t-trigger .wf-icon{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
+.t-http .wf-icon{color:#d7c4ff;border-color:rgba(184,148,255,.6);background:rgba(184,148,255,.18)}
+.t-code .wf-icon{color:#ffd2a4;border-color:rgba(255,174,102,.6);background:rgba(255,174,102,.18)}
+.t-merge .wf-icon{color:#9fe8ff;border-color:rgba(123,214,255,.62);background:rgba(123,214,255,.18)}
+.t-if .wf-icon{color:#9effcb;border-color:rgba(158,255,203,.62);background:rgba(158,255,203,.18)}
+.t-sheet .wf-icon{color:#98ffb8;border-color:rgba(109,225,141,.65);background:rgba(109,225,141,.18)}
+.t-convert .wf-icon{color:#b9b8ff;border-color:rgba(139,136,255,.65);background:rgba(139,136,255,.18)}
+.t-drive .wf-icon{color:#ffe49c;border-color:rgba(255,211,107,.65);background:rgba(255,211,107,.18)}
+.t-db .wf-icon{color:#9effdf;border-color:rgba(84,211,169,.65);background:rgba(84,211,169,.18)}
+.t-memory .wf-icon{color:#c6b5ff;border-color:rgba(196,168,255,.65);background:rgba(196,168,255,.18)}
+.t-intel .wf-icon{color:#9fc7ff;border-color:rgba(128,184,255,.65);background:rgba(128,184,255,.18)}
+.wf-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.3)}
+.wf-foot-l{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.wf-stat{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.wf-dot{width:6px;height:6px;border-radius:50%}
+.wf-dot.ok{background:#6de18d;box-shadow:0 0 7px rgba(109,225,141,.7)}
+.wf-dot.pr{background:#9fc7ff;box-shadow:0 0 7px rgba(159,199,255,.6)}
+.wf-foot-r{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+/* mobile vertical stack */
+.wf-stack{display:none;flex-direction:column;padding:12px 13px 16px}
+.wf-stage{display:flex;flex-direction:column}
+.wf-stage-h{display:flex;align-items:center;gap:9px;width:100%;text-align:left;margin:8px 0 2px;padding:6px 2px;border:none;background:transparent;cursor:pointer}
+.wf-stage-n{font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.wf-stage-t{font-size:11px;font-weight:600;color:var(--fg)}
+.wf-stage-h .wf-jump{margin-left:auto;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.wf-scard{display:flex;align-items:center;gap:11px;border:1px solid var(--border2);border-left-width:3px;border-radius:10px;background:rgba(17,17,17,.94);padding:11px 13px;margin:5px 0;animation:wfPop2 .32s ease both}
+@keyframes wfPop2{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.wf-scard.is-mini{margin-left:24px;padding:9px 12px}
+.wf-scard .wf-icon{width:34px;height:34px;border-radius:9px}
+.wf-scard .wf-icon svg{width:16px;height:16px}
+.wf-sbody{min-width:0;flex:1}
+.wf-skind{font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
+.wf-sname{font-size:13px;font-weight:600;line-height:1.3;color:var(--fg)}
+.wf-sgo{flex-shrink:0;color:var(--dim);display:flex}
+.wf-sgo svg{width:14px;height:14px}
+.wf-scard.t-trigger{border-left-color:rgba(255,255,255,.7)}
+.wf-scard.t-http{border-left-color:#d7c4ff}
+.wf-scard.t-code{border-left-color:#ffd2a4}
+.wf-scard.t-merge{border-left-color:#9fe8ff}
+.wf-scard.t-if{border-left-color:#9effcb}
+.wf-scard.t-sheet{border-left-color:#98ffb8}
+.wf-scard.t-convert{border-left-color:#b9b8ff}
+.wf-scard.t-drive{border-left-color:#ffe49c}
+.wf-scard.t-db{border-left-color:#9effdf}
+.wf-scard.t-memory{border-left-color:#c6b5ff}
+.wf-scard.t-intel{border-left-color:#9fc7ff}
+.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
+
+/* WHY I BUILT THIS */
+.story-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.story-strip{border:1px solid var(--border);border-radius:var(--r);background:var(--s1);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+.ss-item{padding:0;border-right:1px solid var(--border);display:flex;flex-direction:column;cursor:pointer;transition:background .15s;position:relative}
+.ss-item:last-child{border-right:none}
+.ss-head{padding:18px 20px;display:flex;flex-direction:column;gap:4px;transition:background .15s}
+.ss-head:hover{background:rgba(255,255,255,.03)}
+.ss-l{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;justify-content:space-between}
+.ss-arrow{font-size:10px;transition:transform .3s ease;display:inline-block}
+.ss-item.open .ss-arrow{transform:rotate(180deg)}
+.ss-v{font-size:13px;font-weight:600;line-height:1.4}
+.ss-v span{font-weight:400;color:var(--muted)}
+.ss-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.ss-body{padding:0 20px 18px;font-size:12.5px;color:var(--muted);line-height:1.85;border-top:1px solid var(--border)}
+.ss-body{padding-top:14px}
+.ss-body strong{color:var(--fg);font-weight:600}
+
+/* DEMO */
+.demo-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.demo-shell{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.demo-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--s2)}
+.demo-dots{display:flex;gap:6px}
+.ddot{width:10px;height:10px;border-radius:50%}
+.demo-ttl{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+.run-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--fg);color:var(--bg);border:none;border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:opacity .15s;letter-spacing:-.01em}
+.run-btn:hover{opacity:.82}.run-btn:disabled{opacity:.32;cursor:not-allowed}
+.stop-btn{padding:7px 14px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:-.01em}
+.stop-btn:hover{border-color:var(--border2);color:var(--fg)}
+.spin-i{width:11px;height:11px;border-radius:50%;border:2px solid var(--bg);border-top-color:transparent;animation:spin .55s linear infinite;display:none;flex-shrink:0}
+.run-btn.running .spin-i{display:block}.run-btn.running .btn-t{display:none}
+
+/* demo layout */
+.demo-body{display:grid;grid-template-columns:210px 1fr;min-height:520px}
+
+/* sidebar */
+.demo-side{border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column}
+.dp-hint{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;padding:12px 16px 4px;opacity:.6}
+.dp{padding:8px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s;position:relative;user-select:none}
+.dp:hover{background:rgba(255,255,255,.03)}
+.dp.active .dp-dot{background:var(--fg);box-shadow:0 0 0 3px rgba(255,255,255,.1);animation:pulse 1.2s ease infinite}
+.dp.done .dp-dot{background:rgba(255,255,255,.3)}
+.dp.done .dp-lbl{color:var(--muted)}
+.dp.selected{background:rgba(255,255,255,.04)}
+.dp.selected .dp-lbl{color:var(--fg)}
+.dp.selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(255,255,255,.4)}
+.dp.locked{cursor:default}
+.dp-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:all .3s}
+.dp-lbl{font-size:11px;font-weight:500;color:var(--dim);transition:color .2s;line-height:1.2}
+.dp-sub{font-size:8px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;margin-top:1px}
+.dp-conn{width:1px;height:9px;background:var(--border);margin-left:17px}
+
+/* output panel */
+.demo-out{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
+.demo-out::before{content:'';position:absolute;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.09;z-index:0;pointer-events:none}
+.demo-prog{height:2px;background:var(--border);flex-shrink:0}
+.demo-prog-fill{height:100%;background:var(--fg);width:0;transition:width .6s ease}
+.demo-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;opacity:.25;padding:40px;position:relative;z-index:1}
+.demo-idle-ico{font-size:26px}
+.demo-idle-txt{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:1.9}
+.phase-view{flex:1;overflow-y:auto;display:none;padding:20px 22px;position:relative;z-index:1}
+.phase-view.visible{display:block}
+.phase-view::-webkit-scrollbar{width:4px}
+.phase-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* phase content */
+.ph-hdr{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.ph-badge{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+.ph-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.ph-desc{font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);background:rgba(255,255,255,.02)}
+.ph-desc strong{color:var(--fg);font-weight:600}
+.ph-desc code{font-family:var(--mono);font-size:10px;background:rgba(255,255,255,.09);padding:1px 4px;border-radius:3px;color:rgba(255,255,255,.8)}
+
+/* node tabs */
+.ntabs{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:11px;flex-wrap:wrap}
+.ntab{padding:6px 12px;font-size:11px;font-weight:500;cursor:pointer;background:var(--bg);border-right:1px solid var(--border);transition:background .12s,color .12s;color:var(--muted);white-space:nowrap}
+.ntab:last-child{border-right:none}
+.ntab:hover{background:var(--s2)}
+.ntab.active{background:var(--s1);color:var(--fg);font-weight:600}
+.np{display:none}.np.vis{display:block;animation:fadeUp .2s ease both}
+
+/* code / json blocks */
+.jb{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;font-family:var(--mono);font-size:10.5px;line-height:1.75;overflow-x:auto;margin-bottom:10px;white-space:pre}
+.cb{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;font-family:var(--mono);font-size:10px;line-height:1.8;overflow-x:auto;margin-bottom:10px;white-space:pre}
+.jk{color:#9ab8ff}.jvs{color:#9effcb}.jn{color:#ffd080}.jbl{color:#ff9a9a}
+.tx{text-align:center;padding:5px 0;color:var(--dim);font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;display:flex;align-items:center;gap:6px;margin:2px 0}
+.tx::before,.tx::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* data stream rows */
+.ds{display:flex;flex-direction:column;gap:3px;margin-bottom:11px}
+.dr{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--s2);border:1px solid var(--border);border-radius:4px;opacity:0;animation:rowIn .3s ease forwards}
+.dstore{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.05);color:var(--dim);min-width:86px;text-align:center;flex-shrink:0;letter-spacing:.04em}
+.dname{font-size:12px;font-weight:500;flex:1;min-width:0}
+.dval{font-family:var(--mono);font-size:10.5px;flex-shrink:0}
+.ok{color:#9effcb}.pen{color:#ffd080}.dim{color:var(--muted)}
+
+/* inventory tables */
+.inv-meta{display:flex;align-items:center;gap:9px;margin-bottom:9px;flex-wrap:wrap}
+.im-stat{display:flex;align-items:center;gap:5px}
+.im-l{font-family:var(--mono);font-size:7.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.im-v{font-size:12px;font-weight:600}
+.im-sep{width:1px;height:11px;background:var(--border)}
+.inv-fil{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+.fb{font-family:var(--mono);font-size:7.5px;padding:3px 8px;border:1px solid var(--border);border-radius:40px;background:transparent;color:var(--dim);cursor:pointer;transition:all .12s;letter-spacing:.06em;white-space:nowrap}
+.fb:hover{border-color:var(--border2);color:var(--muted)}
+.fb.active{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.inv-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.inv-tbl thead tr{background:var(--s2);border-bottom:1px solid var(--border)}
+.inv-tbl th{padding:7px 10px;text-align:left;font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);white-space:nowrap;font-weight:500}
+.inv-tbl tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.inv-tbl tbody tr:last-child{border-bottom:none}
+.inv-tbl tbody tr:hover{background:rgba(255,255,255,.025)}
+.inv-tbl td{padding:7px 10px;vertical-align:middle}
+.td-sku{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.04em}
+.td-brand{font-weight:600;color:var(--fg);white-space:nowrap;font-size:11.5px}
+.td-name{color:var(--muted);max-width:175px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.5px}
+.td-cat{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;border:1px solid var(--border);color:var(--dim);white-space:nowrap;display:inline-block}
+.td-thc{font-family:var(--mono);font-size:9.5px;color:var(--muted)}
+.td-dim{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
+.ts{color:#9effcb;font-family:var(--mono);font-size:11px;font-weight:600}
+.tr{color:var(--dim);text-decoration:line-through;font-size:8.5px;margin-left:3px;font-family:var(--mono)}
+
+/* AI output */
+.air{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.ais{margin-bottom:14px}.ais:last-child{margin-bottom:0}
+.ais-t{font-family:var(--mono);font-size:7.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.ais-t::after{content:'';flex:1;height:1px;background:var(--border)}
+.ag-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);opacity:0;animation:rowIn .3s ease forwards}
+.ag-row:last-child{border-bottom:none}
+.ag-prod{font-size:12px;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag-c{font-family:var(--mono);font-size:10.5px;color:#9effcb;flex-shrink:0}
+.ag-x{font-family:var(--mono);font-size:10.5px;color:var(--dim);text-decoration:line-through;flex-shrink:0}
+.ag-d{font-family:var(--mono);font-size:9px;background:rgba(158,255,203,.07);color:#9effcb;padding:2px 6px;border-radius:3px;border:1px solid rgba(158,255,203,.18);flex-shrink:0}
+.sc-row{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--border);opacity:0;animation:rowIn .3s ease forwards}
+.sc-row:last-child{border-bottom:none}
+.sc-prod{font-size:12px;flex:1}
+.sc-badge{font-family:var(--mono);font-size:7.5px;padding:2px 6px;border-radius:3px;background:rgba(255,180,80,.06);color:rgba(255,180,80,.85);border:1px solid rgba(255,180,80,.18);flex-shrink:0;white-space:nowrap}
+.ai-sum{font-size:12.5px;color:var(--muted);line-height:1.8;opacity:0;animation:fadeUp .5s 2s ease forwards}
+.ai-sum strong{color:var(--fg);font-weight:600}
+
+/* BREAKDOWN: expandable */
+.bk-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.bk-list{display:flex;flex-direction:column;gap:3px}
+.bk-row{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.bk-row:hover{border-color:var(--border2)}
+.bk-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .12s;user-select:none}
+.bk-head:hover{background:rgba(255,255,255,.02)}
+.bk-dot{width:3px;height:28px;border-radius:2px;flex-shrink:0}
+.bk-dot.c1{background:rgba(255,255,255,.45)}.bk-dot.c2{background:#d7c4ff}.bk-dot.c3{background:#ffd2a4}.bk-dot.c4{background:#9fe8ff}.bk-dot.c5{background:#9effcb}.bk-dot.c6{background:#c6b5ff}.bk-dot.c7{background:#9fc7ff}
+.bk-num{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;min-width:16px}
+.bk-name{font-size:13px;font-weight:600;letter-spacing:-.01em;flex:1}
+.bk-count{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.04em}
+.bk-arrow{font-size:10px;color:var(--dim);transition:transform .3s ease;display:inline-block}
+.bk-row.open .bk-arrow{transform:rotate(180deg)}
+.bk-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.bk-row.open .bk-expand{max-height:200px}
+.bk-body{padding:0 18px 16px 35px;font-size:12px;color:var(--muted);line-height:1.75}
+.bk-body strong{color:var(--fg);font-weight:600}
+
+/* SUMMARY */
+.sum-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.sum-inner{border:1px solid var(--border);border-radius:var(--r);padding:34px 38px;background:var(--s1);display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.sum-h{font-size:25px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-bottom:11px}
+.sum-p{font-size:13px;color:var(--muted);line-height:1.8}
+.ocs{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.oc{display:flex;gap:11px;align-items:flex-start}
+.oc-d{width:3px;height:3px;border-radius:50%;background:var(--fg);opacity:.28;flex-shrink:0;margin-top:8px}
+.oc-t{font-size:12.5px;color:var(--muted);line-height:1.7}
+.oc-t strong{color:var(--fg);font-weight:600}
+
+@media(max-width:768px){
+  .hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{padding-left:20px;padding-right:20px}
+  .hero{padding-top:48px;padding-bottom:24px}
+  .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
+  .hero-title{font-size:clamp(28px,8vw,44px)}
+  .hero-sub{font-size:13px;max-width:100%}
+  .stats{flex-wrap:wrap;width:100%}
+  .stat{min-width:0;flex:1}
+  model-viewer#hero-logo{display:none}
+
+  .flow-sec{padding:0 20px}
+  .wf-spatial{display:none}
+  .wf-stack{display:flex}
+  .wf-legend{display:none}
+  .wf-canvas{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .wf-head{padding:12px 14px}
+  .wf-foot-l{gap:14px}
+
+  .story-strip{grid-template-columns:1fr}
+  .story-sec,.demo-sec,.bk-sec,.sum-sec{padding-top:48px}
+
+  .demo-body{grid-template-columns:1fr;min-height:auto}
+  .demo-side{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;flex-wrap:wrap;padding:8px;gap:4px}
+  .dp{padding:10px 12px;min-height:44px}
+  .dp-lbl{font-size:11px}
+  .dp-conn,.dp-hint{display:none}
+  .phase-view{padding:16px;min-height:300px}
+
+  .bk-head{padding:14px 16px;min-height:44px}
+  .bk-body{padding:0 16px 16px 28px;font-size:13px}
+  .bk-name{font-size:13px}
+
+  .sum-inner{grid-template-columns:1fr;padding:22px;gap:22px}
+
+  .inv-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .jb{font-size:9px;padding:10px}
+}
+
+@media(max-width:480px){
+  .wf-head-ttl{display:none}
+  .wf-canvas{max-height:58vh}
+  .wf-sname{font-size:12.5px}
+}
+
+/* --- SCROLL REVEAL ANIMATION --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+.back-btn{position:fixed;top:16px;left:20px;z-index:1000;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#6e6e6e;text-decoration:none;background:rgba(0,0,0,0.7);padding:6px 12px;border-radius:4px;backdrop-filter:blur(8px);border:none;cursor:pointer;transition:color 0.2s}
+.back-btn:hover{color:#f5f5f5}
+</style>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+<a href="https://wvez.org" target="_top" class="back-btn">&lt; WVEZ.ORG</a>
+<!-- BACKGROUND VIDEO -->
+<video id="bg-video" muted loop playsinline webkit-playsinline autoplay preload="auto" src="https://pub-2b72d9c0a9f649e99699874d22247129.r2.dev/16392053-uhd_3840_2160_24fps.mp4"></video>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-row">
+    <div>
+      <h1 class="hero-title">WVEZ RECON</h1>
+      <div class="hero-tag">Know competitor inventory whenever you feel like it.</div>
+      <p class="hero-sub">An automated workflow that captures live inventory snapshots to flag discrepancies and revenue opportunity instantly. Never manually audit shelves again.</p>
+    </div>
+    <model-viewer
+      id="hero-logo"
+      src="logo.glb"
+      camera-orbit="90deg 90deg auto"
+      field-of-view="26deg"
+      exposure="1.15"
+      disable-zoom
+      interaction-prompt="none"
+      style="position:absolute;right:110px;top:-24px;width:125px;height:125px;background:transparent;"
+    ></model-viewer>
+    <div class="hero-right">
+      <div class="stats">
+        <div class="stat"><div class="sn">27</div><div class="sl">Nodes</div></div>
+        <div class="stat"><div class="sn">2</div><div class="sl">Endpoints</div></div>
+        <div class="stat"><div class="sn">1k+</div><div class="sl">SKUs / Run</div></div>
+        <div class="stat"><div class="sn">1</div><div class="sl">Click</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOW / INTERACTIVE WORKFLOW BUILDER -->
+<div class="flow-sec">
+  <div class="wf-shell">
+    <div class="wf-head">
+      <div class="wf-head-l">
+        <span class="wf-badge-active">Active</span>
+        <span class="wf-head-ttl">RECON Workflow Builder</span>
+      </div>
+      <div class="wf-head-r">
+        <button class="wf-btn wf-reset" id="wfReset" onclick="wfReset()" aria-label="Reset workflow">Reset</button>
+        <button class="wf-btn wf-add" id="wfAdd" onclick="wfAdd()" aria-label="Add next node">
+          <i data-lucide="plus" aria-hidden="true"></i><span>Add Node</span>
+        </button>
+      </div>
+    </div>
+    <div class="wf-legend" aria-label="Workflow stages">
+      <button onclick="jumpToBk(0)">01 · Trigger</button>
+      <button onclick="jumpToBk(1)">02 · Collect</button>
+      <button onclick="jumpToBk(2)">03 · Normalize</button>
+      <button onclick="jumpToBk(3)">04 · Merge &amp; Fingerprint</button>
+      <button onclick="jumpToBk(4)">05 · Route &amp; Archive</button>
+      <button onclick="jumpToBk(5)">06 · AI Memory</button>
+      <button onclick="jumpToBk(6)">07 · Intelligence</button>
+    </div>
+    <div class="wf-canvas" id="wfCanvas" role="region" aria-label="RECON workflow builder canvas">
+      <div class="wf-spatial" id="wfSpatial">
+        <svg class="wf-lines" id="wfLines" viewBox="0 0 1800 860" preserveAspectRatio="none" aria-hidden="true"></svg>
+      </div>
+      <div class="wf-stack" id="wfStack"></div>
+    </div>
+    <div class="wf-foot" role="status" aria-live="polite">
+      <div class="wf-foot-l">
+        <span class="wf-stat"><span class="wf-dot ok"></span><span id="wfNodeCount">1</span>&nbsp;<span id="wfNodeLbl">Node</span></span>
+        <span class="wf-stat"><span class="wf-dot pr"></span><span id="wfConnCount">0</span>&nbsp;<span id="wfConnLbl">Connections</span></span>
+      </div>
+      <div class="wf-foot-r" id="wfHint">Tap Add Node to build the flow</div>
+    </div>
+  </div>
+  <p class="flow-cap">Full n8n workflow · 27 nodes · WVEZ RECON V1.0</p>
+</div>
+
+<!-- WHY I BUILT THIS -->
+<div class="story-sec">
+  <div class="sec-h">
+    <span class="tag">The backstory</span>
+    <h2>Why did I build this?</h2>
+  </div>
+  <div class="story-strip">
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Started as <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">Personal deal tracker</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">RECONv1 didn't originally start as a business tool. It was built to monitor promo deals at stores I regularly shop at. Before RECONv1, I regularly missed the promotional emails my favorite store would send to my inbox with 50,000+ unread emails, only to later be buried and never found. After successfully constructing the tool, I spent a week of using it to source my own deals. Then, the lightbulb hit: <strong>"Imagine if a small business had this tool."</strong></div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Became <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">Competitive intel engine</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">I pivoted from tracking two stores for their live promos and price changes, to creating a workflow that was capable of monitoring <strong>full inventories of stores in any radius</strong>, then comparing their live data side-by-side to extract insights on demand. That's when RECON became what it is now, a tool that tells a business owner exactly where they're winning (and losing) on prices.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Result <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">24/7 Inventory Snapshots </div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">From the first HTTP request to a fully working pipeline with built-in analysis <strong>in 2.5 weeks</strong>. One click now pulls 1,000+ products from two stores (or more), normalizes the data to match each other, generates stable SKUs, archives everything to Drive and Supabase, stores the data, and writes a competitive intelligence report. No manual work.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Biggest lesson <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">Data storage &amp; Batching</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">I knew early on after the pivot I wanted some kind of <strong>pattern learning</strong> built into the system. I wanted the tool to get smarter over time and learn how well a business was truly operating compared to its nearby competitors. But I didn't know how to store thousands of product records efficiently. That's when I discovered <strong>Supabase</strong> and taught myself about batching, vector embeddings, and how to build a system that compounds its own knowledge with every run.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="demo-sec">
+  <div class="sec-h">
+    <span class="tag">Interactive demo</span>
+    <h2>See it run</h2>
+    <p>Click any stage to see what it outputs. Or hit <strong>Run RECON</strong> to watch the whole pipeline fire in sequence.</p>
+  </div>
+  <div class="demo-shell">
+    <div class="demo-bar">
+      <div class="demo-dots">
+        <div class="ddot" style="background:#ff5f57"></div>
+        <div class="ddot" style="background:#febc2e"></div>
+        <div class="ddot" style="background:#28c840"></div>
+      </div>
+      <span class="demo-ttl">WVEZ_RECON_V1 · n8n workflow engine</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="stop-btn" id="stopBtn" onclick="stopDemo()" style="display:none">■ Stop</button>
+        <button class="run-btn" id="runBtn" onclick="startDemo()">
+          <div class="spin-i"></div>
+          <span class="btn-t">▶ Run RECON</span>
+        </button>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-side" id="pipeline">
+        <div class="dp-hint">Click any stage</div>
+        <div class="dp" id="dp0" onclick="sel(0)"><div class="dp-dot" id="dot0"></div><div><div class="dp-lbl">01 · Trigger</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp1" onclick="sel(1)"><div class="dp-dot" id="dot1"></div><div><div class="dp-lbl">02 · Live Collection</div><div class="dp-sub">3 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp2" onclick="sel(2)"><div class="dp-dot" id="dot2"></div><div><div class="dp-lbl">03 · Normalize</div><div class="dp-sub">3 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp3" onclick="sel(3)"><div class="dp-dot" id="dot3"></div><div><div class="dp-lbl">04 · Merge &amp; SKU</div><div class="dp-sub">2 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp4" onclick="sel(4)"><div class="dp-dot" id="dot4"></div><div><div class="dp-lbl">05 · Route &amp; Archive</div><div class="dp-sub">7 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp5" onclick="sel(5)"><div class="dp-dot" id="dot5"></div><div><div class="dp-lbl">06 · AI Memory</div><div class="dp-sub">5 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp6" onclick="sel(6)"><div class="dp-dot" id="dot6"></div><div><div class="dp-lbl">07 · Intelligence</div><div class="dp-sub">6 nodes</div></div></div>
+      </div>
+      <div class="demo-out">
+        <div class="demo-prog"><div class="demo-prog-fill" id="progFill"></div></div>
+        <div class="demo-idle" id="idleState">
+          <div class="demo-idle-ico">◎</div>
+          <div class="demo-idle-txt">Click any stage on the left to explore<br>or press "Run RECON" to watch it all fire</div>
+        </div>
+        <div class="phase-view" id="phaseView"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="bk-sec">
+  <div class="sec-h">
+    <span class="tag">Step by step</span>
+    <h2>How it works</h2>
+  </div>
+  <div class="bk-list">
+    <div class="bk-row" id="bk-0" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c1"></div><span class="bk-num">01</span><span class="bk-name">Trigger</span><span class="bk-count">1 node</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">One click starts everything. All three data pulls fire at the same time.</div></div>
+    </div>
+    <div class="bk-row" id="bk-1" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c2"></div><span class="bk-num">02</span><span class="bk-name">Live Data Collection</span><span class="bk-count">3 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Pulls <strong>every product</strong> from both stores at once. The competitor store uses a headless browser so it looks like a real person browsing. The client store is a direct API call.</div></div>
+    </div>
+    <div class="bk-row" id="bk-2" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c3"></div><span class="bk-num">03</span><span class="bk-name">Normalize</span><span class="bk-count">3 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Both stores send data in completely different formats. This step <strong>translates both into one matching format</strong> so they can be compared side-by-side.</div></div>
+    </div>
+    <div class="bk-row" id="bk-3" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c4"></div><span class="bk-num">04</span><span class="bk-name">Merge &amp; Fingerprint</span><span class="bk-count">2 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Combines all products into one list. Each product gets a <strong>permanent ID</strong>. Same product next week gets the same ID. That's how prices get tracked over time.</div></div>
+    </div>
+    <div class="bk-row" id="bk-4" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c5"></div><span class="bk-num">05</span><span class="bk-name">Route &amp; Archive</span><span class="bk-count">7 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Splits data back into competitor vs. client. Saves both to <strong>Google Sheets</strong>, converts to Excel, and uploads timestamped backups to <strong>Google Drive</strong>.</div></div>
+    </div>
+    <div class="bk-row" id="bk-5" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c6"></div><span class="bk-num">06</span><span class="bk-name">AI Memory</span><span class="bk-count">5 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Every product is saved to a <strong>database</strong> and converted into AI-readable format. This is how the system remembers past runs and learns patterns over time.</div></div>
+    </div>
+    <div class="bk-row" id="bk-6" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c7"></div><span class="bk-num">07</span><span class="bk-name">AI Intelligence</span><span class="bk-count">6 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">An AI reads all 1,100+ products and writes a report: <strong>where you're cheaper, what the competitor is out of, and what to do about it.</strong></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="sum-sec">
+  <div class="sum-inner">
+    <div>
+      <h2 class="sum-h">One click.<br>Full market intelligence.</h2>
+      <p class="sum-p">RECON started as a way to track my own deals and became a full competitive intelligence engine in 2-3 weeks. Every run builds on the last. The system's memory compounds over time. Point it at any two retail endpoints and it works.</p>
+    </div>
+    <div class="ocs">
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Price Gap Alerts</strong>: Every product where the client is cheaper, quantified to the cent.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Scarcity Wins</strong>: Products competitors are out of that the client still has in stock.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Historical Memory</strong>: Every run is stored, enabling week-over-week price trend detection.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Permanent Archive</strong>: Timestamped Excel snapshots and live Google Sheets, updated every run.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── PHASE DURATIONS (ms) ───────────────────────────────────────────────────
+const DURATIONS = [3500, 4500, 4500, 3500, 5000, 4500, 5000];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+let running = false, stopRequested = false;
+let completed = new Set();
+let autoIdx = -1, selIdx = -1;
+
+// ─── PHASE CONTENT: generic retail (electronics) ────────────────────────────
+const PHASES = [
+  // 0: Trigger
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 01</span><span class="ph-title">Trigger</span></div>
+  <div class="ph-desc">One click fires all three data collection branches at the same time.</div>
+  <div class="ds">
+    <div class="dr" style="animation-delay:.2s"><span class="dstore">BRANCH 1</span><span class="dname">Competitor Store: Batch 1</span><span class="dval ok">→ fired</span></div>
+    <div class="dr" style="animation-delay:.5s"><span class="dstore">BRANCH 2</span><span class="dname">Competitor Store: Batch 2</span><span class="dval ok">→ fired</span></div>
+    <div class="dr" style="animation-delay:.8s"><span class="dstore">BRANCH 3</span><span class="dname">Client Store: Full Inventory</span><span class="dval ok">→ fired</span></div>
+  </div>`,
+
+  // 1: Collect
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 02</span><span class="ph-title">Live Data Collection</span></div>
+  <div class="ph-desc">Three requests fire at once. The competitor store uses a <strong>headless browser</strong> so it looks like a real customer. The client store is a direct API call.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t1a')">Output summary</div>
+    <div class="ntab" onclick="tab(this,'t1b')">Sample competitor product</div>
+    <div class="ntab" onclick="tab(this,'t1c')">Sample client product</div>
+  </div>
+  <div class="np vis" id="t1a">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">BATCH 1</span><span class="dname">487 competitor products received</span><span class="dval ok">487</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">BATCH 2</span><span class="dname">312 competitor products received</span><span class="dval ok">312</span></div>
+      <div class="dr" style="animation-delay:.8s"><span class="dstore">CLIENT</span><span class="dname">308 client products received</span><span class="dval ok">308</span></div>
+      <div class="dr" style="animation-delay:1.1s"><span class="dstore">TOTAL</span><span class="dname">All 3 endpoints returned</span><span class="dval pen">1,107 products</span></div>
+    </div>
+  </div>
+  <div class="np" id="t1b">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">→ Raw competitor product</div>
+    <div class="jb">{
+  <span class="jk">"name"</span>: <span class="jvs">"CAYMUS VINEYARDS CABERNET SAUVIGNON NAPA VALLEY 2021"</span>,
+  <span class="jk">"brand"</span>: <span class="jvs">"CAYMUS VINEYARDS"</span>,
+  <span class="jk">"category"</span>: <span class="jvs">"RED"</span>,
+  <span class="jk">"price"</span>: <span class="jn">89</span>,
+  <span class="jk">"unit"</span>: <span class="jvs">"750 ML"</span>,
+  <span class="jk">"status"</span>: <span class="jvs">"IN_STOCK"</span>
+}</div>
+  </div>
+  <div class="np" id="t1c">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">→ Raw client product (different format)</div>
+    <div class="jb">{
+  <span class="jk">"name"</span>: <span class="jvs">"Caymus Vineyards Cabernet Sauvignon Napa Valley 2021"</span>,
+  <span class="jk">"brand"</span>: { <span class="jk">"name"</span>: <span class="jvs">"Caymus Vineyards"</span> },
+  <span class="jk">"category"</span>: { <span class="jk">"name"</span>: <span class="jvs">"Red"</span> },
+  <span class="jk">"variants"</span>: [{
+    <span class="jk">"price"</span>: <span class="jn">94.99</span>,
+    <span class="jk">"promoPrice"</span>: <span class="jn">79.99</span>,
+    <span class="jk">"sku"</span>: <span class="jvs">"CYM-CABSAUV-NV21"</span>
+  }]
+}</div>
+  </div>`,
+
+  // 2: Normalize
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 03</span><span class="ph-title">Normalize</span></div>
+  <div class="ph-desc">Both stores send data in completely different formats. This step <strong>translates both into one matching format</strong> so they can be compared.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t2a')">Before → After</div>
+    <div class="ntab" onclick="tab(this,'t2b')">Output count</div>
+  </div>
+  <div class="np vis" id="t2a">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">→ Both stores normalized to the same shape</div>
+    <div class="jb">[
+  {
+    <span class="jk">"store"</span>: <span class="jvs">"Competitor"</span>,
+    <span class="jk">"name"</span>: <span class="jvs">"Caymus Vineyards Cabernet Sauvignon Napa Valley 2021"</span>,
+    <span class="jk">"brand"</span>: <span class="jvs">"CAYMUS VINEYARDS"</span>,
+    <span class="jk">"category"</span>: <span class="jvs">"Red"</span>,
+    <span class="jk">"price_retail"</span>: <span class="jn">89</span>,
+    <span class="jk">"price_sale"</span>: <span class="jn">89</span>
+  },
+  {
+    <span class="jk">"store"</span>: <span class="jvs">"Client"</span>,
+    <span class="jk">"name"</span>: <span class="jvs">"Caymus Vineyards Cabernet Sauvignon Napa Valley 2021"</span>,
+    <span class="jk">"brand"</span>: <span class="jvs">"Caymus Vineyards"</span>,
+    <span class="jk">"category"</span>: <span class="jvs">"Red"</span>,
+    <span class="jk">"price_retail"</span>: <span class="jn">94.99</span>,
+    <span class="jk">"price_sale"</span>: <span class="jn">79.99</span>
+  }
+]</div>
+  </div>
+  <div class="np" id="t2b">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">NORM 1+2</span><span class="dname">799 competitor products → unified schema</span><span class="dval ok">✓ done</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">CLIENT NORM</span><span class="dname">308 client products → unified schema</span><span class="dval ok">✓ done</span></div>
+    </div>
+  </div>`,
+
+  // 3: Merge + SKU
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 04</span><span class="ph-title">Merge &amp; Fingerprint</span></div>
+  <div class="ph-desc">All 1,107 products merge into one stream. Each gets a <strong>permanent ID</strong> computed from its content. Same product next week = same SKU.</div>
+  <div class="ds">
+    <div class="dr" style="animation-delay:.2s"><span class="dstore">MERGE</span><span class="dname">487 + 312 + 308 = 1,107 products in one stream</span><span class="dval ok">✓ merged</span></div>
+  </div>
+  <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin:10px 0 7px">→ How a product gets its permanent ID</div>
+  <div class="jb">{
+  <span class="jk">"input"</span>: <span class="jvs">"CAYMUS VINEYARDS + CABERNET SAUVIGNON NAPA VALLEY 2021 + 750 ML"</span>,
+  <span class="jk">"sku"</span>: <span class="jvs">"SKU-7A3F21B8"</span>,
+  <span class="jk">"timestamp"</span>: <span class="jvs">"2/16/26 @ 7:44pm"</span>,
+  <span class="jk">"note"</span>: <span class="jvs">"Same product next week → same SKU"</span>
+}</div>
+  <div class="ds">
+    <div class="dr" style="animation-delay:.2s"><span class="dstore">SKU GEN</span><span class="dname">1,107 products fingerprinted and timestamped</span><span class="dval ok">✓ complete</span></div>
+  </div>`,
+
+  // 4: Route + Archive
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 05</span><span class="ph-title">Route &amp; Archive</span></div>
+  <div class="ph-desc">Data splits back into competitor vs. client. Both go to <strong>Google Sheets</strong>, get converted to <strong>Excel</strong>, and backed up to <strong>Google Drive</strong>.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t4a')">Routing output</div>
+    <div class="ntab" onclick="tab(this,'t4b')">Client inventory (sample)</div>
+    <div class="ntab" onclick="tab(this,'t4c')">Competitor inventory (sample)</div>
+    <div class="ntab" onclick="tab(this,'t4d')">Drive archive</div>
+  </div>
+  <div class="np vis" id="t4a">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">ROUTE</span><span class="dname">799 competitor records → Competitor_Live sheet</span><span class="dval dim">799</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">ROUTE</span><span class="dname">308 client records → Client_Live sheet</span><span class="dval dim">308</span></div>
+    </div>
+  </div>
+  <div class="np" id="t4b">
+    <div class="ph-desc">Sample of 308 total client products from the 2/16/26 run.</div>
+    <div class="inv-wrap">
+      <table class="inv-tbl" id="tbl-ghc">
+        <thead><tr><th>SKU</th><th>Brand / Product</th><th>Category</th><th>Retail</th><th>Sale</th></tr></thead>
+        <tbody>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-7A3F21B8</span></td><td><div class="td-brand">Caymus Vineyards</div><div class="td-name">Cabernet Sauvignon Napa Valley 2021</div></td><td><span class="td-cat">RED</span></td><td class="td-dim">$94.99</td><td><span class="ts">$79.99</span></td></tr>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-2B44E2C1</span></td><td><div class="td-brand">Whispering Angel</div><div class="td-name">C&ocirc;tes de Provence Ros&eacute; 2023</div></td><td><span class="td-cat">ROS&Eacute;</span></td><td class="td-dim">$24.99</td><td><span class="ts">$21.99</span></td></tr>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-9C3DA90F</span></td><td><div class="td-brand">Duckhorn Vineyards</div><div class="td-name">Merlot Napa Valley 2021</div></td><td><span class="td-cat">RED</span></td><td class="td-dim">$64.99</td><td><span class="ts">$54.99</span></td></tr>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-1E19B3D4</span></td><td><div class="td-brand">Cloudy Bay</div><div class="td-name">Sauvignon Blanc 2023</div></td><td><span class="td-cat">WHITE</span></td><td class="td-dim">$29.99</td><td><span class="ts">$24.99</span></td></tr>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-5F88C601</span></td><td><div class="td-brand">Veuve Clicquot</div><div class="td-name">Yellow Label Brut NV</div></td><td><span class="td-cat">SPARKLING</span></td><td class="td-dim">$62.99</td><td><span class="ts">$54.99</span></td></tr>
+<tr class="ir-ghc" data-cat="ALL"><td><span class="td-sku">SKU-8A2ED1E3</span></td><td><div class="td-brand">Opus One</div><div class="td-name">Napa Valley Red 2020</div></td><td><span class="td-cat">RED</span></td><td class="td-dim">$449.99</td><td><span class="ts">$419.99</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="np" id="t4c">
+    <div class="ph-desc">Sample of 799 total competitor products from the 2/16/26 run.</div>
+    <div class="inv-wrap">
+      <table class="inv-tbl" id="tbl-mkt">
+        <thead><tr><th>SKU</th><th>Brand / Product</th><th>Category</th><th>Price</th></tr></thead>
+        <tbody>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-7A3F21B8</span></td><td><div class="td-brand">CAYMUS VINEYARDS</div><div class="td-name">Cabernet Sauvignon Napa Valley 2021</div></td><td><span class="td-cat">RED</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$89</span></td></tr>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-2B44E2C1</span></td><td><div class="td-brand">WHISPERING ANGEL</div><div class="td-name">C&ocirc;tes de Provence Ros&eacute; 2023</div></td><td><span class="td-cat">ROS&Eacute;</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$24</span></td></tr>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-9C3DA90F</span></td><td><div class="td-brand">DUCKHORN VINEYARDS</div><div class="td-name">Merlot Napa Valley 2021</div></td><td><span class="td-cat">RED</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$62</span></td></tr>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-1E19B3D4</span></td><td><div class="td-brand">CLOUDY BAY</div><div class="td-name">Sauvignon Blanc 2023</div></td><td><span class="td-cat">WHITE</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$27</span></td></tr>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-5F88C601</span></td><td><div class="td-brand">VEUVE CLICQUOT</div><div class="td-name">Yellow Label Brut NV</div></td><td><span class="td-cat">SPARKLING</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$58</span></td></tr>
+<tr class="ir-mkt" data-cat="ALL"><td><span class="td-sku">SKU-8A2ED1E3</span></td><td><div class="td-brand">OPUS ONE</div><div class="td-name">Napa Valley Red 2020</div></td><td><span class="td-cat">RED</span></td><td><span style="font-family:var(--mono);font-size:11px;font-weight:600">$435</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="np" id="t4d">
+    <div class="ph-desc">Both datasets converted to Excel and backed up to Google Drive.</div>
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">DRIVE</span><span class="dname">2-16-26 @ 7:44pm Competitor_Wine_Run.xlsx (799 rows)</span><span class="dval ok">✓ archived</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">DRIVE</span><span class="dname">2-16-26 @ 7:44pm Client_Wine_Run.xlsx (308 rows)</span><span class="dval ok">✓ archived</span></div>
+    </div>
+  </div>`,
+
+  // 5: AI Memory
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 06</span><span class="ph-title">Build AI Memory</span></div>
+  <div class="ph-desc">Every product is saved to a <strong>database</strong> (for exact lookups) and converted into <strong>AI embeddings</strong> (for meaning-based search). This is how the system learns over time.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t5a')">Database output</div>
+    <div class="ntab" onclick="tab(this,'t5b')">Vector embedding</div>
+  </div>
+  <div class="np vis" id="t5a">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">→ Sample row inserted into Supabase</div>
+    <div class="jb">{
+  <span class="jk">"table"</span>: <span class="jvs">"Runs"</span>,
+  <span class="jk">"SKU"</span>: <span class="jvs">"SKU-7A3F21B8"</span>,
+  <span class="jk">"Timestamp"</span>: <span class="jvs">"2/16/26 @ 7:44pm"</span>,
+  <span class="jk">"Store"</span>: <span class="jvs">"Competitor"</span>,
+  <span class="jk">"Name"</span>: <span class="jvs">"Caymus Vineyards Cabernet Sauvignon Napa Valley 2021"</span>,
+  <span class="jk">"Brand"</span>: <span class="jvs">"CAYMUS VINEYARDS"</span>,
+  <span class="jk">"Price_Sale"</span>: <span class="jn">89</span>
+}</div>
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">SUPABASE</span><span class="dname">1,107 rows inserted. Price history updated</span><span class="dval ok">✓ stored</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">TOTAL</span><span class="dname">Database now at 8,441 total records</span><span class="dval dim">8,441</span></div>
+    </div>
+  </div>
+  <div class="np" id="t5b">
+    <div class="ph-desc">Each product becomes a natural language string, then AI converts it to a 768-dimension vector for <strong>meaning-based search</strong>.</div>
+    <div class="jb">{
+  <span class="jk">"text"</span>: <span class="jvs">"Competitor | CAYMUS VINEYARDS - Cabernet Sauvignon Napa Valley 2021: $89"</span>,
+  <span class="jk">"embedding"</span>: [<span class="jn">0.0234</span>, <span class="jn">-0.0891</span>, <span class="jn">0.0412</span>, <span class="jvs">"... 768 dims"</span>],
+  <span class="jk">"storedIn"</span>: <span class="jvs">"Runs_Vectors (pgvector)"</span>
+}</div>
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">VECTORS</span><span class="dname">1,107 embeddings stored in batches of 50</span><span class="dval ok">✓ indexed</span></div>
+    </div>
+  </div>`,
+
+  // 6: Intelligence
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 07</span><span class="ph-title">AI Intelligence Report</span></div>
+  <div class="ph-desc">The AI reads all 1,107 products and writes a competitive analysis:</div>
+  <div class="air">
+    <div class="ais">
+      <div class="ais-t"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Price Gaps: client is cheaper</div>
+      <div class="ag-row" style="animation-delay:.1s"><span class="ag-prod">Whispering Angel · C&ocirc;tes de Provence Ros&eacute; 2023</span><span class="ag-c">$21.99</span><span class="ag-x">$24</span><span class="ag-d">-$2.01</span></div>
+      <div class="ag-row" style="animation-delay:.3s"><span class="ag-prod">Veuve Clicquot · Yellow Label Brut NV</span><span class="ag-c">$54.99</span><span class="ag-x">$58</span><span class="ag-d">-$3.01</span></div>
+      <div class="ag-row" style="animation-delay:.5s"><span class="ag-prod">Opus One · Napa Valley Red 2020</span><span class="ag-c">$419.99</span><span class="ag-x">$435</span><span class="ag-d">-$15.01</span></div>
+    </div>
+    <div class="ais">
+      <div class="ais-t"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.29 7 12 12 20.71 7"/><line x1="12" y1="22" x2="12" y2="12"/></svg> Scarcity Wins: competitor out of stock</div>
+      <div class="sc-row" style="animation-delay:1.1s"><span style="color:#ffd080">&#9670;</span><span class="sc-prod">Screaming Eagle · Cabernet Sauvignon 2019, client has 3 bottles</span><span class="sc-badge">OOS: promote now</span></div>
+      <div class="sc-row" style="animation-delay:1.3s"><span style="color:#ffd080">&#9670;</span><span class="sc-prod">Penfolds Grange · Shiraz 2018, client has 8 bottles</span><span class="sc-badge">OOS: promote now</span></div>
+      <div class="sc-row" style="animation-delay:1.5s"><span style="color:#ffd080">&#9670;</span><span class="sc-prod">Dom P&eacute;rignon · Vintage 2013, client has 14 bottles</span><span class="sc-badge">OOS: promote now</span></div>
+    </div>
+    <div class="ais">
+      <div class="ais-t"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/></svg> What to do next</div>
+      <p class="ai-sum">The client holds <strong>price advantages on ros&eacute; and sparkling categories</strong>. The Opus One gap is the largest at <strong>$15 below competitor</strong>, a meaningful edge on a high-ticket bottle. Three allocated/luxury wines show competitor stock at zero: <strong>Screaming Eagle Cabernet, Penfolds Grange, and Dom P&eacute;rignon</strong>. These typically sell within days of restock. Recommend featuring those scarcity items in the weekend email blast.</p>
+    </div>
+  </div>`,
+];
+
+// ─── ENGINE: click any stage + stop ─────────────────────────────────────────
+function showPhase(i) {
+  const pv = document.getElementById('phaseView');
+  pv.innerHTML = PHASES[i]();
+  pv.classList.add('visible');
+  document.getElementById('idleState').style.display = 'none';
+  // Update sidebar highlights
+  for(let j=0;j<7;j++) {
+    const dp = document.getElementById('dp'+j);
+    dp.classList.remove('selected','active');
+    if (completed.has(j)) dp.classList.add('done');
+    if (j===autoIdx && running) dp.classList.add('active');
+  }
+  document.getElementById('dp'+i).classList.add('selected');
+  selIdx = i;
+}
+
+function sel(i) {
+  showPhase(i);
+}
+
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function stopDemo() {
+  stopRequested = true;
+}
+
+async function startDemo() {
+  if(running) return;
+  running = true; stopRequested = false;
+  completed.clear(); selIdx = -1; autoIdx = -1;
+  const btn = document.getElementById('runBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  btn.classList.add('running'); btn.disabled = true;
+  stopBtn.style.display = 'block';
+  // reset dots
+  for(let i=0;i<7;i++) { document.getElementById('dp'+i).className='dp'; }
+  const fill = document.getElementById('progFill');
+  fill.style.width = '0%';
+  const total = DURATIONS.reduce((a,b)=>a+b,0);
+  let elapsed = 0;
+  for(let i=0;i<7;i++) {
+    if(stopRequested) break;
+    autoIdx = i;
+    document.getElementById('dp'+i).className='dp active';
+    showPhase(i);
+    // Wait in small increments so stop is responsive
+    const dur = DURATIONS[i];
+    const step = 100;
+    for(let t=0; t<dur; t+=step) {
+      if(stopRequested) break;
+      await sleep(Math.min(step, dur-t));
+    }
+    if(stopRequested) {
+      // Mark current as done before stopping
+      completed.add(i);
+      document.getElementById('dp'+i).className='dp done selected';
+      elapsed += DURATIONS[i];
+      fill.style.width = Math.round(elapsed/total*100)+'%';
+      break;
+    }
+    completed.add(i);
+    document.getElementById('dp'+i).className='dp done selected';
+    elapsed += DURATIONS[i];
+    fill.style.width = Math.round(elapsed/total*100)+'%';
+  }
+  autoIdx = -1;
+  running = false; stopRequested = false;
+  btn.classList.remove('running'); btn.disabled = false;
+  btn.querySelector('.btn-t').textContent = '↺ Run Again';
+  stopBtn.style.display = 'none';
+}
+
+function tab(el, panelId) {
+  const tabs = el.parentElement;
+  tabs.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const prefix = panelId.slice(0,3);
+  document.querySelectorAll('[id^="'+prefix+'"]').forEach(p=>{p.classList.remove('vis');});
+  const t = document.getElementById(panelId);
+  if(t) t.classList.add('vis');
+}
+
+function ft(store, cat, btn) {
+  const tbl = document.getElementById('tbl-'+store);
+  if(!tbl) return;
+  btn.parentElement.querySelectorAll('.fb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  tbl.querySelectorAll('.ir-'+store).forEach(row=>{
+    row.style.display = (cat==='ALL'||row.dataset.cat===cat) ? '' : 'none';
+  });
+}
+// ─── LOGO SWAY ANIMATION ────────────────────────────────────
+const heroLogo = document.getElementById('hero-logo');
+const frontAzimuth = 90;
+const amplitude = 14;
+const period = 5000;
+const polar = 90;
+
+function animateLogo(now) {
+  const phase = (now / period) * Math.PI * 2;
+  const sinVal = Math.sin(phase);
+  const azimuth = frontAzimuth + sinVal * amplitude;
+  heroLogo.setAttribute('camera-orbit', `${azimuth.toFixed(2)}deg ${polar}deg auto`);
+  requestAnimationFrame(animateLogo);
+}
+
+if (heroLogo) {
+  heroLogo.addEventListener('load', () => {
+    requestAnimationFrame(animateLogo);
+  });
+}
+
+function toggleStory(el) {
+  const expand = el.querySelector('.ss-expand');
+  if (el.classList.contains('open')) {
+    expand.style.maxHeight = null;
+    el.classList.remove('open');
+  } else {
+    el.classList.add('open');
+    expand.style.maxHeight = expand.scrollHeight + 'px';
+  }
+}
+function toggleBk(el) {
+  el.classList.toggle('open');
+}
+
+function jumpToBk(i) {
+  const row = document.getElementById('bk-' + i);
+  if (!row) return;
+  if (!row.classList.contains('open')) row.classList.add('open');
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  row.style.borderColor = 'rgba(255,255,255,.4)';
+  setTimeout(() => { row.style.borderColor = ''; }, 1200);
+}
+
+// ─── INTERACTIVE WORKFLOW BUILDER ───────────────────────────────────────────
+// Click "Add Node" to assemble the real 27-node RECON workflow one node at a
+// time. Desktop renders the spatial n8n graph; mobile renders a readable stack.
+const WF_STAGES = [
+  { n:'01', t:'Trigger' },
+  { n:'02', t:'Collect' },
+  { n:'03', t:'Normalize' },
+  { n:'04', t:'Merge & Fingerprint' },
+  { n:'05', t:'Route & Archive' },
+  { n:'06', t:'AI Memory' },
+  { n:'07', t:'Intelligence' },
+];
+const WF_NODES = [
+  { id:'run',       t:'trigger', kind:'Trigger',  icon:'mouse-pointer-click', name:'Run RECON',                       x:6,  y:40, stage:0, from:[] },
+  { id:'http1',     t:'http',    kind:'HTTP',     icon:'globe',               name:'Competitor Store - Batch 1',      x:17, y:22, stage:1, from:['run'] },
+  { id:'http2',     t:'http',    kind:'HTTP',     icon:'globe',               name:'Competitor Store Batch 2',        x:17, y:40, stage:1, from:['run'] },
+  { id:'http3',     t:'http',    kind:'HTTP',     icon:'globe',               name:'Client Store - FULL Inventory',   x:17, y:58, stage:1, from:['run'] },
+  { id:'code1',     t:'code',    kind:'Code',     icon:'braces',              name:'Competitor Normalizer - Batch 1', x:28, y:22, stage:2, from:['http1'] },
+  { id:'code2',     t:'code',    kind:'Code',     icon:'braces',              name:'Competitor Normalizer Batch 2',   x:28, y:40, stage:2, from:['http2'] },
+  { id:'code3',     t:'code',    kind:'Code',     icon:'braces',              name:'Client Normalizer',               x:28, y:58, stage:2, from:['http3'] },
+  { id:'merge',     t:'merge',   kind:'Merge',    icon:'git-merge',           name:'Combine Data Streams',            x:39, y:40, stage:3, from:['code1','code2','code3'] },
+  { id:'sku',       t:'code',    kind:'Code',     icon:'braces',              name:'SKU Generator & Timestamper',     x:50, y:40, stage:3, from:['merge'] },
+  { id:'route',     t:'if',      kind:'Router',   icon:'git-fork',            name:'Client / Competitor Output Route',x:61, y:22, stage:4, from:['sku'] },
+  { id:'report',    t:'code',    kind:'Code',     icon:'braces',              name:'Market Report Builder',           x:61, y:40, stage:4, from:['sku'] },
+  { id:'hist',      t:'db',      kind:'Database', icon:'database',            name:'Historical Record - Database',    x:61, y:58, stage:4, from:['sku'] },
+  { id:'vector',    t:'code',    kind:'Code',     icon:'braces',              name:'Vector Embedding Formatter',      x:61, y:76, stage:4, from:['sku'] },
+  { id:'complog',   t:'sheet',   kind:'Sheets',   icon:'sheet',               name:'Competitor Inventory Log',        x:72, y:22, stage:4, from:['route'] },
+  { id:'clientlog', t:'sheet',   kind:'Sheets',   icon:'sheet',               name:'Client Inventory Log',            x:72, y:40, stage:4, from:['route'] },
+  { id:'expcomp',   t:'convert', kind:'Convert',  icon:'file-spreadsheet',    name:'Export Competitor -> XLSX',       x:83, y:22, stage:4, from:['complog'] },
+  { id:'expclient', t:'convert', kind:'Convert',  icon:'file-spreadsheet',    name:'Export Client -> XLSX',           x:83, y:40, stage:4, from:['clientlog'] },
+  { id:'archcomp',  t:'drive',   kind:'Drive',    icon:'triangle',            name:'Archive Competitor Run',          x:94, y:22, stage:4, from:['expcomp'] },
+  { id:'archclient',t:'drive',   kind:'Drive',    icon:'triangle',            name:'Archive Client Run',              x:94, y:40, stage:4, from:['expclient'] },
+  { id:'agent',     t:'intel',   kind:'Agent',    icon:'bot',                 name:'Market Intelligence Agent',       x:72, y:58, stage:6, from:['hist'] },
+  { id:'gemini',    t:'intel',   kind:'Model',    icon:'sparkles',            name:'Gemini 2.5 Pro',                  x:72, y:76, stage:6, from:['agent'], mini:true, dashed:true },
+  { id:'revenue',   t:'intel',   kind:'Tool',     icon:'percent',             name:'Revenue Gap Calculator',          x:83, y:76, stage:6, from:['agent'], mini:true, dashed:true },
+  { id:'semret',    t:'memory',  kind:'Memory',   icon:'zap',                 name:'Semantic Memory - Retrieve',      x:94, y:58, stage:5, from:['agent'] },
+  { id:'embret',    t:'intel',   kind:'Model',    icon:'brain',               name:'Embedding Model - Retrieve',      x:94, y:76, stage:5, from:['semret'], mini:true, dashed:true },
+  { id:'semins',    t:'memory',  kind:'Memory',   icon:'zap',                 name:'Semantic Memory - Insert',        x:83, y:84, stage:5, from:['vector'] },
+  { id:'embins',    t:'intel',   kind:'Model',    icon:'brain',               name:'Embedding Model - Insert',        x:83, y:92, stage:5, from:['semins'], mini:true, dashed:true },
+  { id:'loader',    t:'memory',  kind:'Loader',   icon:'file-text',           name:'Default Data Loader',             x:94, y:92, stage:5, from:['semins'], mini:true, dashed:true },
+];
+const WF_SVGNS = 'http://www.w3.org/2000/svg';
+let wfPlaced = 0;
+
+function wfMakeEl(tag, cls){ const e = document.createElement(tag); if (cls) e.className = cls; return e; }
+
+function wfAddSpatial(n, animate) {
+  const node = wfMakeEl('div', 'wf-node t-' + n.t + (n.mini ? ' is-mini' : ''));
+  node.style.left = n.x + '%';
+  node.style.top = n.y + '%';
+  if (!animate) node.style.animation = 'none';
+  if (n.mini) {
+    node.title = n.name;
+    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>';
+  } else {
+    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
+      '<div class="wf-kind">' + n.kind + '</div><div class="wf-name">' + n.name + '</div>';
+  }
+  document.getElementById('wfSpatial').appendChild(node);
+  const svg = document.getElementById('wfLines');
+  n.from.forEach(function(fid) {
+    const a = WF_NODES.find(function(x){ return x.id === fid; });
+    if (!a) return;
+    const sx = a.x * 18, sy = a.y * 8.6, ex = n.x * 18, ey = n.y * 8.6;
+    let d;
+    if (n.dashed) {
+      d = 'M' + sx + ',' + (sy + 16) + ' C' + sx + ',' + (sy + 46) + ' ' + ex + ',' + (ey - 46) + ' ' + ex + ',' + (ey - 16);
+    } else {
+      const sr = sx + 58, le = ex - 58, c1 = sr + (le - sr) * 0.5, c2 = le - (le - sr) * 0.5;
+      d = 'M' + sr + ',' + sy + ' C' + c1 + ',' + sy + ' ' + c2 + ',' + ey + ' ' + le + ',' + ey;
+    }
+    const p = document.createElementNS(WF_SVGNS, 'path');
+    p.setAttribute('d', d);
+    p.setAttribute('class', n.dashed ? 'wf-line dash' : (fid === 'run' ? 'wf-line strong' : 'wf-line'));
+    svg.appendChild(p);
+  });
+}
+
+function wfAddStack(n, animate) {
+  const stack = document.getElementById('wfStack');
+  let grp = document.getElementById('wfstg-' + n.stage);
+  if (!grp) {
+    grp = wfMakeEl('div', 'wf-stage');
+    grp.id = 'wfstg-' + n.stage;
+    const s = WF_STAGES[n.stage];
+    grp.innerHTML = '<button class="wf-stage-h" onclick="jumpToBk(' + n.stage + ')">' +
+      '<span class="wf-stage-n">' + s.n + '</span><span class="wf-stage-t">' + s.t + '</span>' +
+      '<span class="wf-jump">view ›</span></button>';
+    stack.appendChild(grp);
+  }
+  const card = wfMakeEl('div', 'wf-scard t-' + n.t + (n.mini ? ' is-mini' : ''));
+  if (!animate) card.style.animation = 'none';
+  card.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
+    '<div class="wf-sbody"><div class="wf-skind">' + n.kind + '</div><div class="wf-sname">' + n.name + '</div></div>' +
+    '<div class="wf-sgo"><i data-lucide="arrow-right"></i></div>';
+  grp.appendChild(card);
+}
+
+function wfPlace(i, animate) {
+  const n = WF_NODES[i];
+  wfAddSpatial(n, animate);
+  wfAddStack(n, animate);
+}
+
+function wfMeta() {
+  const placed = WF_NODES.slice(0, wfPlaced);
+  const ids = new Set(placed.map(function(n){ return n.id; }));
+  let conns = 0;
+  placed.forEach(function(n){ n.from.forEach(function(f){ if (ids.has(f)) conns++; }); });
+  document.getElementById('wfNodeCount').textContent = wfPlaced;
+  document.getElementById('wfNodeLbl').textContent = wfPlaced === 1 ? 'Node' : 'Nodes';
+  document.getElementById('wfConnCount').textContent = conns;
+  document.getElementById('wfConnLbl').textContent = conns === 1 ? 'Connection' : 'Connections';
+  const add = document.getElementById('wfAdd');
+  const hint = document.getElementById('wfHint');
+  if (wfPlaced >= WF_NODES.length) {
+    add.disabled = true;
+    add.querySelector('span').textContent = 'Complete';
+    hint.textContent = 'Full RECON workflow · ' + WF_NODES.length + ' nodes';
+  } else {
+    add.disabled = false;
+    add.querySelector('span').textContent = 'Add Node';
+    const left = WF_NODES.length - wfPlaced;
+    hint.textContent = 'Tap Add Node · ' + left + ' node' + (left === 1 ? '' : 's') + ' left';
+  }
+}
+
+function wfBuildTo(count) {
+  document.getElementById('wfSpatial').querySelectorAll('.wf-node').forEach(function(e){ e.remove(); });
+  document.getElementById('wfLines').innerHTML = '';
+  document.getElementById('wfStack').innerHTML = '';
+  wfPlaced = 0;
+  for (let i = 0; i < count; i++) { wfPlace(i, false); wfPlaced++; }
+  wfMeta();
+  if (window.lucide) lucide.createIcons();
+}
+
+function wfAdd() {
+  if (wfPlaced >= WF_NODES.length) return;
+  wfPlace(wfPlaced, true);
+  wfPlaced++;
+  wfMeta();
+  if (window.lucide) lucide.createIcons();
+  const c = document.getElementById('wfCanvas');
+  requestAnimationFrame(function(){
+    try { c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' }); }
+    catch (e) { c.scrollTop = c.scrollHeight; }
+  });
+}
+
+function wfReset() { wfBuildTo(1); }
+function wfInit() { wfBuildTo(1); }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const sectionsToAnimate = document.querySelectorAll('.flow-sec, .story-sec, .demo-sec, .bk-sec, .sum-sec');
+    sectionsToAnimate.forEach(el => el.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    });
+    sectionsToAnimate.forEach(el => observer.observe(el));
+    // Force background video play on mobile (iOS Safari autoplay workaround)
+    const bgVideo = document.getElementById('bg-video');
+    if (bgVideo) {
+      const tryPlay = () => {
+        const p = bgVideo.play();
+        if (p !== undefined) {
+          p.catch(() => {
+            const forcePlay = () => {
+              bgVideo.play();
+              document.removeEventListener('touchstart', forcePlay);
+              document.removeEventListener('scroll', forcePlay);
+            };
+            document.addEventListener('touchstart', forcePlay, { once: true });
+            document.addEventListener('scroll', forcePlay, { once: true });
+          });
+        }
+      };
+      tryPlay();
+    }
+
+    lucide.createIcons();
+    if (typeof wfInit === 'function') wfInit();
+  });
+</script>
+</body>
+</html>
