@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WVEZ · FLIPPR</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  .hero-tag { font-family: var(--sans); font-size: 11px; font-style: italic; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; opacity: 0.8; }
+:root{
+  --bg:#000;--s1:hsl(0,0%,5%);--s2:hsl(0,0%,8%);
+  --border:hsl(0,0%,18%);--border2:hsl(0,0%,28%);
+  --fg:#fff;--muted:hsl(0,0%,62%);--dim:hsl(0,0%,36%);
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Mono',monospace;--r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);font-family:var(--mono);color:var(--fg);-webkit-font-smoothing:antialiased;position:relative;padding-bottom:120px}
+
+/* texture overlay */
+body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.07;z-index:0;pointer-events:none}
+
+/* background video */
+#bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:0;pointer-events:none;filter:grayscale(100%) brightness(0.3) contrast(1.3);opacity:0.5}
+.hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{position:relative;z-index:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rowIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+.sec-h{margin-bottom:28px}
+.sec-h h2{font-size:clamp(22px,3.5vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:9px}
+.sec-h p{font-size:13.5px;color:var(--muted);margin-top:9px;line-height:1.75;max-width:560px}
+
+/* HERO */
+.hero{padding:72px 40px 0;max-width:1160px;margin:0 auto;animation:fadeUp .7s ease both}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:36px;position:relative}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.hero-logo{width:90px;height:90px;border-radius:50%;object-fit:cover}
+.hero-title{font-size:clamp(44px,6.5vw,74px);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.8;max-width:490px;margin-top:12px}
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-shrink:0;align-self:flex-end}
+.stat{padding:13px 20px;border-right:1px solid var(--border);text-align:center;min-width:80px}
+.stat:last-child{border-right:none}
+.sn{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.sl{font-size:7.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin-top:4px}
+
+/* FLOW */
+.flow-sec{max-width:1160px;margin:0 auto;padding:0 40px}
+.flow-box{position:relative;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#040404}
+.wf-canvas{position:relative;width:100%;min-width:0;aspect-ratio:1800/580;height:auto;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.05),rgba(0,0,0,0) 62%),#060606}
+.wf-canvas::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.12) .8px,transparent .8px);background-size:16px 16px;opacity:.35}
+.wf-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.wf-line{fill:none;stroke:rgba(188,198,214,.42);stroke-width:2.2}
+.wf-line.strong{stroke:rgba(225,231,240,.62)}
+.wf-line.dash{stroke-dasharray:5 5;opacity:.78}
+.wf-node{position:absolute;z-index:2;transform:translate(-50%,-50%);width:fit-content;min-width:74px;max-width:96px;height:auto;min-height:0;padding:5px 6px;border:1px solid var(--border2);border-radius:9px;background:rgba(18,18,18,.94);box-shadow:0 8px 18px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:flex-start}
+.wf-node.small{min-width:74px;max-width:96px}
+.wf-icon{width:15px;height:15px;flex-shrink:0;border-radius:5px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.02em}
+.wf-icon svg{width:10px;height:10px;stroke-width:2}
+.wf-name{font-size:8px;font-weight:600;line-height:1.15;letter-spacing:-.01em;color:var(--fg);display:block;white-space:normal;overflow:visible;text-align:center}
+.t-trigger .wf-icon{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
+.t-http .wf-icon{color:#d7c4ff;border-color:rgba(184,148,255,.6);background:rgba(184,148,255,.18)}
+.t-code .wf-icon{color:#ffd2a4;border-color:rgba(255,174,102,.6);background:rgba(255,174,102,.18)}
+.t-merge .wf-icon{color:#9fe8ff;border-color:rgba(123,214,255,.62);background:rgba(123,214,255,.18)}
+.t-if .wf-icon{color:#9effcb;border-color:rgba(158,255,203,.62);background:rgba(158,255,203,.18)}
+.t-wait .wf-icon{color:#c4c4c4;border-color:rgba(196,196,196,.45);background:rgba(196,196,196,.12)}
+.t-telegram .wf-icon{color:#7dd3fc;border-color:rgba(125,211,252,.65);background:rgba(125,211,252,.18)}
+
+/* Node positions */
+/* Main line (all at top:50%) */
+.n-trigger{left:6%;top:50%}
+.n-keywords{left:18%;top:50%}
+.n-loop{left:30%;top:50%}
+.n-ebay{left:42%;top:50%}
+.n-filter{left:56%;top:50%}
+.n-price{left:72%;top:50%}
+.n-send{left:88%;top:50%}
+/* Off-line nodes */
+.n-token{left:6%;top:78%}
+.n-wait{left:42%;top:78%}
+
+/* Annotations */
+.ann{position:absolute;font-family:var(--mono);font-size:clamp(5px,.75vw,8px);font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:clamp(1.5px,.3vw,3px) clamp(4px,.8vw,9px);border-radius:40px;border:1px solid;backdrop-filter:blur(8px);white-space:nowrap;pointer-events:auto;cursor:pointer;z-index:3;transform:translateX(-50%)}
+.a1{left:6%;top:38%;color:#fff;border-color:rgba(255,255,255,.35);background:rgba(0,0,0,.8)}
+.a2{left:42%;top:38%;color:#d7c4ff;border-color:rgba(215,196,255,.35);background:rgba(0,0,0,.8)}
+.a3{left:56%;top:38%;color:#9effcb;border-color:rgba(158,255,203,.35);background:rgba(0,0,0,.8)}
+.a4{left:72%;top:38%;color:#ffd2a4;border-color:rgba(255,210,164,.35);background:rgba(0,0,0,.8)}
+.a5{left:88%;top:38%;color:#7dd3fc;border-color:rgba(125,211,252,.35);background:rgba(0,0,0,.8)}
+.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
+
+/* STORY */
+.story-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.story-strip{border:1px solid var(--border);border-radius:var(--r);background:var(--s1);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+.ss-item{padding:0;border-right:1px solid var(--border);display:flex;flex-direction:column;cursor:pointer;transition:background .15s;position:relative}
+.ss-item:last-child{border-right:none}
+.ss-head{padding:18px 20px;display:flex;flex-direction:column;gap:4px;transition:background .15s}
+.ss-head:hover{background:rgba(255,255,255,.03)}
+.ss-l{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;justify-content:space-between}
+.ss-arrow{font-size:10px;transition:transform .3s ease;display:inline-block}
+.ss-item.open .ss-arrow{transform:rotate(180deg)}
+.ss-v{font-size:13px;font-weight:600;line-height:1.4}
+.ss-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.ss-body{padding:0 20px 18px;font-size:12.5px;color:var(--muted);line-height:1.85;border-top:1px solid var(--border);padding-top:14px}
+.ss-body strong{color:var(--fg);font-weight:600}
+
+/* DEMO */
+.demo-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.demo-shell{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.demo-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--s2)}
+.demo-dots{display:flex;gap:6px}
+.ddot{width:10px;height:10px;border-radius:50%}
+.demo-ttl{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+.run-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--fg);color:var(--bg);border:none;border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:opacity .15s;letter-spacing:-.01em}
+.run-btn:hover{opacity:.82}.run-btn:disabled{opacity:.32;cursor:not-allowed}
+.stop-btn{padding:7px 14px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:-.01em}
+.stop-btn:hover{border-color:var(--border2);color:var(--fg)}
+.spin-i{width:11px;height:11px;border-radius:50%;border:2px solid var(--bg);border-top-color:transparent;animation:spin .55s linear infinite;display:none;flex-shrink:0}
+.run-btn.running .spin-i{display:block}.run-btn.running .btn-t{display:none}
+.demo-body{display:grid;grid-template-columns:210px 1fr;min-height:520px}
+.demo-side{border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column}
+.dp-hint{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;padding:12px 16px 4px;opacity:.6}
+.dp{padding:8px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s;position:relative;user-select:none}
+.dp:hover{background:rgba(255,255,255,.03)}
+.dp.active .dp-dot{background:var(--fg);box-shadow:0 0 0 3px rgba(255,255,255,.1);animation:pulse 1.2s ease infinite}
+.dp.done .dp-dot{background:rgba(255,255,255,.3)}
+.dp.done .dp-lbl{color:var(--muted)}
+.dp.selected{background:rgba(255,255,255,.04)}
+.dp.selected .dp-lbl{color:var(--fg)}
+.dp.selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(255,255,255,.4)}
+.dp-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:all .3s}
+.dp-lbl{font-size:11px;font-weight:500;color:var(--dim);transition:color .2s;line-height:1.2}
+.dp-sub{font-size:8px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;margin-top:1px}
+.dp-conn{width:1px;height:9px;background:var(--border);margin-left:17px}
+.demo-out{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
+.demo-out::before{content:'';position:absolute;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.09;z-index:0;pointer-events:none}
+.demo-idle{position:relative;z-index:1}
+.phase-view{position:relative;z-index:1}
+.demo-prog{height:2px;background:var(--border);flex-shrink:0}
+.demo-prog-fill{height:100%;background:var(--fg);width:0;transition:width .6s ease}
+.demo-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;opacity:.25;padding:40px}
+.demo-idle-ico{font-size:26px}
+.demo-idle-txt{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:1.9}
+.phase-view{flex:1;overflow-y:auto;display:none;padding:20px 22px}
+.phase-view.visible{display:block}
+.phase-view::-webkit-scrollbar{width:4px}
+.phase-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.ph-hdr{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+.ph-badge{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+.ph-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.ph-desc{font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);background:rgba(255,255,255,.02)}
+.ph-desc strong{color:var(--fg);font-weight:600}
+.ph-desc code{font-family:var(--mono);font-size:10px;background:rgba(255,255,255,.09);padding:1px 4px;border-radius:3px;color:rgba(255,255,255,.8)}
+.ntabs{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:11px;flex-wrap:wrap}
+.ntab{padding:6px 12px;font-size:11px;font-weight:500;cursor:pointer;background:var(--bg);border-right:1px solid var(--border);transition:background .12s,color .12s;color:var(--muted);white-space:nowrap}
+.ntab:last-child{border-right:none}
+.ntab:hover{background:var(--s2)}
+.ntab.active{background:var(--s1);color:var(--fg);font-weight:600}
+.np{display:none}.np.vis{display:block;animation:fadeUp .2s ease both}
+.jb{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:13px;font-family:var(--mono);font-size:10.5px;line-height:1.75;overflow-x:auto;margin-bottom:10px;white-space:pre}
+.jk{color:#9ab8ff}.jvs{color:#9effcb}.jn{color:#ffd080}.jbl{color:#ff9a9a}
+.tx{text-align:center;padding:5px 0;color:var(--dim);font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;display:flex;align-items:center;gap:6px;margin:2px 0}
+.tx::before,.tx::after{content:'';flex:1;height:1px;background:var(--border)}
+.ds{display:flex;flex-direction:column;gap:3px;margin-bottom:11px}
+.dr{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--s2);border:1px solid var(--border);border-radius:4px;opacity:0;animation:rowIn .3s ease forwards}
+.dstore{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.05);color:var(--dim);min-width:86px;text-align:center;flex-shrink:0;letter-spacing:.04em}
+.dname{font-size:12px;font-weight:500;flex:1;min-width:0}
+.dval{font-family:var(--mono);font-size:10.5px;flex-shrink:0}
+.ok{color:#9effcb}.pen{color:#ffd080}.dim{color:var(--muted)}
+
+.inv-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.inv-tbl thead tr{background:var(--s2);border-bottom:1px solid var(--border)}
+.inv-tbl th{padding:7px 10px;text-align:left;font-family:var(--mono);font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);white-space:nowrap;font-weight:500}
+.inv-tbl tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.inv-tbl tbody tr:last-child{border-bottom:none}
+.inv-tbl tbody tr:hover{background:rgba(255,255,255,.025)}
+.inv-tbl td{padding:7px 10px;vertical-align:middle}
+.profit-pos{color:#9effcb;font-family:var(--mono);font-size:11px;font-weight:600}
+.profit-neg{color:#ff9a9a;font-family:var(--mono);font-size:11px}
+.profit-skip{color:var(--dim);font-family:var(--mono);font-size:11px}
+
+/* BREAKDOWN */
+.bk-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.bk-list{display:flex;flex-direction:column;gap:3px}
+.bk-row{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.bk-row:hover{border-color:var(--border2)}
+.bk-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .12s;user-select:none}
+.bk-head:hover{background:rgba(255,255,255,.02)}
+.bk-dot{width:3px;height:28px;border-radius:2px;flex-shrink:0}
+.bk-dot.c1{background:rgba(255,255,255,.45)}.bk-dot.c2{background:#d7c4ff}.bk-dot.c3{background:#9effcb}.bk-dot.c4{background:#ffd2a4}.bk-dot.c5{background:#7dd3fc}
+.bk-num{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;min-width:16px}
+.bk-name{font-size:13px;font-weight:600;letter-spacing:-.01em;flex:1}
+.bk-count{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.04em}
+.bk-arrow{font-size:10px;color:var(--dim);transition:transform .3s ease;display:inline-block}
+.bk-row.open .bk-arrow{transform:rotate(180deg)}
+.bk-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.bk-row.open .bk-expand{max-height:200px}
+.bk-body{padding:0 18px 16px 35px;font-size:12px;color:var(--muted);line-height:1.75}
+.bk-body strong{color:var(--fg);font-weight:600}
+
+/* SUMMARY */
+.sum-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.sum-inner{border:1px solid var(--border);border-radius:var(--r);padding:34px 38px;background:var(--s1);display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.sum-h{font-size:25px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-bottom:11px}
+.sum-p{font-size:13px;color:var(--muted);line-height:1.8}
+.ocs{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.oc{display:flex;gap:11px;align-items:flex-start}
+.oc-d{width:3px;height:3px;border-radius:50%;background:var(--fg);opacity:.28;flex-shrink:0;margin-top:8px}
+.oc-t{font-size:12.5px;color:var(--muted);line-height:1.7}
+.oc-t strong{color:var(--fg);font-weight:600}
+
+@media(max-width:768px){
+  .hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{padding-left:20px;padding-right:20px}
+  .hero{padding-top:48px;padding-bottom:24px}
+  .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
+  .hero-title{font-size:clamp(28px,8vw,44px)}
+  .hero-sub{font-size:13px;max-width:100%}
+  .stats{flex-wrap:wrap;width:100%}
+  .stat{min-width:0;flex:1}
+  model-viewer#hero-logo{display:none}
+
+  .flow-sec{padding:0 20px;padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;min-height:0}
+  .flow-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .wf-canvas{min-width:600px}
+  .ann{font-size:7px}
+
+  .story-strip{grid-template-columns:1fr}
+  .story-sec,.demo-sec,.bk-sec,.sum-sec{padding-top:48px}
+
+  .demo-body{grid-template-columns:1fr;min-height:auto}
+  .demo-side{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;flex-wrap:wrap;padding:8px;gap:4px}
+  .dp{padding:10px 12px;min-height:44px}
+  .dp-lbl{font-size:11px}
+  .dp-conn,.dp-hint{display:none}
+  .phase-view{padding:16px;min-height:300px}
+
+  .bk-head{padding:14px 16px;min-height:44px}
+  .bk-body{padding:0 16px 16px 28px;font-size:13px}
+  .bk-name{font-size:13px}
+
+  .sum-inner{grid-template-columns:1fr;padding:22px;gap:22px}
+
+  .inv-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .jb{font-size:9px;padding:10px}
+}
+@media(max-width:480px){
+  .flow-box{display:none}
+  .flow-cap{display:none}
+}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease-out,transform .8s cubic-bezier(.175,.885,.32,1.275)}
+.reveal.active{opacity:1;transform:translateY(0)}
+.back-btn{position:fixed;top:16px;left:20px;z-index:1000;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#6e6e6e;text-decoration:none;background:rgba(0,0,0,0.7);padding:6px 12px;border-radius:4px;backdrop-filter:blur(8px);border:none;cursor:pointer;transition:color 0.2s}
+.back-btn:hover{color:#f5f5f5}
+</style>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+<a href="https://wvez.org" target="_top" class="back-btn">&lt; WVEZ.ORG</a>
+
+<!-- BACKGROUND VIDEO -->
+<video id="bg-video" muted loop playsinline webkit-playsinline autoplay preload="auto" src="https://pub-2b72d9c0a9f649e99699874d22247129.r2.dev/12817774_3840_2160_30fps.mp4"></video>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-row">
+    <div>
+      <h1 class="hero-title">WVEZ FLIPPR</h1>
+      <div class="hero-tag">Sneaker reseller to automated buy signals: never miss a profitable flip again.</div>
+      <p class="hero-sub">An automated pipeline that scans eBay for underpriced used electronics, validates each listing against the most recent sold data, calculates true profit after all fees and shipping, and sends a buy-now alert straight to Telegram.</p>
+    </div>
+    <model-viewer
+  id="hero-logo"
+  src="logo.glb"
+  camera-orbit="90deg 90deg auto"
+  field-of-view="26deg"
+  exposure="1.15"
+  disable-zoom
+  interaction-prompt="none"
+  style="position:absolute;right:110px;top:-3px;width:125px;height:125px;background:transparent;"
+></model-viewer>
+    <div class="hero-right">
+      <div class="stats">
+        <div class="stat"><div class="sn">200+</div><div class="sl">Scanned / Run</div></div>
+        <div class="stat"><div class="sn">4</div><div class="sl">Filter Stages</div></div>
+        <div class="stat"><div class="sn">60</div><div class="sl">Sold Comps</div></div>
+        <div class="stat"><div class="sn">1</div><div class="sl">Click</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FLOW -->
+<div class="flow-sec">
+  <div class="flow-box">
+    <div class="wf-canvas" role="img" aria-label="FLIPPR">
+      <svg class="wf-lines" viewBox="0 0 1800 580" preserveAspectRatio="none">
+        <!-- Trigger → Keywords (straight right) -->
+        <path class="wf-line" d="M148 290 L324 290"/>
+        <!-- Trigger → Token (straight down) -->
+        <path class="wf-line strong" d="M108 330 L108 452"/>
+        <!-- Keywords → Loop (straight right) -->
+        <path class="wf-line" d="M364 290 L540 290"/>
+        <!-- Loop → eBay (straight right) -->
+        <path class="wf-line strong" d="M580 290 L756 290"/>
+        <!-- eBay → Filter (straight right) -->
+        <path class="wf-line" d="M796 290 L1008 290"/>
+        <!-- Filter → Price (straight right) -->
+        <path class="wf-line strong" d="M1048 290 L1296 290"/>
+        <!-- Price → Send (straight right) -->
+        <path class="wf-line strong" d="M1336 290 L1584 290"/>
+        <!-- eBay → Wait (straight down) -->
+        <path class="wf-line dash" d="M756 330 L756 452"/>
+        <!-- Wait → Loop (dashed curve back up-left) -->
+        <path class="wf-line dash" d="M716 452 C620 452, 560 340, 540 330"/>
+      </svg>
+
+      <!-- Nodes -->
+      <div class="wf-node t-trigger small n-trigger"><div class="wf-icon"><i data-lucide="mouse-pointer-click"></i></div><div><div class="wf-name">Execute Workflow</div></div></div>
+      <div class="wf-node t-http small n-token"><div class="wf-icon"><i data-lucide="globe"></i></div><div><div class="wf-name">Get eBay Token</div></div></div>
+      <div class="wf-node t-code small n-keywords"><div class="wf-icon"><i data-lucide="braces"></i></div><div><div class="wf-name">Keyword List</div></div></div>
+      <div class="wf-node t-merge small n-loop"><div class="wf-icon"><i data-lucide="repeat"></i></div><div><div class="wf-name">Keyword Loop</div></div></div>
+      <div class="wf-node t-http small n-ebay"><div class="wf-icon"><i data-lucide="globe"></i></div><div><div class="wf-name">eBay Newly Listed</div></div></div>
+      <div class="wf-node t-if small n-filter"><div class="wf-icon"><i data-lucide="git-fork"></i></div><div><div class="wf-name">Filter Pipeline</div></div></div>
+      <div class="wf-node t-code small n-price"><div class="wf-icon"><i data-lucide="braces"></i></div><div><div class="wf-name">Identify &amp; Price</div></div></div>
+      <div class="wf-node t-telegram small n-send"><div class="wf-icon"><i data-lucide="send"></i></div><div><div class="wf-name">Telegram Alert</div></div></div>
+      <div class="wf-node t-wait small n-wait"><div class="wf-icon"><i data-lucide="pause"></i></div><div><div class="wf-name">Wait 2s</div></div></div>
+
+      <!-- Annotations -->
+      <span class="ann a1" onclick="jumpToBk(0)">01 · Auth</span>
+      <span class="ann a2" onclick="jumpToBk(1)">02 · Scan</span>
+      <span class="ann a3" onclick="jumpToBk(2)">03 · Filter</span>
+      <span class="ann a4" onclick="jumpToBk(3)">04 · Identify &amp; Price</span>
+      <span class="ann a5" onclick="jumpToBk(4)">05 · Alert</span>
+    </div>
+  </div>
+  <p class="flow-cap">Full n8n workflow · WVEZ FLIPPR V1.0</p>
+</div>
+
+<!-- STORY -->
+<div class="story-sec">
+  <div class="sec-h">
+    <span class="tag">The backstory</span>
+    <h2>Why did I build this?</h2>
+  </div>
+  <div class="story-strip">
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Started as <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">A sneaker kid's instinct</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">I grew up reselling sneakers all through middle and high school. I always knew how often profitable flips would go live, but eBay's built-in notifications were <strong>too slow to catch any of them</strong>. I wanted something faster.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Became <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">Buy signals, not checkmarks</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">My first version just monitored keywords every few minutes. It worked, but I was still spending too much time checking if the "deal" was truly a deal. Skimming descriptions, titles, accounts. Constant notifications. Lost time AND lost money. So I pivoted to finding the perfect products, ones I knew would sell quickly and <strong>turn profit after fees</strong>. The goal became a "buy signal," not a "go check."</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Result <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">Zero-thought flip pipeline</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">A fully automated system that scans 200+ listings per run across four product categories, filters out junk, pulls real sold comps, and only alerts me when the math says buy. Every alert is <strong>pre-validated</strong>: net profit, ROI, fees, shipping, all calculated before it hits my phone.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Biggest lesson <span class="ss-arrow">▾</span></div>
+        <div class="ss-v">The research was the real build</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">The hardest part wasn't the code. It was the research. Days of manually finding products that would <strong>guarantee profit after taxes, fees, and shipping</strong>. Even more time went into coding the junk title filter. Countless executions watching what crossed the table, figuring out what didn't belong, and building the regex that catches broken screens, accessories, and parts listings before they waste your time.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="demo-sec">
+  <div class="sec-h">
+    <span class="tag">Interactive demo</span>
+    <h2>See it run</h2>
+    <p>Click any stage to see what it outputs. Or hit <strong>Run FLIPPR</strong> to watch the whole pipeline fire in sequence.</p>
+  </div>
+  <div class="demo-shell">
+    <div class="demo-bar">
+      <div class="demo-dots">
+        <div class="ddot" style="background:#ff5f57"></div>
+        <div class="ddot" style="background:#febc2e"></div>
+        <div class="ddot" style="background:#28c840"></div>
+      </div>
+      <span class="demo-ttl">WVEZ_FLIPPR_V1 · n8n workflow engine</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="stop-btn" id="stopBtn" onclick="stopDemo()" style="display:none">■ Stop</button>
+        <button class="run-btn" id="runBtn" onclick="startDemo()">
+          <div class="spin-i"></div>
+          <span class="btn-t">▶ Run FLIPPR </span>
+        </button>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-side" id="pipeline">
+        <div class="dp-hint">Click any stage</div>
+        <div class="dp" id="dp0" onclick="sel(0)"><div class="dp-dot" id="dot0"></div><div><div class="dp-lbl">01 · Auth + Keywords</div><div class="dp-sub">3 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp1" onclick="sel(1)"><div class="dp-dot" id="dot1"></div><div><div class="dp-lbl">02 · Scan eBay</div><div class="dp-sub">3 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp2" onclick="sel(2)"><div class="dp-dot" id="dot2"></div><div><div class="dp-lbl">03 · Filter Pipeline</div><div class="dp-sub">4 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp3" onclick="sel(3)"><div class="dp-dot" id="dot3"></div><div><div class="dp-lbl">04 · Identify &amp; Price</div><div class="dp-sub">4 nodes</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp4" onclick="sel(4)"><div class="dp-dot" id="dot4"></div><div><div class="dp-lbl">05 · Alert</div><div class="dp-sub">1 node</div></div></div>
+      </div>
+      <div class="demo-out">
+        <div class="demo-prog"><div class="demo-prog-fill" id="progFill"></div></div>
+        <div class="demo-idle" id="idleState">
+          <div class="demo-idle-ico">◎</div>
+          <div class="demo-idle-txt">Click any stage on the left to explore<br>or press "Run FLIPPR" to watch it all fire</div>
+        </div>
+        <div class="phase-view" id="phaseView"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BREAKDOWN -->
+<div class="bk-sec">
+  <div class="sec-h">
+    <span class="tag">Step by step</span>
+    <h2>How it works</h2>
+  </div>
+  <div class="bk-list">
+    <div class="bk-row" id="bk-0" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c1"></div><span class="bk-num">01</span><span class="bk-name">Authenticate + Load Keywords</span><span class="bk-count">3 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">One click starts everything. The system <strong>logs into eBay's API</strong> and loads a curated list of product keywords with price ranges, each one pre-validated for consistent resale profit.</div></div>
+    </div>
+    <div class="bk-row" id="bk-1" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c2"></div><span class="bk-num">02</span><span class="bk-name">Scan + Loop Keywords</span><span class="bk-count">3 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">For each keyword, the system <strong>pulls the 50 most recently listed items</strong> from eBay (used, US-only, fixed price). It loops through every keyword with a 2-second pause between each to stay under API limits.</div></div>
+    </div>
+    <div class="bk-row" id="bk-2" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c3"></div><span class="bk-num">03</span><span class="bk-name">Filter Pipeline</span><span class="bk-count">4 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Four layers of filtering <strong>strip out everything that isn't a real, buyable product</strong>. Flattening, price range checks, condition verification, and a 60+ term regex engine that catches broken screens, replacement parts, accessories, and dozens of false positives.</div></div>
+    </div>
+    <div class="bk-row" id="bk-3" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c4"></div><span class="bk-num">04</span><span class="bk-name">Identify, Price &amp; Validate</span><span class="bk-count">4 nodes</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">A deterministic parser <strong>extracts the exact model</strong> from every title. Each model gets priced against up to 60 real sold comps, then true net profit is calculated after marketplace fees, payment processing, and shipping. Only listings clearing minimum profit and ROI thresholds survive. Passing deals get formatted into a structured alert.</div></div>
+    </div>
+    <div class="bk-row" id="bk-4" onclick="toggleBk(this)">
+      <div class="bk-head"><div class="bk-dot c5"></div><span class="bk-num">05</span><span class="bk-name">Send Buy Signal</span><span class="bk-count">1 node</span><span class="bk-arrow">▾</span></div>
+      <div class="bk-expand"><div class="bk-body">Surviving deals are sent as a <strong>clean Telegram alert</strong> with everything needed to act: product name, buy price, expected profit, ROI percentage, and a direct link to the listing. One tap to buy.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="sum-sec">
+  <div class="sum-inner">
+    <div>
+      <h2 class="sum-h">The alert IS<br>the decision.</h2>
+      <p class="sum-p">Built from years of reselling instinct and weeks of product research, this workflow turns a firehose of new listings into a clean stream of validated buy signals. No browsing. No second-guessing. Every notification that hits your phone has already been filtered, identified, priced, and profit-checked.</p>
+    </div>
+    <div class="ocs">
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>200+ listings scanned per run</strong>: across four high-turnover product categories with proven resale margins.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>60-term junk filter</strong>: catches broken screens, parts listings, accessories, and dozens of false positives that waste your time.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Real sold comp pricing</strong>: median price from up to 60 actual sales, cached for 6 hours to stay fast.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>True profit math</strong>: accounts for marketplace fees, payment processing, shipping both ways, and minimum ROI thresholds.</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Instant buy signals</strong>: formatted alerts with profit breakdown and direct listing links, delivered to your phone in seconds.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── LOGO SWAY ANIMATION ────────────────────────────────────
+const heroLogo = document.getElementById('hero-logo');
+const frontAzimuth = 90;
+const amplitude = 14;
+const period = 5000;
+const polar = 90;
+
+function animateLogo(now) {
+  const phase = (now / period) * Math.PI * 2;
+  const sinVal = Math.sin(phase);
+  const azimuth = frontAzimuth + sinVal * amplitude;
+  heroLogo.setAttribute('camera-orbit', `${azimuth.toFixed(2)}deg ${polar}deg auto`);
+  requestAnimationFrame(animateLogo);
+}
+
+if (heroLogo) {
+  heroLogo.addEventListener('load', () => {
+    requestAnimationFrame(animateLogo);
+  });
+}
+
+const DURATIONS = [10000, 12000, 12000, 14000, 10000];
+let running = false, stopRequested = false;
+let completed = new Set();
+let autoIdx = -1, selIdx = -1, userTookControl = false;
+
+const PHASES = [
+  // 0: Auth + Keywords
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 01</span><span class="ph-title">Auth + Keywords</span></div>
+  <div class="ph-desc">Token acquired. <strong>4 product keywords</strong> loaded with target price ranges and category IDs.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t0a')">Keyword config</div>
+    <div class="ntab" onclick="tab(this,'t0b')">Output summary</div>
+  </div>
+  <div class="np vis" id="t0a">
+    <div class="jb">{
+  <span class="jk">"keywords"</span>: [
+    { <span class="jk">"keyword"</span>: <span class="jvs">"Wireless Headphones Pro"</span>,  <span class="jk">"min"</span>: <span class="jn">80</span>,  <span class="jk">"max"</span>: <span class="jn">220</span> },
+    { <span class="jk">"keyword"</span>: <span class="jvs">"Portable Speaker XL"</span>,     <span class="jk">"min"</span>: <span class="jn">60</span>,  <span class="jk">"max"</span>: <span class="jn">180</span> },
+    { <span class="jk">"keyword"</span>: <span class="jvs">"Smartwatch Series 9"</span>,     <span class="jk">"min"</span>: <span class="jn">120</span>, <span class="jk">"max"</span>: <span class="jn">350</span> },
+    { <span class="jk">"keyword"</span>: <span class="jvs">"Handheld Console OLED"</span>,   <span class="jk">"min"</span>: <span class="jn">150</span>, <span class="jk">"max"</span>: <span class="jn">300</span> }
+  ]
+}</div>
+  </div>
+  <div class="np" id="t0b">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">API TOKEN</span><span class="dname">eBay OAuth token</span><span class="dval ok">✓ acquired</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">KEYWORDS</span><span class="dname">Product keywords loaded</span><span class="dval ok">4 ready</span></div>
+      <div class="dr" style="animation-delay:.8s"><span class="dstore">CATEGORIES</span><span class="dname">Unique eBay categories</span><span class="dval pen">3 targeted</span></div>
+    </div>
+  </div>`,
+
+  // 1: Scan
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 02</span><span class="ph-title">Scan eBay</span></div>
+  <div class="ph-desc">50 newest listings pulled per keyword. <strong>200 total items ingested</strong> from US-only, used, fixed-price listings.</div>
+  <div class="ds">
+    <div class="dr" style="animation-delay:.2s"><span class="dstore">KEYWORD 1</span><span class="dname">Wireless Headphones Pro</span><span class="dval ok">50 items</span></div>
+    <div class="dr" style="animation-delay:.5s"><span class="dstore">KEYWORD 2</span><span class="dname">Portable Speaker XL</span><span class="dval ok">50 items</span></div>
+    <div class="dr" style="animation-delay:.8s"><span class="dstore">KEYWORD 3</span><span class="dname">Smartwatch Series 9</span><span class="dval ok">50 items</span></div>
+    <div class="dr" style="animation-delay:1.1s"><span class="dstore">KEYWORD 4</span><span class="dname">Handheld Console OLED</span><span class="dval ok">50 items</span></div>
+    <div class="dr" style="animation-delay:1.4s"><span class="dstore">TOTAL</span><span class="dname">All keywords returned</span><span class="dval pen">200 listings</span></div>
+  </div>`,
+
+  // 2: Filter Pipeline
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 03</span><span class="ph-title">Filter Pipeline</span></div>
+  <div class="ph-desc">Four-stage filter chain: <strong>flatten → price range → condition → junk title regex</strong>. Only clean, buyable products survive.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t2a')">Filter results</div>
+    <div class="ntab" onclick="tab(this,'t2b')">Junk samples</div>
+  </div>
+  <div class="np vis" id="t2a">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">INPUT</span><span class="dname">Raw listings from scan</span><span class="dval dim">200</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">PRICE</span><span class="dname">Outside target price range</span><span class="dval" style="color:#ff9a9a">-62</span></div>
+      <div class="dr" style="animation-delay:.8s"><span class="dstore">CONDITION</span><span class="dname">Not marked "Used"</span><span class="dval" style="color:#ff9a9a">-18</span></div>
+      <div class="dr" style="animation-delay:1.1s"><span class="dstore">REGEX</span><span class="dname">Junk title matches (60+ terms)</span><span class="dval" style="color:#ff9a9a">-47</span></div>
+      <div class="dr" style="animation-delay:1.4s"><span class="dstore">OUTPUT</span><span class="dname">Clean listings surviving</span><span class="dval ok">73</span></div>
+    </div>
+  </div>
+  <div class="np" id="t2b">
+    <div style="font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">→ Sample titles caught by junk filter</div>
+    <div class="jb" style="font-size:10px;color:var(--muted)">✕ "Wireless Headphones Pro BROKEN Speaker Replacement"
+✕ "Smartwatch Series 9 Band Charger Cable Bundle"
+✕ "Handheld Console OLED Controller Left Grip"
+✕ "Portable Speaker XL FOR PARTS - Read Desc"
+✕ "Smartwatch Housing Case Cover Screen Protector"</div>
+  </div>`,
+
+  // 3: Identify & Price
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 04</span><span class="ph-title">Identify &amp; Price</span></div>
+  <div class="ph-desc">Deterministic parser <strong>extracts exact models</strong>, then each is <strong>priced against up to 60 real sold comps</strong>. Full profit math: marketplace fees, payment processing, and shipping.</div>
+  <div class="ntabs">
+    <div class="ntab active" onclick="tab(this,'t3a')">Model extraction</div>
+    <div class="ntab" onclick="tab(this,'t3b')">Profit calculation</div>
+    <div class="ntab" onclick="tab(this,'t3c')">Output summary</div>
+  </div>
+  <div class="np vis" id="t3a">
+    <div class="inv-wrap"><table class="inv-tbl">
+      <thead><tr><th>Raw Title</th><th>→ Core Model</th></tr></thead>
+      <tbody>
+        <tr><td style="font-size:10px;color:var(--muted)">Wireless Headphones Pro Max 2024 Midnight</td><td style="font-weight:600">Headphones Pro Max</td></tr>
+        <tr><td style="font-size:10px;color:var(--muted)">Smartwatch Series 9 45mm GPS Midnight</td><td style="font-weight:600">Smartwatch Series 9 45mm</td></tr>
+        <tr><td style="font-size:10px;color:var(--muted)">Handheld Console OLED White w/ Game Bundle</td><td style="font-weight:600">Console OLED</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="np" id="t3b">
+    <div class="ph-desc" style="margin-bottom:8px">Marketplace fees <strong>13.13%</strong> + payment processing <strong>2.99% + $0.49</strong> + $12 outbound shipping. Min $20 profit, min 15% ROI.</div>
+    <div class="inv-wrap"><table class="inv-tbl">
+      <thead><tr><th>Model</th><th>Buy</th><th>Sold Median</th><th>Net Profit</th><th>ROI</th></tr></thead>
+      <tbody>
+        <tr><td style="font-weight:600">Headphones Pro Max</td><td>$142</td><td>$245</td><td class="profit-pos">$51.01</td><td class="profit-pos">35.9%</td></tr>
+        <tr><td style="font-weight:600">Smartwatch Series 9 45mm</td><td>$185</td><td>$310</td><td class="profit-pos">$62.41</td><td class="profit-pos">33.7%</td></tr>
+        <tr><td style="font-weight:600">Console OLED</td><td>$195</td><td>$290</td><td class="profit-pos">$35.76</td><td class="profit-pos">18.3%</td></tr>
+        <tr><td style="color:var(--dim)">Speaker XL 2nd Gen</td><td style="color:var(--dim)">$98</td><td style="color:var(--dim)">$122</td><td class="profit-neg">-$8.16</td><td class="profit-neg">-8.3%</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="np" id="t3c">
+    <div class="ds">
+      <div class="dr" style="animation-delay:.2s"><span class="dstore">PARSED</span><span class="dname">Models identified</span><span class="dval ok">68 of 73</span></div>
+      <div class="dr" style="animation-delay:.5s"><span class="dstore">PRICED</span><span class="dname">Listings with sold data</span><span class="dval dim">68</span></div>
+      <div class="dr" style="animation-delay:.8s"><span class="dstore">PASSED</span><span class="dname">Met profit + ROI thresholds</span><span class="dval ok">3 deals</span></div>
+    </div>
+  </div>`,
+
+  // 4: Alert (NO EMOJIS)
+  () => `<div class="ph-hdr"><span class="ph-badge">Phase 05</span><span class="ph-title">Telegram Buy Signal</span></div>
+  <div class="ph-desc"><strong>Pre-validated alert</strong> with everything needed to act. One tap to buy.</div>
+  <div style="background:#0d1117;border:1px solid #1e2a3a;border-radius:8px;padding:18px 20px;margin:12px 0;font-size:12.5px;line-height:1.9">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ff9a9a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg><strong style="font-size:14px;letter-spacing:.02em">FLIPPR ALERT</strong></div>
+    <div style="font-size:14px;font-weight:600;margin-bottom:12px">Smartwatch Series 9 45mm</div>
+    <div style="color:var(--muted);font-size:12px">Smartwatch Series 9 45mm GPS Midnight Aluminum</div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:6px">
+      <div><span style="color:var(--dim);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase">BUY</span> <strong>$185</strong> <span style="color:var(--dim)">(free ship)</span> = <strong>$185.00 total</strong></div>
+      <div><span style="color:var(--dim);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase">SOLD MEDIAN</span> <strong>$310</strong> <span style="color:var(--dim)">(47 comps)</span></div>
+    </div>
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid #1e2a3a;display:flex;gap:20px">
+      <div><span style="color:var(--dim);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase">NET PROFIT</span><div style="color:#9effcb;font-size:16px;font-weight:700;margin-top:2px">$62.41</div></div>
+      <div><span style="color:var(--dim);font-family:var(--mono);font-size:8px;letter-spacing:.1em;text-transform:uppercase">ROI</span><div style="color:#9effcb;font-size:16px;font-weight:700;margin-top:2px">33.7%</div></div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:16px;color:var(--dim);font-size:11px">
+      <span>Condition: Used</span>
+      <span>Listed: Mar 7, 2:14 PM</span>
+    </div>
+    <div style="margin-top:10px"><a href="#" style="color:#7dd3fc;text-decoration:none;font-size:12px;font-weight:500" onclick="return false">View Listing →</a></div>
+  </div>`
+];
+
+// ─── ENGINE ─────────────────────────────────────────────────────────────────
+function showPhase(i) {
+  const pv = document.getElementById('phaseView');
+  pv.innerHTML = PHASES[i]();
+  pv.classList.add('visible');
+  document.getElementById('idleState').style.display = 'none';
+  for(let j=0;j<5;j++) {
+    const dp = document.getElementById('dp'+j);
+    dp.classList.remove('selected','active');
+    if (completed.has(j)) dp.classList.add('done');
+    if (j===autoIdx && running) dp.classList.add('active');
+  }
+  document.getElementById('dp'+i).classList.add('selected');
+  selIdx = i;
+}
+
+function sel(i) { userTookControl = true; showPhase(i); }
+
+function tab(el, panelId) {
+  const tabs = el.parentElement;
+  tabs.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const prefix = panelId.slice(0,3);
+  document.querySelectorAll('[id^="'+prefix+'"]').forEach(p=>{p.classList.remove('vis');});
+  const t = document.getElementById(panelId);
+  if(t) t.classList.add('vis');
+}
+
+async function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function stopDemo() { stopRequested = true; }
+
+async function startDemo() {
+  if(running) return;
+  running = true; stopRequested = false;
+  completed.clear(); selIdx = -1; autoIdx = -1; userTookControl = false;
+  const btn = document.getElementById('runBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  btn.classList.add('running'); btn.disabled = true;
+  stopBtn.style.display = 'block';
+  for(let i=0;i<5;i++) { document.getElementById('dp'+i).className='dp'; }
+  const fill = document.getElementById('progFill');
+  fill.style.width = '0%';
+  const total = DURATIONS.reduce((a,b)=>a+b,0);
+  let elapsed = 0;
+  for(let i=0;i<5;i++) {
+    if(stopRequested) break;
+    autoIdx = i;
+    document.getElementById('dp'+i).className='dp active';
+    if(!userTookControl) showPhase(i);
+    const dur = DURATIONS[i];
+    const step = 100;
+    for(let t=0; t<dur; t+=step) {
+      if(stopRequested) break;
+      await sleep(Math.min(step, dur-t));
+    }
+    if(stopRequested) {
+      completed.add(i);
+      document.getElementById('dp'+i).className='dp done selected';
+      elapsed += DURATIONS[i];
+      fill.style.width = Math.round(elapsed/total*100)+'%';
+      break;
+    }
+    completed.add(i);
+    document.getElementById('dp'+i).className='dp done selected';
+    elapsed += DURATIONS[i];
+    fill.style.width = Math.round(elapsed/total*100)+'%';
+  }
+  autoIdx = -1;
+  running = false; stopRequested = false;
+  btn.classList.remove('running'); btn.disabled = false;
+  btn.querySelector('.btn-t').textContent = '↺ Run Again';
+  stopBtn.style.display = 'none';
+}
+
+function toggleStory(el) {
+  const expand = el.querySelector('.ss-expand');
+  if (el.classList.contains('open')) {
+    expand.style.maxHeight = null;
+    el.classList.remove('open');
+  } else {
+    el.classList.add('open');
+    expand.style.maxHeight = expand.scrollHeight + 'px';
+  }
+}
+function toggleBk(el) { el.classList.toggle('open'); }
+function jumpToBk(i) {
+  const row = document.getElementById('bk-' + i);
+  if (!row) return;
+  if (!row.classList.contains('open')) row.classList.add('open');
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  row.style.borderColor = 'rgba(255,255,255,.4)';
+  setTimeout(() => { row.style.borderColor = ''; }, 1200);
+}
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const sectionsToAnimate = document.querySelectorAll('.flow-sec, .story-sec, .demo-sec, .bk-sec, .sum-sec');
+    sectionsToAnimate.forEach(el => el.classList.add('reveal'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        } else {
+          entry.target.classList.remove('active');
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    });
+    sectionsToAnimate.forEach(el => observer.observe(el));
+    // Force background video play on mobile (iOS Safari autoplay workaround)
+    const bgVideo = document.getElementById('bg-video');
+    if (bgVideo) {
+      const tryPlay = () => {
+        const p = bgVideo.play();
+        if (p !== undefined) {
+          p.catch(() => {
+            const forcePlay = () => {
+              bgVideo.play();
+              document.removeEventListener('touchstart', forcePlay);
+              document.removeEventListener('scroll', forcePlay);
+            };
+            document.addEventListener('touchstart', forcePlay, { once: true });
+            document.addEventListener('scroll', forcePlay, { once: true });
+          });
+        }
+      };
+      tryPlay();
+    }
+
+    lucide.createIcons();
+  });
+</script>
+</body>
+</html>
