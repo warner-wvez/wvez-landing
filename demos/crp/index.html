@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WVEZ · Content Recipe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<style>
+:root {
+  --bg: #000;
+  --s1: hsl(0,0%,5%);
+  --s2: hsl(0,0%,8%);
+  --border: hsl(0,0%,18%);
+  --border2: hsl(0,0%,28%);
+  --fg: #fff;
+  --muted: hsl(0,0%,62%);
+  --dim: hsl(0,0%,36%);
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Mono', monospace;
+  --r: 6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);-webkit-font-smoothing:antialiased;padding-bottom:120px;position:relative}
+
+/* texture overlay */
+body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.07;z-index:0;pointer-events:none}
+
+/* background video */
+#bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:0;pointer-events:none;filter:grayscale(100%) brightness(0.3) contrast(1.3);opacity:0.5}
+.hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{position:relative;z-index:1}
+
+/* animations */
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:translateY(0) } }
+@keyframes pulse  { 0%,100% { opacity:.3 } 50% { opacity:1 } }
+@keyframes spin   { to { transform:rotate(360deg) } }
+@keyframes rowIn  { from { opacity:0; transform:translateY(5px) } to { opacity:1; transform:translateY(0) } }
+
+/* scroll reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+
+/* ── HERO ── */
+.hero{padding:72px 40px 0;max-width:1160px;margin:0 auto;animation:fadeUp .7s ease both}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;margin-bottom:36px;position:relative}
+.hero-title{font-size:clamp(44px,6.5vw,74px);font-weight:700;letter-spacing:-.04em;line-height:1}
+.hero-tag{font-family:var(--sans);font-size:11px;font-style:italic;color:var(--muted);margin-top:6px;margin-bottom:8px;letter-spacing:0.05em;opacity:0.8}
+.hero-sub{font-size:14px;color:var(--muted);line-height:1.8;max-width:520px;margin-top:14px}
+.stats{display:flex;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;flex-shrink:0;align-self:flex-end}
+.hero-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.stat{padding:13px 20px;border-right:1px solid var(--border);text-align:center;min-width:80px}
+.stat:last-child{border-right:none}
+.sn{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.sl{font-size:7.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin-top:4px}
+
+/* ── SECTION HEADER ── */
+.sec-h{margin-bottom:28px}
+.sec-h h2{font-size:clamp(22px,3.5vw,34px);font-weight:700;letter-spacing:-.025em;line-height:1.15;margin-top:9px}
+.sec-h p{font-size:13.5px;color:var(--muted);margin-top:9px;line-height:1.75;max-width:560px}
+.tag{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+
+/* ── FLOW CANVAS ── */
+.flow-sec{max-width:1160px;margin:0 auto;padding:0 40px}
+.sec-label{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:16px;margin-top:72px}
+.flow-box{position:relative;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#040404}
+.wf-canvas{position:relative;width:100%;min-width:0;aspect-ratio:1800/500;height:auto;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.05),rgba(0,0,0,0) 62%),#060606}
+.wf-canvas::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.12) .8px,transparent .8px);background-size:16px 16px;opacity:.35}
+.wf-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.wf-line{fill:none;stroke:rgba(188,198,214,.42);stroke-width:2.2}
+.wf-line.strong{stroke:rgba(225,231,240,.62)}
+.wf-line.dash{stroke-dasharray:5 5;opacity:.78}
+
+/* phase annotations */
+.ann{position:absolute;font-family:var(--mono);font-size:clamp(6px,.8vw,9px);font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:clamp(2px,.35vw,4px) clamp(6px,.9vw,10px);border-radius:40px;border:1px solid;backdrop-filter:blur(8px);white-space:nowrap;pointer-events:none;z-index:3}
+.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
+
+/* annotation colors */
+.a1{color:#fff;border-color:rgba(255,255,255,.35);background:rgba(0,0,0,.8)}
+.a2{color:#9ab8ff;border-color:rgba(154,184,255,.35);background:rgba(0,0,0,.8)}
+.a3{color:#ffd2a4;border-color:rgba(255,210,164,.35);background:rgba(0,0,0,.8)}
+.a4{color:#9fe8ff;border-color:rgba(159,232,255,.35);background:rgba(0,0,0,.8)}
+.a5{color:#d7c4ff;border-color:rgba(215,196,255,.35);background:rgba(0,0,0,.8)}
+.a6{color:#ffb4e6;border-color:rgba(255,180,230,.35);background:rgba(0,0,0,.8)}
+.a7{color:#98ffb8;border-color:rgba(152,255,184,.35);background:rgba(0,0,0,.8)}
+
+/* node styles */
+.wf-node{position:absolute;z-index:2;transform:translate(-50%,-50%);width:fit-content;min-width:80px;max-width:110px;height:auto;min-height:0;padding:8px 8px 6px;border:1px solid var(--border2);border-radius:9px;background:rgba(18,18,18,.94);box-shadow:0 8px 18px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:flex-start}
+.wf-node.small{min-width:80px;max-width:110px}
+.wf-node.wide{min-width:80px;max-width:110px}
+.wf-node.wf-mini{width:34px;min-width:34px;max-width:34px;height:34px;min-height:34px;padding:0;border-radius:999px;display:flex;align-items:center;justify-content:center}
+.wf-node.wf-mini .wf-icon{width:18px;height:18px;border:none;border-radius:999px;background:transparent}
+.wf-node.wf-mini .wf-name{display:none}
+.wf-icon{width:20px;height:20px;flex-shrink:0;border-radius:5px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.02em}
+.wf-icon svg{width:12px;height:12px;stroke-width:2}
+.wf-name{font-size:9px;font-weight:500;line-height:1.2;letter-spacing:.01em;color:var(--fg);display:block;white-space:normal;overflow:visible;text-align:center}
+.wf-sub{display:none}
+
+/* node type colors */
+.t-trigger .wf-icon{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
+.t-http .wf-icon{color:#d7c4ff;border-color:rgba(184,148,255,.6);background:rgba(184,148,255,.18)}
+.t-code .wf-icon{color:#ffd2a4;border-color:rgba(255,174,102,.6);background:rgba(255,174,102,.18)}
+.t-merge .wf-icon{color:#9fe8ff;border-color:rgba(123,214,255,.62);background:rgba(123,214,255,.18)}
+.t-sheet .wf-icon{color:#98ffb8;border-color:rgba(109,225,141,.65);background:rgba(109,225,141,.18)}
+.t-ai .wf-icon{color:#ffb4e6;border-color:rgba(255,180,230,.65);background:rgba(255,180,230,.18)}
+.t-apify .wf-icon{color:#9ab8ff;border-color:rgba(154,184,255,.6);background:rgba(154,184,255,.18)}
+.t-batch .wf-icon{color:#9fe8ff;border-color:rgba(123,214,255,.62);background:rgba(123,214,255,.18)}
+
+/* node positions */
+.n-trigger{left:6%;top:55%}
+.n-apify{left:20%;top:55%}
+.n-std{left:34%;top:55%}
+.n-batch{left:48%;top:55%}
+.n-http{left:62%;top:55%}
+.n-gemini{left:76%;top:55%}
+.n-sheets{left:88%;top:55%}
+.n-clear{left:96%;top:55%}
+
+/* annotation positions */
+.ann-1{left:1.5%;top:35%}
+.ann-2{left:15.5%;top:35%}
+.ann-3{left:28.65%;top:35%}
+.ann-4{left:44%;top:35%}
+.ann-5{left:58%;top:35%}
+.ann-6{left:70%;top:35%}
+.ann-7{left:87%;top:35%}
+
+/* ── STORY STRIP ── */
+.story-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.story-strip{border:1px solid var(--border);border-radius:var(--r);background:var(--s1);display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden}
+.ss-item{padding:0;border-right:1px solid var(--border);display:flex;flex-direction:column;cursor:pointer;transition:background .15s;position:relative}
+.ss-item:last-child{border-right:none}
+.ss-head{padding:18px 20px;display:flex;flex-direction:column;gap:4px;transition:background .15s}
+.ss-head:hover{background:rgba(255,255,255,.03)}
+.ss-l{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--dim);display:flex;align-items:center;justify-content:space-between}
+.ss-arrow{transition:transform .2s;display:inline-block;font-size:10px}
+.ss-item.open .ss-arrow{transform:rotate(180deg)}
+.ss-v{font-size:13px;font-weight:600;line-height:1.4;letter-spacing:-.01em}
+.ss-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.ss-body{padding:0 20px 18px;font-size:12.5px;color:var(--muted);line-height:1.85;border-top:1px solid var(--border);padding-top:14px}
+.ss-body strong{color:var(--fg);font-weight:600}
+
+/* ── DEMO SHELL ── */
+.demo-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.demo-shell{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.demo-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--s2)}
+.demo-dots{display:flex;gap:6px}
+.ddot{width:10px;height:10px;border-radius:50%}
+.demo-ttl{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.06em}
+.run-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--fg);color:var(--bg);border:none;border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:opacity .15s;letter-spacing:-.01em}
+.run-btn:hover{opacity:.82}.run-btn:disabled{opacity:.32;cursor:not-allowed}
+.stop-btn{padding:7px 14px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s}
+.stop-btn:hover{border-color:var(--border2);color:var(--fg)}
+.spin-i{width:11px;height:11px;border-radius:50%;border:2px solid var(--bg);border-top-color:transparent;animation:spin .55s linear infinite;display:none;flex-shrink:0}
+.run-btn.running .spin-i{display:block}.run-btn.running .btn-t{display:none}
+
+/* ── DEMO SIDEBAR ── */
+.demo-body{display:grid;grid-template-columns:210px 1fr;min-height:520px}
+.demo-side{border-right:1px solid var(--border);background:var(--bg);display:flex;flex-direction:column}
+.dp-hint{font-family:var(--mono);font-size:7.5px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;padding:12px 16px 4px;opacity:.6}
+.dp{padding:8px 14px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .12s;position:relative;user-select:none}
+.dp:hover{background:rgba(255,255,255,.03)}
+.dp.active .dp-dot{background:var(--fg);box-shadow:0 0 0 3px rgba(255,255,255,.1);animation:pulse 1.2s ease infinite}
+.dp.done .dp-dot{background:rgba(255,255,255,.3)}
+.dp.done .dp-lbl{color:var(--muted)}
+.dp.selected{background:rgba(255,255,255,.04)}
+.dp.selected .dp-lbl{color:var(--fg)}
+.dp.selected::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(255,255,255,.4)}
+.dp-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:all .3s}
+.dp-lbl{font-size:11px;font-weight:500;color:var(--dim);transition:color .2s;line-height:1.2}
+.dp-sub{font-size:8px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;margin-top:1px}
+.dp-conn{width:1px;height:9px;background:var(--border);margin-left:17px}
+.demo-out{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
+.demo-out::before{content:'';position:absolute;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.09;z-index:0;pointer-events:none}
+.demo-prog{height:2px;background:var(--border);flex-shrink:0}
+.demo-prog-fill{height:100%;background:var(--fg);width:0;transition:width .6s ease}
+.demo-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;opacity:.25;padding:40px;position:relative;z-index:1}
+.demo-idle-ico{font-size:26px}
+.demo-idle-txt{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-align:center;line-height:1.9}
+.phase-view{flex:1;overflow-y:auto;display:none;padding:20px 22px;position:relative;z-index:1}
+.phase-view.visible{display:block}
+.phase-view::-webkit-scrollbar{width:4px}
+.phase-view::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* step header + description (RECON style) */
+.ph-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ph-badge{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--border);border-radius:40px;color:var(--dim)}
+.ph-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.ph-desc{font-size:12.5px;color:var(--muted);line-height:1.75;margin-bottom:12px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--r);background:rgba(255,255,255,.02)}
+.ph-desc strong{color:var(--fg);font-weight:600}
+
+/* source divider */
+.src-div{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:14px 0 6px;display:flex;align-items:center;gap:7px}
+.src-div::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* data stream rows */
+.ds{display:flex;flex-direction:column;gap:3px;margin-bottom:11px}
+.dr{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--s2);border:1px solid var(--border);border-radius:4px;opacity:0;animation:rowIn .3s ease forwards}
+.dstore{font-family:var(--mono);font-size:8px;padding:2px 7px;border-radius:3px;background:rgba(255,255,255,.05);color:var(--dim);min-width:86px;text-align:center;flex-shrink:0;letter-spacing:.04em}
+.dname{font-size:12px;font-weight:500;flex:1;min-width:0}
+.dval{font-family:var(--mono);font-size:10.5px;flex-shrink:0}
+.ok{color:#9effcb}.pen{color:#ffd080}.dim{color:var(--muted)}
+
+/* sheet preview */
+.sh-wrap{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:10px}
+.sh-hdr{display:flex;background:var(--s2);border-bottom:1px solid var(--border);padding:6px 0}
+.sh-hdr span{flex:1;font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);text-align:center;padding:0 4px}
+.sh-row{display:flex;padding:7px 0;border-bottom:1px solid var(--border);opacity:0;animation:rowIn .25s ease forwards}
+.sh-row:last-child{border-bottom:none}
+.sh-row span{flex:1;font-size:10px;text-align:center;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* result banner */
+.res-ban{border:1px solid rgba(152,255,184,.2);border-radius:var(--r);background:rgba(152,255,184,.04);padding:14px 18px;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;opacity:0;animation:rowIn .3s ease forwards}
+.res-s{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:65px}
+.res-v{font-size:17px;font-weight:700;color:#98ffb8;letter-spacing:-.02em}
+.res-l{font-family:var(--mono);font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+
+/* deal cards */
+.deal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:11px}
+.deal-card{border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;background:var(--s2);opacity:0;animation:rowIn .3s ease forwards;display:flex;flex-direction:column;gap:5px;position:relative}
+.deal-title{font-size:11.5px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deal-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.deal-code{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:3px;background:rgba(158,255,203,.08);color:#9effcb;border:1px solid rgba(158,255,203,.2);letter-spacing:.04em}
+.deal-price{font-family:var(--mono);font-size:10.5px;color:#9effcb;font-weight:600}
+.deal-orig{font-family:var(--mono);font-size:9px;color:var(--dim);text-decoration:line-through}
+.deal-save{font-family:var(--mono);font-size:8px;padding:2px 6px;border-radius:3px;background:rgba(255,208,128,.08);color:#ffd080;border:1px solid rgba(255,208,128,.2)}
+
+/* ── BREAKDOWN ── */
+.bk-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
+.bk-list{display:flex;flex-direction:column;gap:3px}
+.bk-row{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .2s}
+.bk-row:hover{border-color:var(--border2)}
+.bk-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;transition:background .12s;user-select:none}
+.bk-head:hover{background:rgba(255,255,255,.02)}
+.bk-dot{width:3px;height:28px;border-radius:2px;flex-shrink:0}
+.c1{background:rgba(255,255,255,.45)}.c2{background:#9ab8ff}.c3{background:#ffd2a4}.c4{background:#9fe8ff}.c5{background:#d7c4ff}.c6{background:#ffb4e6}.c7{background:#98ffb8}
+.bk-num{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;min-width:16px}
+.bk-name{font-size:13px;font-weight:600;flex:1}
+.bk-count{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.06em}
+.bk-arrow{color:var(--dim);font-size:11px;transition:transform .2s}
+.bk-row.open .bk-arrow{transform:rotate(180deg)}
+.bk-expand{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(0.4,0,0.2,1)}
+.bk-row.open .bk-expand{max-height:200px}
+.bk-body{padding:0 18px 16px 35px;font-size:12px;color:var(--muted);line-height:1.75}
+.bk-body strong{color:var(--fg);font-weight:600}
+
+/* ── SUMMARY ── */
+.sum-sec{max-width:1160px;margin:0 auto;padding:72px 40px 0}
+.sum-inner{border:1px solid var(--border);border-radius:var(--r);padding:34px 38px;background:var(--s1);display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.sum-h{font-size:25px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-bottom:11px}
+.sum-p{font-size:13px;color:var(--muted);line-height:1.8}
+.ocs{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.oc{display:flex;gap:11px;align-items:flex-start}
+.oc-d{width:3px;height:3px;border-radius:50%;background:var(--fg);opacity:.28;flex-shrink:0;margin-top:8px}
+.oc-t{font-size:12.5px;color:var(--muted);line-height:1.7}
+.oc-t strong{color:var(--fg);font-weight:600}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hero{padding:48px 20px 0;padding-bottom:24px}
+  .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
+  .hero-title{font-size:clamp(28px,8vw,44px)}
+  .hero-sub{font-size:13px;max-width:100%}
+  .stats{margin-top:20px;flex-wrap:wrap;width:100%}
+  .stat{min-width:0;flex:1}
+  model-viewer#hero-logo{display:none}
+
+  .flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{padding-left:16px;padding-right:16px}
+  .flow-sec{padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;min-height:0}
+  .flow-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .wf-canvas{min-width:600px}
+
+  .story-strip{grid-template-columns:1fr}
+  .story-sec,.demo-sec,.bk-sec,.sum-sec{padding-top:48px}
+
+  .demo-body{grid-template-columns:1fr;min-height:auto}
+  .demo-side{border-right:none;border-bottom:1px solid var(--border);flex-direction:row;flex-wrap:wrap;padding:8px;gap:4px}
+  .dp{padding:10px 12px;min-height:44px}
+  .dp-lbl{font-size:11px}
+  .dp-conn,.dp-hint{display:none}
+  .phase-view{padding:16px;min-height:300px}
+
+  .bk-head{padding:14px 16px;min-height:44px}
+  .bk-body{padding:0 16px 16px 28px;font-size:13px}
+  .bk-name{font-size:13px}
+
+  .sum-inner{grid-template-columns:1fr;padding:22px;gap:22px}
+
+  .deal-grid{grid-template-columns:1fr}
+  .jb{font-size:9px;padding:10px}
+}
+@media(max-width:480px){
+  .flow-box{display:none}
+  .flow-cap{display:none}
+}
+.back-btn{position:fixed;top:16px;left:20px;z-index:1000;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#6e6e6e;text-decoration:none;background:rgba(0,0,0,0.7);padding:6px 12px;border-radius:4px;backdrop-filter:blur(8px);border:none;cursor:pointer;transition:color 0.2s}
+.back-btn:hover{color:#f5f5f5}
+</style>
+</head>
+<body>
+<a href="https://wvez.org" target="_top" class="back-btn">&lt; WVEZ.ORG</a>
+
+<!-- BACKGROUND VIDEO -->
+<video id="bg-video" muted loop playsinline webkit-playsinline autoplay preload="auto" src="https://pub-2b72d9c0a9f649e99699874d22247129.r2.dev/12817774_3840_2160_30fps.mp4"></video>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-row">
+    <div>
+      <h1 class="hero-title">WVEZ Content Recipe</h1>
+      <div class="hero-tag">Know exactly what works before you post.</div>
+      <p class="hero-sub">A content intelligence system that scrapes any Instagram creator's posts, runs analysis on the first 10 seconds of every video, and delivers a full engagement breakdown so you know what types of content actually drive growth.</p>
+    </div>
+    <model-viewer
+      id="hero-logo"
+      src="logo.glb"
+      camera-orbit="90deg 90deg auto"
+      field-of-view="26deg"
+      exposure="1.15"
+      disable-zoom
+      interaction-prompt="none"
+      style="position:absolute;right:60px;top:-30px;width:200px;height:200px;background:transparent;"
+    ></model-viewer>
+    <div class="hero-right">
+      <div class="stats">
+        <div class="stat"><div class="sn">8</div><div class="sl">Nodes</div></div>
+        <div class="stat"><div class="sn">4</div><div class="sl">Integrations</div></div>
+        <div class="stat"><div class="sn">50</div><div class="sl">Videos / Run</div></div>
+        <div class="stat"><div class="sn">1</div><div class="sl">Click</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOW VISUALIZATION ═══ -->
+<div class="flow-sec">
+  <div class="flow-box">
+    <div class="wf-canvas">
+      <!-- SVG Lines -->
+      <svg class="wf-lines" viewBox="0 0 1800 500" preserveAspectRatio="none">
+        <path class="wf-line strong" d="M 108 275 L 340 275"/>
+        <path class="wf-line strong" d="M 390 275 L 580 275"/>
+        <path class="wf-line strong" d="M 640 275 L 830 275"/>
+        <path class="wf-line strong" d="M 890 275 L 1080 275"/>
+        <path class="wf-line strong" d="M 1140 275 L 1330 275"/>
+        <path class="wf-line strong" d="M 1390 275 L 1550 275"/>
+        <path class="wf-line strong" d="M 1600 275 L 1710 275"/>
+        <!-- Loop-back line from Clear Binary → SplitInBatches -->
+        <path class="wf-line dash" d="M 1728 305 C 1728 440, 864 440, 864 305"/>
+      </svg>
+
+      <!-- Annotations -->
+      <span class="ann a1 ann-1" onclick="jumpToBk(0)" style="cursor:pointer;pointer-events:auto">01 · Trigger</span>
+      <span class="ann a2 ann-2" onclick="jumpToBk(1)" style="cursor:pointer;pointer-events:auto">02 · Scrape</span>
+      <span class="ann a3 ann-3" onclick="jumpToBk(2)" style="cursor:pointer;pointer-events:auto">03 · Standardize</span>
+      <span class="ann a4 ann-4" onclick="jumpToBk(3)" style="cursor:pointer;pointer-events:auto">04 · Batch</span>
+      <span class="ann a5 ann-5" onclick="jumpToBk(4)" style="cursor:pointer;pointer-events:auto">05 · Media</span>
+      <span class="ann a6 ann-6" onclick="jumpToBk(5)" style="cursor:pointer;pointer-events:auto">06 · AI Analysis</span>
+      <span class="ann a7 ann-7" onclick="jumpToBk(6)" style="cursor:pointer;pointer-events:auto">07 · Output</span>
+
+      <!-- Nodes -->
+      <div class="wf-node t-trigger n-trigger">
+        <div class="wf-icon"><i data-lucide="mouse-pointer-click"></i></div>
+        <div><div class="wf-name">Execute Workflow</div></div>
+      </div>
+      <div class="wf-node t-apify n-apify">
+        <div class="wf-icon"><i data-lucide="scan-search"></i></div>
+        <div><div class="wf-name">Fetch Creator Content</div></div>
+      </div>
+      <div class="wf-node t-code n-std">
+        <div class="wf-icon"><i data-lucide="braces"></i></div>
+        <div><div class="wf-name">Standardize Data</div></div>
+      </div>
+      <div class="wf-node t-batch n-batch">
+        <div class="wf-icon"><i data-lucide="repeat"></i></div>
+        <div><div class="wf-name">Process Each Post</div></div>
+      </div>
+      <div class="wf-node t-http n-http">
+        <div class="wf-icon"><i data-lucide="globe"></i></div>
+        <div><div class="wf-name">Get Media</div></div>
+      </div>
+      <div class="wf-node t-ai n-gemini">
+        <div class="wf-icon"><i data-lucide="sparkles"></i></div>
+        <div><div class="wf-name">AI Analysis</div></div>
+      </div>
+      <div class="wf-node t-sheet n-sheets">
+        <div class="wf-icon"><i data-lucide="sheet"></i></div>
+        <div><div class="wf-name">Data Output</div></div>
+      </div>
+      <div class="wf-node t-code n-clear">
+        <div class="wf-icon"><i data-lucide="trash-2"></i></div>
+        <div><div class="wf-name">Clear Binary</div></div>
+      </div>
+    </div>
+  </div>
+  <p class="flow-cap">Full n8n workflow · 8 nodes · WVEZ Content Recipe V1.0</p>
+</div>
+
+<!-- ═══ WHY DID I BUILD THIS? ═══ -->
+<div class="story-sec">
+  <div class="sec-h">
+    <span class="tag">The backstory</span>
+    <h2>Why did I build this?</h2>
+  </div>
+  <div class="story-strip">
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Started as <span class="ss-arrow">&#9662;</span></div>
+        <div class="ss-v">A quick favor for a friend</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">My friend was trying to grow his Instagram account and I asked him, "hey, would you be interested in a system that can pull engagement data from any account you choose?" After the quick yes, I got to work. Shoutout to <a href="https://www.instagram.com/sheancreates/" target="_blank" rel="noopener" style="color:var(--fg);text-decoration:underline;text-underline-offset:3px">@sheancreates</a>.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Became <span class="ss-arrow">&#9662;</span></div>
+        <div class="ss-v">A full content intelligence engine</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">What started as simple data pulls evolved into a system that uses Google Gemini to watch the first 10 seconds of every video, transcribe the hook, and categorize each post into a "content pillar", giving him a complete picture of what types of content actually drive engagement.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Result <span class="ss-arrow">&#9662;</span></div>
+        <div class="ss-v">1,000+ videos analyzed automatically</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">The workflow now pulls the most recent 50 videos from any creator of his choosing. He can see the post date, URL, likes, comments, captions, hashtags, length, views, engagement score, AI-assigned content pillar, and the literal first sentence of each video. He now knows EXACTLY what works, for himself and his competitors.</div>
+      </div>
+    </div>
+    <div class="ss-item" onclick="toggleStory(this)">
+      <div class="ss-head">
+        <div class="ss-l">Biggest lesson <span class="ss-arrow">&#9662;</span></div>
+        <div class="ss-v">AI sees what humans scroll past</div>
+      </div>
+      <div class="ss-expand">
+        <div class="ss-body">The biggest unlock was using Gemini to actually watch and categorize the videos. Humans scroll past 50 reels and remember nothing, the system watches all 50 (or more), transcribes every hook, and spots patterns you'd never catch manually. The first 10 seconds tell the whole story.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ INTERACTIVE DEMO ═══ -->
+<div class="demo-sec">
+  <div class="sec-h">
+    <span class="tag">Interactive demo</span>
+    <h2>See it run</h2>
+    <p>Click any stage to see what it outputs. Or hit <strong>Run Analysis</strong> to watch the whole pipeline fire in sequence.</p>
+  </div>
+  <div class="demo-shell">
+    <div class="demo-bar">
+      <div class="demo-dots">
+        <div class="ddot" style="background:#ff5f57"></div>
+        <div class="ddot" style="background:#febc2e"></div>
+        <div class="ddot" style="background:#28c840"></div>
+      </div>
+      <span class="demo-ttl">WVEZ_CONTENT_RECIPE_V1 · n8n workflow engine</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="stop-btn" id="stopBtn" onclick="stopDemo()" style="display:none">■ Stop</button>
+        <button class="run-btn" id="runBtn" onclick="startDemo()">
+          <div class="spin-i"></div>
+          <span class="btn-t">▶ Run Analysis</span>
+        </button>
+      </div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-side" id="pipeline">
+        <div class="dp-hint">Click any stage</div>
+        <div class="dp" id="dp0" onclick="sel(0)"><div class="dp-dot" id="dot0"></div><div><div class="dp-lbl">01 · Scrape</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp1" onclick="sel(1)"><div class="dp-dot" id="dot1"></div><div><div class="dp-lbl">02 · Standardize</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp2" onclick="sel(2)"><div class="dp-dot" id="dot2"></div><div><div class="dp-lbl">03 · Download Media</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp3" onclick="sel(3)"><div class="dp-dot" id="dot3"></div><div><div class="dp-lbl">04 · AI Analysis</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp4" onclick="sel(4)"><div class="dp-dot" id="dot4"></div><div><div class="dp-lbl">05 · Score</div><div class="dp-sub">1 node</div></div></div>
+        <div class="dp-conn"></div>
+        <div class="dp" id="dp5" onclick="sel(5)"><div class="dp-dot" id="dot5"></div><div><div class="dp-lbl">06 · Output</div><div class="dp-sub">2 nodes</div></div></div>
+      </div>
+      <div class="demo-out">
+        <div class="demo-prog"><div class="demo-prog-fill" id="progFill"></div></div>
+        <div class="demo-idle" id="idleState">
+          <div class="demo-idle-ico">◎</div>
+          <div class="demo-idle-txt">Click any stage on the left to explore<br>or press "Run Analysis" to watch it all fire</div>
+        </div>
+        <div class="phase-view" id="phaseView"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<div class="bk-sec">
+  <div class="sec-h">
+    <span class="tag">Step by step</span>
+    <h2>How it works</h2>
+  </div>
+
+  <div class="bk-list">
+  <div class="bk-row" id="bk-0" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c1"></div>
+      <span class="bk-num">01</span>
+      <span class="bk-name">Trigger</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">You click one button. That's it, the whole system starts running and <strong>does everything else automatically</strong>.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-1" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c2"></div>
+      <span class="bk-num">02</span>
+      <span class="bk-name">Scrape Creator Content</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Goes to Instagram and <strong>pulls the most recent 50 posts from any creator you choose</strong>, their captions, views, likes, comments, video URLs, everything.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-2" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c3"></div>
+      <span class="bk-num">03</span>
+      <span class="bk-name">Standardize</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Cleans and organizes the raw data, <strong>calculates engagement scores, formats dates, and strips out the noise</strong> so every post is comparable.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-3" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c4"></div>
+      <span class="bk-num">04</span>
+      <span class="bk-name">Batch Processing</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Processes posts in small groups of 5 to <strong>stay within rate limits and keep the system reliable</strong>, no crashing, no skipped posts.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-4" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c5"></div>
+      <span class="bk-num">05</span>
+      <span class="bk-name">Download Media</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Downloads the actual video or image file for each post so <strong>AI can watch and analyze the content directly</strong>.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-5" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c6"></div>
+      <span class="bk-num">06</span>
+      <span class="bk-name">AI Video Analysis</span>
+      <span class="bk-count">1 node</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Google Gemini watches the first 10 seconds of every video. It <strong>transcribes the hook word-for-word and assigns a content category</strong> based on what the video is actually about.</div>
+    </div>
+  </div>
+
+  <div class="bk-row" id="bk-6" onclick="toggleBk(this)">
+    <div class="bk-head">
+      <div class="bk-dot c7"></div>
+      <span class="bk-num">07</span>
+      <span class="bk-name">Output to Google Sheets</span>
+      <span class="bk-count">2 nodes</span>
+      <span class="bk-arrow">&#9662;</span>
+    </div>
+    <div class="bk-expand">
+      <div class="bk-body">Everything lands in a clean Google Sheet, <strong>date, creator, URL, views, likes, engagement score, pillar, and the literal first sentence</strong>. Ready to sort and compare.</div>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══ SUMMARY ═══ -->
+<div class="sum-sec">
+  <div class="sum-inner">
+    <div>
+      <h2 class="sum-h">Stop guessing. Start knowing.</h2>
+      <p class="sum-p">Content Recipe turns Instagram guesswork into data. Instead of scrolling through competitors' feeds trying to figure out what's working, you press one button and get a full analysis with engagement scores, content categories, and the word for word hooks that are landing. Built for a friend. Useful for all creators.</p>
+    </div>
+    <div class="ocs">
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Scrape any creator's last 50 posts</strong>, views, likes, comments, captions, hashtags, and video length in one pull</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>AI watches every video's first 10 seconds</strong>, transcribes the hook and assigns a content pillar automatically</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Engagement scoring formula</strong>, (Likes + Comments) / Views so you can compare apples to apples across creators</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Clean Google Sheets output</strong>, sort by engagement, filter by pillar, and see patterns instantly</div></div>
+      <div class="oc"><div class="oc-d"></div><div class="oc-t"><strong>Competitor intelligence built in</strong>, run it on any public account and know exactly what types of content perform best</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── LOGO SWAY ANIMATION (identical to landing page) ────────────────
+const heroLogo = document.getElementById('hero-logo');
+const frontAzimuth = 90;
+const amplitude = 14;
+const period = 5000;
+const polar = 90;
+
+function animateLogo(now) {
+  const phase = (now / period) * Math.PI * 2;
+  const sinVal = Math.sin(phase);
+  const azimuth = frontAzimuth + sinVal * amplitude;
+  heroLogo.setAttribute('camera-orbit', `${azimuth.toFixed(2)}deg ${polar}deg auto`);
+  requestAnimationFrame(animateLogo);
+}
+
+if (heroLogo) {
+  heroLogo.addEventListener('load', () => {
+    requestAnimationFrame(animateLogo);
+  });
+}
+
+// ─── STORY STRIP TOGGLE ─────────────────────────────────────────────
+function toggleStory(el) {
+  const expand = el.querySelector('.ss-expand');
+  if (el.classList.contains('open')) {
+    expand.style.maxHeight = null;
+    el.classList.remove('open');
+  } else {
+    el.classList.add('open');
+    expand.style.maxHeight = expand.scrollHeight + 'px';
+  }
+}
+
+// ─── BREAKDOWN ACCORDION ─────────────────────────────────────────────
+function toggleBk(el) {
+  el.classList.toggle('open');
+}
+
+function jumpToBk(i) {
+  const row = document.getElementById('bk-' + i);
+  if (!row) return;
+  if (!row.classList.contains('open')) row.classList.add('open');
+  row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  row.style.borderColor = 'rgba(255,255,255,.4)';
+  setTimeout(() => { row.style.borderColor = ''; }, 1200);
+}
+
+// ─── STEP DURATIONS (ms), MINIMUM 10000 per step ───────────────────
+const DURATIONS = [11000, 10000, 10000, 12000, 11000, 12000];
+
+// ─── STATE ────────────────────────────────────────────────────────────
+let running = false, stopRequested = false, completed = new Set();
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ─── STEPS ────────────────────────────────────────────────────────────
+const STEPS = [
+  // 0, Scrape
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 01</span><span class="ph-title">Scrape Creator Content</span></div>
+    <div class="ph-desc">The system goes to Instagram and grabs the <strong>most recent 50 posts from the creator you chose</strong>. It collects everything, views, likes, comments, captions, hashtags, video URLs, even the audio track used.</div>`;
+    h += '<div class="ds">';
+    h += '<div class="dr" style="animation-delay:.1s"><span class="dstore">POST 1</span><span class="dname">"I want to be great and it\'s time to go all in"</span><span class="dval ok">786 views</span></div>';
+    h += '<div class="dr" style="animation-delay:.2s"><span class="dstore">POST 2</span><span class="dname">"I\'m so proud of you gang keep going!"</span><span class="dval ok">1,213 views</span></div>';
+    h += '<div class="dr" style="animation-delay:.3s"><span class="dstore">POST 3</span><span class="dname">"Why chase something childish like perfection?"</span><span class="dval ok">1,214 views</span></div>';
+    h += '<div class="dr" style="animation-delay:.4s"><span class="dstore">POST 4</span><span class="dname">"To plant a garden is to believe in tomorrow"</span><span class="dval pen">1,648 views</span></div>';
+    h += '<div class="dr" style="animation-delay:.5s"><span class="dstore">POST 5</span><span class="dname">"I am okay with being alone"</span><span class="dval pen">2,634 views</span></div>';
+    h += '<div class="dr" style="animation-delay:.6s"><span class="dstore">···</span><span class="dname dim">+ 45 more posts loading</span><span class="dval dim">...</span></div>';
+    h += '</div>';
+    return h;
+  },
+
+  // 1, Standardize
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 02</span><span class="ph-title">Standardize</span></div>
+    <div class="ph-desc">Raw Instagram data is messy, different formats, missing fields, inconsistent timestamps. This step <strong>standardizes every post into the same clean format</strong> and calculates the engagement score: (Likes + Comments) / Views.</div>`;
+    h += `<div class="sh-wrap"><div class="sh-hdr">
+      <span>Date</span><span>Creator</span><span>Views</span><span>Likes</span><span>Comments</span><span>Eng. Score</span><span>Length</span>
+    </div>
+    <div class="sh-row" style="animation-delay:.15s"><span>2026-01-22</span><span>@creator_a</span><span>786</span><span>135</span><span>10</span><span class="ok">18.45%</span><span>99s</span></div>
+    <div class="sh-row" style="animation-delay:.25s"><span>2026-01-21</span><span>@creator_a</span><span>1,213</span><span>189</span><span>29</span><span class="ok">17.97%</span><span>71s</span></div>
+    <div class="sh-row" style="animation-delay:.35s"><span>2026-01-20</span><span>@creator_a</span><span>1,214</span><span>151</span><span>18</span><span class="pen">13.92%</span><span>81s</span></div>
+    <div class="sh-row" style="animation-delay:.45s"><span>2026-01-19</span><span>@creator_a</span><span>1,648</span><span>273</span><span>4</span><span class="ok">16.81%</span><span>53s</span></div>
+    <div class="sh-row" style="animation-delay:.55s"><span>2026-01-18</span><span>@creator_a</span><span>2,634</span><span>397</span><span>12</span><span class="ok">15.53%</span><span>84s</span></div>
+    </div>`;
+    return h;
+  },
+
+  // 2, Download Media
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 03</span><span class="ph-title">Download Media</span></div>
+    <div class="ph-desc">The system downloads the actual media file for each post, whether it's a Reel, video, or image. This is <strong>necessary for AI to actually watch and analyze the content</strong>, not just read the caption.</div>`;
+    h += '<div class="ds">';
+    h += '<div class="dr" style="animation-delay:.1s"><span class="dstore">VIDEO</span><span class="dname">reel_01_motivation_all_in.mp4</span><span class="dval ok">done · 2.4MB</span></div>';
+    h += '<div class="dr" style="animation-delay:.2s"><span class="dstore">VIDEO</span><span class="dname">reel_02_proud_keep_going.mp4</span><span class="dval ok">done · 1.8MB</span></div>';
+    h += '<div class="dr" style="animation-delay:.3s"><span class="dstore">VIDEO</span><span class="dname">reel_03_perfection_chase.mp4</span><span class="dval ok">done · 2.1MB</span></div>';
+    h += '<div class="dr" style="animation-delay:.4s"><span class="dstore">VIDEO</span><span class="dname">reel_04_garden_believe.mp4</span><span class="dval pen">downloading...</span></div>';
+    h += '<div class="dr" style="animation-delay:.5s"><span class="dstore">VIDEO</span><span class="dname">reel_05_alone_reframe.mp4</span><span class="dval dim">queued</span></div>';
+    h += '</div>';
+    return h;
+  },
+
+  // 3, AI Analysis
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 04</span><span class="ph-title">AI Video Analysis</span></div>
+    <div class="ph-desc">Google Gemini <strong>watches the first 10 seconds of each video, transcribes the exact opening line, and assigns a content "pillar"</strong>, a specific category based on the problem the content addresses. Not generic tags like "Motivation", real categories like "Overcoming Fear of Commitment."</div>`;
+    h += '<div class="deal-grid">';
+    h += `<div class="deal-card" style="animation-delay:.1s">
+      <div class="deal-title">Post: "I want to be great..."</div>
+      <div class="deal-meta"><span class="deal-code">PILLAR</span><span style="font-size:11px;color:var(--muted)">Overcoming Fear of Commitment</span></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">"For too long, I've been afraid of what happens when I actually try my hardest."</div>
+    </div>`;
+    h += `<div class="deal-card" style="animation-delay:.2s">
+      <div class="deal-title">Post: "I'm so proud of you gang..."</div>
+      <div class="deal-meta"><span class="deal-code">PILLAR</span><span style="font-size:11px;color:var(--muted)">Celebrating Small Wins</span></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">"I just finished reflecting on the hardest thing I did last month."</div>
+    </div>`;
+    h += `<div class="deal-card" style="animation-delay:.3s">
+      <div class="deal-title">Post: "Why chase perfection?"</div>
+      <div class="deal-meta"><span class="deal-code">PILLAR</span><span style="font-size:11px;color:var(--muted)">Challenging Perfectionist Mindsets</span></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">"I realized that chasing perfection is the quickest way to ruin your life."</div>
+    </div>`;
+    h += `<div class="deal-card" style="animation-delay:.4s">
+      <div class="deal-title">Post: "I am okay with being alone"</div>
+      <div class="deal-meta"><span class="deal-code">PILLAR</span><span style="font-size:11px;color:var(--muted)">Reframing Solitude & Isolation</span></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:2px;font-style:italic">"I used to think being alone was a punishment."</div>
+    </div>`;
+    h += '</div>';
+    return h;
+  },
+
+  // 4, Score & Compare
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 05</span><span class="ph-title">Score & Compare</span></div>
+    <div class="ph-desc">Every post gets an engagement score so you can <strong>compare apples to apples</strong>. A post with 39,000 views and 22.9% engagement tells a completely different story than one with 800 views and 18%.</div>`;
+    h += `<div class="sh-wrap"><div class="sh-hdr">
+      <span>Pillar</span><span>Views</span><span>Eng. Score</span><span>Hook</span>
+    </div>
+    <div class="sh-row" style="animation-delay:.1s"><span class="ok">Active Listening</span><span>39,310</span><span class="ok" style="font-weight:700">22.95%</span><span style="font-size:9px;font-style:italic">"If you really love someone..."</span></div>
+    <div class="sh-row" style="animation-delay:.2s"><span class="ok">Self-Reflection</span><span>4,377</span><span class="ok" style="font-weight:700">22.92%</span><span style="font-size:9px;font-style:italic">"I need to stop looking for..."</span></div>
+    <div class="sh-row" style="animation-delay:.3s"><span class="pen">Unplanned Changes</span><span>571</span><span class="pen" style="font-weight:700">21.54%</span><span style="font-size:9px;font-style:italic">"Sometimes the best plans..."</span></div>
+    <div class="sh-row" style="animation-delay:.4s"><span class="pen">Kindness Check</span><span>1,081</span><span class="pen" style="font-weight:700">19.98%</span><span style="font-size:9px;font-style:italic">"When was the last time..."</span></div>
+    <div class="sh-row" style="animation-delay:.5s"><span>Friendship Bonds</span><span>575</span><span style="font-weight:700">19.65%</span><span style="font-size:9px;font-style:italic">"The people who show up..."</span></div>
+    </div>`;
+    return h;
+  },
+
+  // 5, Output
+  () => {
+    let h = `<div class="ph-hdr"><span class="ph-badge">Step 06</span><span class="ph-title">Output to Google Sheets</span></div>
+    <div class="ph-desc">The final output is a <strong>complete spreadsheet with every data point</strong>, date, creator name, URL, views, likes, comments, engagement score, hashtags, AI-assigned content pillar, and the literal first sentence spoken in the video.</div>`;
+    h += `<div class="sh-wrap"><div class="sh-hdr">
+      <span>Date</span><span>Creator</span><span>Views</span><span>Likes</span><span>Eng.</span><span>Pillar</span><span>Hook</span>
+    </div>
+    <div class="sh-row" style="animation-delay:.1s"><span>Jan 22</span><span>@creator_a</span><span>786</span><span>135</span><span class="ok">18.4%</span><span>Fear of Commitment</span><span style="font-size:8px;font-style:italic">"For too long, I've been..."</span></div>
+    <div class="sh-row" style="animation-delay:.2s"><span>Jan 21</span><span>@creator_a</span><span>1,213</span><span>189</span><span class="ok">17.9%</span><span>Celebrating Wins</span><span style="font-size:8px;font-style:italic">"I just finished reflecting..."</span></div>
+    <div class="sh-row" style="animation-delay:.3s"><span>Jan 20</span><span>@creator_a</span><span>1,214</span><span>151</span><span class="pen">13.9%</span><span>Perfectionist Mindset</span><span style="font-size:8px;font-style:italic">"I realized that chasing..."</span></div>
+    <div class="sh-row" style="animation-delay:.4s"><span>Jan 5</span><span>@creator_a</span><span>39,310</span><span>8,949</span><span class="ok" style="font-weight:700">22.9%</span><span>Active Listening</span><span style="font-size:8px;font-style:italic">"If you really love..."</span></div>
+    </div>`;
+    h += `<div class="res-ban" style="animation-delay:.6s">
+      <div class="res-s"><div class="res-v">50</div><div class="res-l">Posts Analyzed</div></div>
+      <div class="res-s"><div class="res-v">12</div><div class="res-l">Pillars Found</div></div>
+      <div class="res-s"><div class="res-v">22.9%</div><div class="res-l">Top Engagement</div></div>
+      <div class="res-s"><div class="res-v">50</div><div class="res-l">Hooks Transcribed</div></div>
+    </div>`;
+    return h;
+  }
+];
+
+// ─── ENGINE ───────────────────────────────────────────────────────────
+let autoIdx = -1, selIdx = -1, userTookControl = false;
+
+function showPhase(i) {
+  const pv = document.getElementById('phaseView');
+  pv.innerHTML = STEPS[i]();
+  pv.classList.add('visible');
+  document.getElementById('idleState').style.display = 'none';
+  for(let j=0;j<6;j++) {
+    const dp = document.getElementById('dp'+j);
+    dp.classList.remove('selected','active');
+    if (completed.has(j)) dp.classList.add('done');
+    if (j===autoIdx && running) dp.classList.add('active');
+  }
+  document.getElementById('dp'+i).classList.add('selected');
+  selIdx = i;
+}
+
+function sel(i) { userTookControl = true; showPhase(i); }
+
+function stopDemo() { stopRequested = true; }
+
+async function startDemo() {
+  if(running) return;
+  running = true; stopRequested = false;
+  completed.clear(); selIdx = -1; autoIdx = -1; userTookControl = false;
+  const btn = document.getElementById('runBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  btn.classList.add('running'); btn.disabled = true;
+  stopBtn.style.display = 'block';
+  for(let i=0;i<6;i++) { document.getElementById('dp'+i).className='dp'; }
+  const fill = document.getElementById('progFill');
+  fill.style.width = '0%';
+  const total = DURATIONS.reduce((a,b)=>a+b,0);
+  let elapsed = 0;
+  for(let i=0;i<6;i++) {
+    if(stopRequested) break;
+    autoIdx = i;
+    document.getElementById('dp'+i).className='dp active';
+    if(!userTookControl) showPhase(i);
+    const dur = DURATIONS[i];
+    const step = 100;
+    for(let t=0; t<dur; t+=step) {
+      if(stopRequested) break;
+      await sleep(Math.min(step, dur-t));
+    }
+    if(stopRequested) {
+      completed.add(i);
+      document.getElementById('dp'+i).className='dp done selected';
+      elapsed += DURATIONS[i];
+      fill.style.width = Math.round(elapsed/total*100)+'%';
+      break;
+    }
+    completed.add(i);
+    document.getElementById('dp'+i).className='dp done selected';
+    elapsed += DURATIONS[i];
+    fill.style.width = Math.round(elapsed/total*100)+'%';
+  }
+  autoIdx = -1;
+  running = false; stopRequested = false;
+  btn.classList.remove('running'); btn.disabled = false;
+  btn.querySelector('.btn-t').textContent = '\u21BA Run Again';
+  stopBtn.style.display = 'none';
+}
+
+// ─── SCROLL REVEAL ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const sectionsToAnimate = document.querySelectorAll('.flow-sec, .story-sec, .demo-sec, .bk-sec, .sum-sec');
+  sectionsToAnimate.forEach(el => el.classList.add('reveal'));
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      } else {
+        entry.target.classList.remove('active');
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: "0px 0px -50px 0px"
+  });
+  sectionsToAnimate.forEach(el => observer.observe(el));
+  // Force background video play on mobile (iOS Safari autoplay workaround)
+  const bgVideo = document.getElementById('bg-video');
+  if (bgVideo) {
+    const tryPlay = () => {
+      const p = bgVideo.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          const forcePlay = () => {
+            bgVideo.play();
+            document.removeEventListener('touchstart', forcePlay);
+            document.removeEventListener('scroll', forcePlay);
+          };
+          document.addEventListener('touchstart', forcePlay, { once: true });
+          document.addEventListener('scroll', forcePlay, { once: true });
+        });
+      }
+    };
+    tryPlay();
+  }
+
+  lucide.createIcons();
+});
+</script>
+</body>
+</html>
