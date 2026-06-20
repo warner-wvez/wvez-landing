@@ -961,6 +961,14 @@
       .project-header { padding: 2.5rem 1rem 0.5rem; }
       .project-close { font-size: 1.6rem; top: 0.5rem; right: 0.75rem; }
 
+      /* demo viewer arrows: collapse the "Previous/Next project" labels to a
+         compact triangle on each edge so they stop crowding the demo */
+      .project-nav { padding: 0.9rem 0.45rem; gap: 0; }
+      .project-nav span:not(.triangle) { display: none; }
+      .project-nav .triangle { font-size: 1.15rem; margin-top: 0; }
+      .project-nav.prev { left: 0; }
+      .project-nav.next { right: 0; }
+
       .progress-dots { bottom: 3.25rem; }
 
       .sidebar { width: 11rem; }
