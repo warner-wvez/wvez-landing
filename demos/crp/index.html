@@ -64,40 +64,39 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 /* ── FLOW CANVAS ── */
 .flow-sec{max-width:1160px;margin:0 auto;padding:0 40px}
 .sec-label{font-family:var(--mono);font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:16px;margin-top:72px}
-.flow-box{position:relative;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#040404}
-.wf-canvas{position:relative;width:100%;min-width:0;aspect-ratio:1800/500;height:auto;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.05),rgba(0,0,0,0) 62%),#060606}
-.wf-canvas::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.12) .8px,transparent .8px);background-size:16px 16px;opacity:.35}
-.wf-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-.wf-line{fill:none;stroke:rgba(188,198,214,.42);stroke-width:2.2}
-.wf-line.strong{stroke:rgba(225,231,240,.62)}
-.wf-line.dash{stroke-dasharray:5 5;opacity:.78}
-
-/* phase annotations */
-.ann{position:absolute;font-family:var(--mono);font-size:clamp(6px,.8vw,9px);font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:clamp(2px,.35vw,4px) clamp(6px,.9vw,10px);border-radius:40px;border:1px solid;backdrop-filter:blur(8px);white-space:nowrap;pointer-events:none;z-index:3}
-.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
-
-/* annotation colors */
-.a1{color:#fff;border-color:rgba(255,255,255,.35);background:rgba(0,0,0,.8)}
-.a2{color:#9ab8ff;border-color:rgba(154,184,255,.35);background:rgba(0,0,0,.8)}
-.a3{color:#ffd2a4;border-color:rgba(255,210,164,.35);background:rgba(0,0,0,.8)}
-.a4{color:#9fe8ff;border-color:rgba(159,232,255,.35);background:rgba(0,0,0,.8)}
-.a5{color:#d7c4ff;border-color:rgba(215,196,255,.35);background:rgba(0,0,0,.8)}
-.a6{color:#ffb4e6;border-color:rgba(255,180,230,.35);background:rgba(0,0,0,.8)}
-.a7{color:#98ffb8;border-color:rgba(152,255,184,.35);background:rgba(0,0,0,.8)}
-
-/* node styles */
-.wf-node{position:absolute;z-index:2;transform:translate(-50%,-50%);width:fit-content;min-width:80px;max-width:110px;height:auto;min-height:0;padding:8px 8px 6px;border:1px solid var(--border2);border-radius:9px;background:rgba(18,18,18,.94);box-shadow:0 8px 18px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:flex-start}
-.wf-node.small{min-width:80px;max-width:110px}
-.wf-node.wide{min-width:80px;max-width:110px}
-.wf-node.wf-mini{width:34px;min-width:34px;max-width:34px;height:34px;min-height:34px;padding:0;border-radius:999px;display:flex;align-items:center;justify-content:center}
-.wf-node.wf-mini .wf-icon{width:18px;height:18px;border:none;border-radius:999px;background:transparent}
-.wf-node.wf-mini .wf-name{display:none}
-.wf-icon{width:20px;height:20px;flex-shrink:0;border-radius:5px;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.02em}
+.wf-shell{position:relative;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(11,11,11,.92),rgba(4,4,4,.96))}
+.wf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--border)}
+.wf-head-l{display:flex;align-items:center;gap:12px;min-width:0}
+.wf-badge-active{display:inline-flex;align-items:center;gap:7px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#6de18d;border:1px solid rgba(109,225,141,.4);background:rgba(109,225,141,.1);border-radius:40px;padding:4px 11px;white-space:nowrap}
+.wf-badge-active::before{content:'';width:5px;height:5px;border-radius:50%;background:#6de18d;box-shadow:0 0 8px #6de18d;animation:pulse 2s infinite}
+.wf-head-ttl{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wf-head-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.wf-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:34px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
+.wf-btn:hover{color:var(--fg);border-color:var(--fg)}
+.wf-btn svg{width:13px;height:13px;stroke-width:2.2}
+.wf-add{color:#6de18d;border-color:rgba(109,225,141,.45);background:rgba(109,225,141,.08)}
+.wf-add:hover{color:#aaffc4;border-color:#6de18d;background:rgba(109,225,141,.16)}
+.wf-add:disabled{opacity:.45;cursor:default;color:var(--dim);border-color:var(--border);background:transparent}
+.wf-legend{display:flex;flex-wrap:wrap;gap:6px;padding:11px 16px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.25)}
+.wf-legend button{font-family:var(--mono);font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px solid var(--border);border-radius:40px;padding:4px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+.wf-legend button:hover{color:var(--fg);border-color:var(--border2)}
+.wf-canvas{position:relative;background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.05),rgba(0,0,0,0) 60%),#060606}
+.wf-spatial{position:relative;width:100%;aspect-ratio:1800/500;height:auto}
+.wf-spatial::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.11) .8px,transparent .8px);background-size:18px 18px;opacity:.32;pointer-events:none}
+.wf-lines{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+.wf-line{fill:none;stroke:rgba(188,198,214,.4);stroke-width:2.2;stroke-linecap:round}
+.wf-line.strong{stroke:rgba(225,231,240,.6)}
+.wf-line.dash{stroke-dasharray:5 5;opacity:.7}
+.wf-node{position:absolute;z-index:2;transform:translate(-50%,-50%);width:96px;padding:6px;border:1px solid var(--border2);border-radius:9px;background:rgba(17,17,17,.95);box-shadow:0 8px 18px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;animation:wfPop .3s cubic-bezier(.34,1.32,.5,1) both}
+@keyframes wfPop{from{opacity:0;transform:translate(-50%,-50%) scale(.74)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.wf-node.is-mini{width:34px;height:34px;padding:0;border-radius:50%;justify-content:center}
+.wf-node.is-mini .wf-kind,.wf-node.is-mini .wf-name{display:none}
+.wf-node.is-mini .wf-icon{width:20px;height:20px;border:none;background:transparent}
+.wf-icon{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1px solid;display:flex;align-items:center;justify-content:center}
 .wf-icon svg{width:12px;height:12px;stroke-width:2}
-.wf-name{font-size:9px;font-weight:500;line-height:1.2;letter-spacing:.01em;color:var(--fg);display:block;white-space:normal;overflow:visible;text-align:center}
-.wf-sub{display:none}
-
-/* node type colors */
+.wf-kind{font-size:6px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);line-height:1}
+.wf-name{font-size:8px;font-weight:600;line-height:1.18;letter-spacing:-.01em;color:var(--fg);white-space:normal}
+.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
 .t-trigger .wf-icon{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
 .t-http .wf-icon{color:#d7c4ff;border-color:rgba(184,148,255,.6);background:rgba(184,148,255,.18)}
 .t-code .wf-icon{color:#ffd2a4;border-color:rgba(255,174,102,.6);background:rgba(255,174,102,.18)}
@@ -106,25 +105,36 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .t-ai .wf-icon{color:#ffb4e6;border-color:rgba(255,180,230,.65);background:rgba(255,180,230,.18)}
 .t-apify .wf-icon{color:#9ab8ff;border-color:rgba(154,184,255,.6);background:rgba(154,184,255,.18)}
 .t-batch .wf-icon{color:#9fe8ff;border-color:rgba(123,214,255,.62);background:rgba(123,214,255,.18)}
-
-/* node positions */
-.n-trigger{left:6%;top:55%}
-.n-apify{left:20%;top:55%}
-.n-std{left:34%;top:55%}
-.n-batch{left:48%;top:55%}
-.n-http{left:62%;top:55%}
-.n-gemini{left:76%;top:55%}
-.n-sheets{left:88%;top:55%}
-.n-clear{left:96%;top:55%}
-
-/* annotation positions */
-.ann-1{left:1.5%;top:35%}
-.ann-2{left:15.5%;top:35%}
-.ann-3{left:28.65%;top:35%}
-.ann-4{left:44%;top:35%}
-.ann-5{left:58%;top:35%}
-.ann-6{left:70%;top:35%}
-.ann-7{left:87%;top:35%}
+.wf-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.3)}
+.wf-foot-l{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.wf-stat{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.wf-dot{width:6px;height:6px;border-radius:50%}
+.wf-dot.ok{background:#6de18d;box-shadow:0 0 7px rgba(109,225,141,.7)}
+.wf-dot.pr{background:#9fc7ff;box-shadow:0 0 7px rgba(159,199,255,.6)}
+.wf-foot-r{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.wf-stack{display:none;flex-direction:column;padding:12px 13px 16px}
+.wf-stage{display:flex;flex-direction:column}
+.wf-stage-h{display:flex;align-items:center;gap:9px;width:100%;text-align:left;margin:8px 0 2px;padding:6px 2px;border:none;background:transparent;cursor:pointer}
+.wf-stage-n{font-size:8px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.wf-stage-t{font-size:11px;font-weight:600;color:var(--fg)}
+.wf-stage-h .wf-jump{margin-left:auto;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.wf-scard{display:flex;align-items:center;gap:11px;border:1px solid var(--border2);border-left-width:3px;border-radius:10px;background:rgba(17,17,17,.94);padding:11px 13px;margin:5px 0;animation:wfPop2 .32s ease both}
+@keyframes wfPop2{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.wf-scard.is-mini{margin-left:24px;padding:9px 12px}
+.wf-scard .wf-icon{width:34px;height:34px;border-radius:9px}
+.wf-scard .wf-icon svg{width:16px;height:16px}
+.wf-sbody{min-width:0;flex:1}
+.wf-skind{font-size:8px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:2px}
+.wf-sname{font-size:13px;font-weight:600;line-height:1.3;color:var(--fg)}
+.wf-sgo{flex-shrink:0;color:var(--dim);display:flex}
+.wf-sgo svg{width:14px;height:14px}
+.wf-scard.t-trigger{border-left-color:rgba(255,255,255,.7)}
+.wf-scard.t-apify{border-left-color:#9ab8ff}
+.wf-scard.t-code{border-left-color:#ffd2a4}
+.wf-scard.t-batch{border-left-color:#9fe8ff}
+.wf-scard.t-http{border-left-color:#d7c4ff}
+.wf-scard.t-ai{border-left-color:#ffb4e6}
+.wf-scard.t-sheet{border-left-color:#98ffb8}
 
 /* ── STORY STRIP ── */
 .story-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
@@ -268,8 +278,12 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 
   .flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{padding-left:16px;padding-right:16px}
   .flow-sec{padding-top:0;padding-bottom:0;margin-top:0;margin-bottom:0;min-height:0}
-  .flow-box{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  .wf-canvas{min-width:600px}
+  .wf-spatial{display:none}
+  .wf-stack{display:flex}
+  .wf-legend{display:none}
+  .wf-canvas{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .wf-head{padding:12px 14px}
+  .wf-foot-l{gap:14px}
 
   .story-strip{grid-template-columns:1fr}
   .story-sec,.demo-sec,.bk-sec,.sum-sec{padding-top:48px}
@@ -291,8 +305,9 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
   .jb{font-size:9px;padding:10px}
 }
 @media(max-width:480px){
-  .flow-box{display:none}
-  .flow-cap{display:none}
+  .wf-head-ttl{display:none}
+  .wf-canvas{max-height:58vh}
+  .wf-sname{font-size:12.5px}
 }
 .back-btn{position:fixed;top:16px;left:20px;z-index:1000;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:#6e6e6e;text-decoration:none;background:rgba(0,0,0,0.7);padding:6px 12px;border-radius:4px;backdrop-filter:blur(8px);border:none;cursor:pointer;transition:color 0.2s}
 .back-btn:hover{color:#f5f5f5}
@@ -333,65 +348,42 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
   </div>
 </div>
 
-<!-- ═══ FLOW VISUALIZATION ═══ -->
+<!-- FLOW / INTERACTIVE WORKFLOW BUILDER -->
 <div class="flow-sec">
-  <div class="flow-box">
-    <div class="wf-canvas">
-      <!-- SVG Lines -->
-      <svg class="wf-lines" viewBox="0 0 1800 500" preserveAspectRatio="none">
-        <path class="wf-line strong" d="M 108 275 L 340 275"/>
-        <path class="wf-line strong" d="M 390 275 L 580 275"/>
-        <path class="wf-line strong" d="M 640 275 L 830 275"/>
-        <path class="wf-line strong" d="M 890 275 L 1080 275"/>
-        <path class="wf-line strong" d="M 1140 275 L 1330 275"/>
-        <path class="wf-line strong" d="M 1390 275 L 1550 275"/>
-        <path class="wf-line strong" d="M 1600 275 L 1710 275"/>
-        <!-- Loop-back line from Clear Binary → SplitInBatches -->
-        <path class="wf-line dash" d="M 1728 305 C 1728 440, 864 440, 864 305"/>
-      </svg>
-
-      <!-- Annotations -->
-      <span class="ann a1 ann-1" onclick="jumpToBk(0)" style="cursor:pointer;pointer-events:auto">01 · Trigger</span>
-      <span class="ann a2 ann-2" onclick="jumpToBk(1)" style="cursor:pointer;pointer-events:auto">02 · Scrape</span>
-      <span class="ann a3 ann-3" onclick="jumpToBk(2)" style="cursor:pointer;pointer-events:auto">03 · Standardize</span>
-      <span class="ann a4 ann-4" onclick="jumpToBk(3)" style="cursor:pointer;pointer-events:auto">04 · Batch</span>
-      <span class="ann a5 ann-5" onclick="jumpToBk(4)" style="cursor:pointer;pointer-events:auto">05 · Media</span>
-      <span class="ann a6 ann-6" onclick="jumpToBk(5)" style="cursor:pointer;pointer-events:auto">06 · AI Analysis</span>
-      <span class="ann a7 ann-7" onclick="jumpToBk(6)" style="cursor:pointer;pointer-events:auto">07 · Output</span>
-
-      <!-- Nodes -->
-      <div class="wf-node t-trigger n-trigger">
-        <div class="wf-icon"><i data-lucide="mouse-pointer-click"></i></div>
-        <div><div class="wf-name">Execute Workflow</div></div>
+  <div class="wf-shell">
+    <div class="wf-head">
+      <div class="wf-head-l">
+        <span class="wf-badge-active">Active</span>
+        <span class="wf-head-ttl">Content Recipe Workflow Builder</span>
       </div>
-      <div class="wf-node t-apify n-apify">
-        <div class="wf-icon"><i data-lucide="scan-search"></i></div>
-        <div><div class="wf-name">Fetch Creator Content</div></div>
+      <div class="wf-head-r">
+        <button class="wf-btn wf-reset" id="wfReset" onclick="wfReset()" aria-label="Reset workflow">Reset</button>
+        <button class="wf-btn wf-add" id="wfAdd" onclick="wfAdd()" aria-label="Add next node">
+          <i data-lucide="plus" aria-hidden="true"></i><span>Add Node</span>
+        </button>
       </div>
-      <div class="wf-node t-code n-std">
-        <div class="wf-icon"><i data-lucide="braces"></i></div>
-        <div><div class="wf-name">Standardize Data</div></div>
+    </div>
+    <div class="wf-legend" aria-label="Workflow stages">
+      <button onclick="jumpToBk(0)">01 · Trigger</button>
+      <button onclick="jumpToBk(1)">02 · Scrape</button>
+      <button onclick="jumpToBk(2)">03 · Standardize</button>
+      <button onclick="jumpToBk(3)">04 · Batch</button>
+      <button onclick="jumpToBk(4)">05 · Media</button>
+      <button onclick="jumpToBk(5)">06 · AI Analysis</button>
+      <button onclick="jumpToBk(6)">07 · Output</button>
+    </div>
+    <div class="wf-canvas" id="wfCanvas" role="region" aria-label="Content Recipe workflow builder canvas">
+      <div class="wf-spatial" id="wfSpatial">
+        <svg class="wf-lines" id="wfLines" viewBox="0 0 1800 500" preserveAspectRatio="none" aria-hidden="true"></svg>
       </div>
-      <div class="wf-node t-batch n-batch">
-        <div class="wf-icon"><i data-lucide="repeat"></i></div>
-        <div><div class="wf-name">Process Each Post</div></div>
+      <div class="wf-stack" id="wfStack"></div>
+    </div>
+    <div class="wf-foot" role="status" aria-live="polite">
+      <div class="wf-foot-l">
+        <span class="wf-stat"><span class="wf-dot ok"></span><span id="wfNodeCount">1</span>&nbsp;<span id="wfNodeLbl">Node</span></span>
+        <span class="wf-stat"><span class="wf-dot pr"></span><span id="wfConnCount">0</span>&nbsp;<span id="wfConnLbl">Connections</span></span>
       </div>
-      <div class="wf-node t-http n-http">
-        <div class="wf-icon"><i data-lucide="globe"></i></div>
-        <div><div class="wf-name">Get Media</div></div>
-      </div>
-      <div class="wf-node t-ai n-gemini">
-        <div class="wf-icon"><i data-lucide="sparkles"></i></div>
-        <div><div class="wf-name">AI Analysis</div></div>
-      </div>
-      <div class="wf-node t-sheet n-sheets">
-        <div class="wf-icon"><i data-lucide="sheet"></i></div>
-        <div><div class="wf-name">Data Output</div></div>
-      </div>
-      <div class="wf-node t-code n-clear">
-        <div class="wf-icon"><i data-lucide="trash-2"></i></div>
-        <div><div class="wf-name">Clear Binary</div></div>
-      </div>
+      <div class="wf-foot-r" id="wfHint">Tap Add Node to build the flow</div>
     </div>
   </div>
   <p class="flow-cap">Full n8n workflow · 8 nodes · WVEZ Content Recipe V1.0</p>
@@ -659,6 +651,157 @@ function jumpToBk(i) {
   setTimeout(() => { row.style.borderColor = ''; }, 1200);
 }
 
+// ─── INTERACTIVE WORKFLOW BUILDER ───────────────────────────────────────────
+// Click "Add Node" to assemble the real Content Recipe workflow one node at a
+// time. Desktop renders the spatial n8n graph; mobile renders a readable stack.
+const WF_STAGES = [
+  { n:'01', t:'Trigger' },
+  { n:'02', t:'Scrape' },
+  { n:'03', t:'Standardize' },
+  { n:'04', t:'Batch' },
+  { n:'05', t:'Media' },
+  { n:'06', t:'AI Analysis' },
+  { n:'07', t:'Output' },
+];
+const WF_NODES = [
+  { id:'trigger', t:'trigger', kind:'Trigger', icon:'mouse-pointer-click', name:'Execute Workflow',     x:6,  y:55, stage:0, from:[] },
+  { id:'apify',   t:'apify',   kind:'Apify',   icon:'scan-search',         name:'Fetch Creator Content', x:20, y:55, stage:1, from:['trigger'], strong:true },
+  { id:'std',     t:'code',    kind:'Code',    icon:'braces',              name:'Standardize Data',      x:34, y:55, stage:2, from:['apify'], strong:true },
+  { id:'batch',   t:'batch',   kind:'Loop',    icon:'repeat',              name:'Process Each Post',     x:48, y:55, stage:3, from:['std'], strong:true },
+  { id:'http',    t:'http',    kind:'HTTP',    icon:'globe',               name:'Get Media',             x:62, y:55, stage:4, from:['batch'], strong:true },
+  { id:'gemini',  t:'ai',      kind:'AI',      icon:'sparkles',            name:'AI Analysis',           x:76, y:55, stage:5, from:['http'], strong:true },
+  { id:'sheets',  t:'sheet',   kind:'Sheets',  icon:'sheet',               name:'Data Output',           x:88, y:55, stage:6, from:['gemini'], strong:true },
+  { id:'clear',   t:'code',    kind:'Code',    icon:'trash-2',             name:'Clear Binary',          x:96, y:55, stage:6, from:['sheets'], strong:true, back:['batch'] },
+];
+const WF_SVGNS = 'http://www.w3.org/2000/svg';
+const WF_YS = 5; // CRP viewBox is 1800x500 -> y scale 500/100
+let wfPlaced = 0;
+
+function wfMakeEl(tag, cls){ const e = document.createElement(tag); if (cls) e.className = cls; return e; }
+
+function wfEdge(a, b){
+  const sx = a.x*18, sy = a.y*WF_YS, ex = b.x*18, ey = b.y*WF_YS;
+  const dx = ex - sx, dy = ey - sy;
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    const dir = dx >= 0 ? 1 : -1;
+    const sr = sx + dir*58, le = ex - dir*58, c1 = sr + (le-sr)*0.5, c2 = le - (le-sr)*0.5;
+    return 'M' + sr + ',' + sy + ' C' + c1 + ',' + sy + ' ' + c2 + ',' + ey + ' ' + le + ',' + ey;
+  }
+  const dir = dy >= 0 ? 1 : -1;
+  const st = sy + dir*20, et = ey - dir*20, c1 = st + (et-st)*0.5, c2 = et - (et-st)*0.5;
+  return 'M' + sx + ',' + st + ' C' + sx + ',' + c1 + ' ' + ex + ',' + c2 + ' ' + ex + ',' + et;
+}
+
+// loop-back edge: arc below the node row so it does not cross other nodes
+function wfBackEdge(n, b){
+  const sx = n.x*18, sy = n.y*WF_YS, ex = b.x*18, ey = b.y*WF_YS;
+  const bottom = Math.max(sy, ey) + 150;
+  return 'M' + sx + ',' + (sy+28) + ' C' + sx + ',' + bottom + ' ' + ex + ',' + bottom + ' ' + ex + ',' + (ey+28);
+}
+
+function wfAddSpatial(n, animate){
+  const node = wfMakeEl('div', 'wf-node t-' + n.t + (n.mini ? ' is-mini' : ''));
+  node.style.left = n.x + '%'; node.style.top = n.y + '%';
+  if (!animate) node.style.animation = 'none';
+  if (n.mini) {
+    node.title = n.name;
+    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>';
+  } else {
+    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
+      '<div class="wf-kind">' + n.kind + '</div><div class="wf-name">' + n.name + '</div>';
+  }
+  document.getElementById('wfSpatial').appendChild(node);
+  const svg = document.getElementById('wfLines');
+  (n.from || []).forEach(fid => {
+    const a = WF_NODES.find(x => x.id === fid); if (!a) return;
+    const p = document.createElementNS(WF_SVGNS, 'path');
+    p.setAttribute('d', wfEdge(a, n));
+    p.setAttribute('class', n.dashed ? 'wf-line dash' : (n.strong ? 'wf-line strong' : 'wf-line'));
+    svg.appendChild(p);
+  });
+  (n.back || []).forEach(bid => {
+    const b = WF_NODES.find(x => x.id === bid); if (!b) return;
+    const p = document.createElementNS(WF_SVGNS, 'path');
+    p.setAttribute('d', wfBackEdge(n, b));
+    p.setAttribute('class', 'wf-line dash');
+    svg.appendChild(p);
+  });
+}
+
+function wfAddStack(n, animate){
+  const stack = document.getElementById('wfStack');
+  let grp = document.getElementById('wfstg-' + n.stage);
+  if (!grp) {
+    grp = wfMakeEl('div', 'wf-stage');
+    grp.id = 'wfstg-' + n.stage;
+    const s = WF_STAGES[n.stage];
+    grp.innerHTML = '<button class="wf-stage-h" onclick="jumpToBk(' + n.stage + ')">' +
+      '<span class="wf-stage-n">' + s.n + '</span><span class="wf-stage-t">' + s.t + '</span>' +
+      '<span class="wf-jump">view ›</span></button>';
+    stack.appendChild(grp);
+  }
+  const card = wfMakeEl('div', 'wf-scard t-' + n.t + (n.mini ? ' is-mini' : ''));
+  if (!animate) card.style.animation = 'none';
+  card.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
+    '<div class="wf-sbody"><div class="wf-skind">' + n.kind + '</div><div class="wf-sname">' + n.name + '</div></div>' +
+    '<div class="wf-sgo"><i data-lucide="arrow-right"></i></div>';
+  grp.appendChild(card);
+}
+
+function wfPlace(i, animate){ const n = WF_NODES[i]; wfAddSpatial(n, animate); wfAddStack(n, animate); }
+
+function wfMeta(){
+  const placed = WF_NODES.slice(0, wfPlaced);
+  const ids = new Set(placed.map(n => n.id));
+  let conns = 0;
+  placed.forEach(n => {
+    (n.from || []).forEach(f => { if (ids.has(f)) conns++; });
+    (n.back || []).forEach(b => { if (ids.has(b)) conns++; });
+  });
+  document.getElementById('wfNodeCount').textContent = wfPlaced;
+  document.getElementById('wfNodeLbl').textContent = wfPlaced === 1 ? 'Node' : 'Nodes';
+  document.getElementById('wfConnCount').textContent = conns;
+  document.getElementById('wfConnLbl').textContent = conns === 1 ? 'Connection' : 'Connections';
+  const add = document.getElementById('wfAdd');
+  const hint = document.getElementById('wfHint');
+  if (wfPlaced >= WF_NODES.length) {
+    add.disabled = true;
+    add.querySelector('span').textContent = 'Complete';
+    hint.textContent = 'Full Content Recipe workflow · ' + WF_NODES.length + ' nodes';
+  } else {
+    add.disabled = false;
+    add.querySelector('span').textContent = 'Add Node';
+    const left = WF_NODES.length - wfPlaced;
+    hint.textContent = 'Tap Add Node · ' + left + ' node' + (left === 1 ? '' : 's') + ' left';
+  }
+}
+
+function wfBuildTo(count){
+  document.getElementById('wfSpatial').querySelectorAll('.wf-node').forEach(e => e.remove());
+  document.getElementById('wfLines').innerHTML = '';
+  document.getElementById('wfStack').innerHTML = '';
+  wfPlaced = 0;
+  for (let i = 0; i < count; i++) { wfPlace(i, false); wfPlaced++; }
+  wfMeta();
+  if (window.lucide) lucide.createIcons();
+}
+
+function wfAdd(){
+  if (wfPlaced >= WF_NODES.length) return;
+  wfPlace(wfPlaced, true);
+  wfPlaced++;
+  wfMeta();
+  if (window.lucide) lucide.createIcons();
+  const c = document.getElementById('wfCanvas');
+  requestAnimationFrame(() => {
+    try { c.scrollTo({ top: c.scrollHeight, behavior: 'smooth' }); }
+    catch (e) { c.scrollTop = c.scrollHeight; }
+  });
+}
+
+function wfReset(){ wfBuildTo(1); }
+function wfInit(){ wfBuildTo(1); }
+
 // ─── STEP DURATIONS (ms), MINIMUM 10000 per step ───────────────────
 const DURATIONS = [11000, 10000, 10000, 12000, 11000, 12000];
 
@@ -883,6 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   lucide.createIcons();
+  if (typeof wfInit === 'function') wfInit();
 });
 </script>
 </body>
