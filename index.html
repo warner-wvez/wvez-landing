@@ -40,9 +40,11 @@
     }
 
     html, body {
-      height: 100vh;
+      height: auto;
+      min-height: 100vh;
       width: 100vw;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     body {
@@ -472,45 +474,64 @@
       padding: 0;
     }
 
+    /* One page, all ventures in a 3x2 grid. Auto-margins center the grid
+       when it fits and stay overflow-safe (no top clipping) when it doesn't. */
     .ventures-stage {
-      position: relative;
       width: 100%;
       height: 100%;
+      display: flex;
+      overflow-y: auto;
+    }
+
+    .ventures-grid {
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      column-gap: 3.5rem;
+      row-gap: 1.75rem;
+      width: 100%;
+      max-width: 1200px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .venture-slide {
+      position: static;
+      inset: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0;
+      text-align: center;
+    }
+
+    /* Fixed title height so every icon starts on the same line across all six cells. */
+    .venture-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.15rem;
+      min-height: 2.4em;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .venture-slide {
-      position: absolute;
-      inset: 0;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 0 10rem;
-      text-align: center;
-    }
-    .venture-slide.active { display: flex; }
-
-    .venture-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-    }
-
     .venture-cat {
-      font-size: 0.62rem;
-      letter-spacing: 0.25em;
+      font-size: 0.56rem;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-bottom: 1.75rem;
+      margin-bottom: 1rem;
     }
 
+    /* Fixed-height icon stage keeps icons and the click cue perfectly aligned. */
     .venture-icon-btn {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 112px;
       cursor: pointer;
       padding: 0;
       background: none;
@@ -518,24 +539,37 @@
     }
 
     .venture-icon {
-      height: 180px;
+      height: 100px;
       width: auto;
       display: block;
-      transition: transform 0.12s steps(3);
     }
-    .venture-icon-875   { height: 180px; }
-    .venture-icon-willis { height: 180px; }
-    .venture-icon-aon   { height: 180px; }
-    .venture-icon-crain { height: 180px; }
-    .venture-icon-btn:hover .venture-icon {
-      transform: scale(1.08);
+    #ventures .venture-icon { height: 100px; }
+    .venture-icon-btn:hover .venture-icon { visibility: hidden; }
+
+    /* Hover preview appears in place, over its own venture icon, at a reduced size.
+       Kept narrow enough to stay inside its own grid column so it is never clipped
+       by the stage's scroll box (overflow-y:auto forces overflow-x to compute to auto). */
+    .venture-preview {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      height: auto;
+      max-width: 200px;
+      max-height: 150px;
+      display: none;
+      z-index: 60;
+      pointer-events: none;
+      image-rendering: pixelated;
     }
+    .venture-icon-btn:hover .venture-preview { display: block; }
 
     .venture-desc {
-      max-width: 520px;
-      font-size: 0.78rem;
-      line-height: 1.65;
-      margin-top: 1.75rem;
+      max-width: none;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      margin-top: 0.9rem;
       color: #222;
     }
     .venture-desc a {
@@ -544,11 +578,11 @@
     }
 
     .click-cue {
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
+      font-size: 0.5rem;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--muted);
-      margin-top: 1.25rem;
+      margin-top: 0.85rem;
       font-style: italic;
     }
 
@@ -573,12 +607,6 @@
     .global-nav:hover { color: var(--fg); }
     .global-nav.left  { left: 0; }
     .global-nav.right { right: 0; }
-
-    .global-nav .venture-label {
-      display: none;
-      line-height: 1.3;
-    }
-    .global-nav.show-labels .venture-label { display: block; }
 
     .global-nav .triangle {
       font-size: 0.75rem;
@@ -613,30 +641,6 @@
       display: block;
     }
     .progress-dot.active { opacity: 1; background: var(--fg); }
-
-    /* ===========================================================
-       HOVER PREVIEW — XL pixel workflow, instant snap
-       =========================================================== */
-    .hover-preview {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      display: none;
-      z-index: 200;
-      max-width: 85vw;
-      max-height: 75vh;
-    }
-    .hover-preview.visible { display: block; }
-    .hover-preview img {
-      display: block;
-      max-width: 100%;
-      max-height: 75vh;
-      width: auto;
-      height: auto;
-      image-rendering: pixelated;
-    }
 
     /* ===========================================================
        PHOTO HOVER PREVIEW — behind text, reduced opacity
@@ -933,12 +937,21 @@
         white-space: normal;
       }
 
-      .venture-slide { padding: 3rem 1rem; position: relative; inset: auto; }
+      /* ventures: stack the 3x2 grid into a single scrolling column */
+      .ventures-stage { height: auto; overflow: visible; display: block; }
+      .ventures-grid {
+        grid-template-columns: 1fr;
+        row-gap: 3rem;
+        max-width: 440px;
+        padding: 1rem 1.5rem;
+      }
+      .venture-slide { padding: 0; position: static; inset: auto; }
+      .venture-title { min-height: 0; margin-bottom: 0.35rem; }
+      .venture-icon-btn { height: auto; }
 
       /* keep arrows fixed on the side edges (compact), not dumped top-left */
       .global-nav { padding: 0.9rem 0.6rem; gap: 0; }
       .global-nav .triangle { font-size: 0.95rem; }
-      .global-nav .venture-label { display: none !important; }
 
       .global-nav-row {
         display: flex;
@@ -947,12 +960,9 @@
         margin-top: 1.5rem;
       }
 
-      .venture-icon { height: 130px; }
-      .venture-icon-875   { height: 130px; }
-      .venture-icon-willis { height: 130px; }
-      .venture-icon-aon   { height: 130px; }
-      .venture-icon-crain { height: 130px; }
-      .hover-preview { display: none !important; }
+      #ventures .venture-icon { height: 130px; }
+      .venture-preview { display: none !important; }
+      .venture-icon-btn:hover .venture-icon { visibility: visible; }
 
       nav.top { padding: 0 1rem; }
       .brand { font-size: 0.65rem; letter-spacing: 0.15em; }
@@ -975,7 +985,8 @@
     }
 
     @media (pointer: coarse) {
-      .hover-preview { display: none !important; }
+      .venture-preview { display: none !important; }
+      .venture-icon-btn:hover .venture-icon { visibility: visible; }
     }
   </style>
 </head>
@@ -1002,23 +1013,19 @@
       <button data-goto="0">Home</button>
       <button data-goto="1">About</button>
       <button data-goto="2">Ventures</button>
-      <button data-goto="7">Services</button>
-      <button data-goto="8">Photography</button>
-      <button data-goto="9">Contact</button>
+      <button data-goto="3">Services</button>
+      <button data-goto="4">Photography</button>
+      <button data-goto="5">Contact</button>
     </nav>
   </div>
 
   <!-- GLOBAL LEFT ARROW -->
   <button class="global-nav left" id="global-prev" aria-label="Previous">
-    <span class="venture-label">Previous</span>
-    <span class="venture-label">Venture</span>
     <span class="triangle">&#9664;</span>
   </button>
 
   <!-- GLOBAL RIGHT ARROW -->
   <button class="global-nav right" id="global-next" aria-label="Next">
-    <span class="venture-label">Next</span>
-    <span class="venture-label">Venture</span>
     <span class="triangle">&#9654;</span>
   </button>
 
@@ -1059,14 +1066,15 @@
 
     <section class="panel" id="ventures">
       <div class="ventures-stage">
+       <div class="ventures-grid">
 
-        <div class="venture-slide active"
-             data-external="https://jobze.io"
-             data-preview="pixel/875_pixelv3.png">
+        <div class="venture-slide"
+             data-external="https://jobze.io">
           <div class="venture-title">JOBZE</div>
           <div class="venture-cat">Job search assistant</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/875_pixelv3.png" class="venture-icon venture-icon-875" alt="JOBZE">
+            <img src="pixel/875_pixelv3.png" class="venture-icon" alt="JOBZE">
+            <img data-src="pixel/875_pixelv3.png" class="venture-preview" alt="" aria-hidden="true">
           </button>
           <div class="click-cue">(click to see)</div>
           <div class="venture-desc"> Slack-based job-suite. In beta at <a href="https://jobze.io" target="_blank" rel="noopener">jobze.io</a>.</div>
@@ -1075,57 +1083,70 @@
         <div class="venture-slide"
              data-url="/recon/"
              data-title="WVEZ RECON"
-             data-meta="Competitive intelligence"
-             data-preview="pixel/recon_pixel.png">
+             data-meta="Competitive intelligence">
           <div class="venture-title">RECON</div>
           <div class="venture-cat">Competitive intelligence</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/willis_pixelv3.png" class="venture-icon venture-icon-willis" alt="RECON">
+            <img src="pixel/willis_pixelv3.png" class="venture-icon" alt="RECON">
+            <img data-src="pixel/recon_pixel.png" class="venture-preview" alt="" aria-hidden="true">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Pulls live inventory & pricing from competitor stores on a custom hourly schedule, compares profits and losses on items side by side, and delivers reports showing where a business is winning or losing on price. Built for business.</div>
+          <div class="venture-desc">Pulls live inventory & pricing from competitor stores on a custom hourly schedule.</div>
         </div>
 
         <div class="venture-slide"
              data-url="/flippr/"
              data-title="WVEZ FLIPPR"
-             data-meta="Resale arbitrage"
-             data-preview="pixel/flippr_pixel.png">
+             data-meta="Resale arbitrage">
           <div class="venture-title">FLIPPR</div>
           <div class="venture-cat">Resale arbitrage</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/aon_pixelv3.png" class="venture-icon venture-icon-aon" alt="FLIPPR">
+            <img src="pixel/aon_pixelv3.png" class="venture-icon" alt="FLIPPR">
+            <img data-src="pixel/flippr_pixel.png" class="venture-preview" alt="" aria-hidden="true">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scans eBay every 5min across 35+ product categories, pulls real sold comps, calculates net profit after fees & shipping. Only sends buy alert when code guarantees money. Now automated.</div>
+          <div class="venture-desc">Scans eBay every 5min across 35+ product categories with sold comps. Only sends buy alert when profiting after fees & shipping.</div>
         </div>
 
         <div class="venture-slide"
              data-url="/crp/"
              data-title="WVEZ Content Recipe"
-             data-meta="Content auditing"
-             data-preview="pixel/crp_pixel.png">
+             data-meta="Content auditing">
           <div class="venture-title">Content Recipe</div>
           <div class="venture-cat">Content auditing</div>
           <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/crain_pixelv3.png" class="venture-icon venture-icon-crain" alt="Content Recipe">
+            <img src="pixel/crain_pixelv3.png" class="venture-icon" alt="Content Recipe">
+            <img data-src="pixel/crp_pixel.png" class="venture-preview" alt="" aria-hidden="true">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scrapes creator's Instagram, TikTok, YouTube, or any social. Runs analysis on every video's first 10 seconds & delivers a full engagement breakdown showing exactly which content types drive growth. Built to turn gut-feel posting into data-backed strategy.</div>
+          <div class="venture-desc">Scrapes creator's Insta, TikTok, YT, or any social. Analysis ran on first 10s of every vid to deliver full engagement breakdown.</div>
         </div>
 
         <div class="venture-slide"
-             data-external="https://warner-wvez.github.io/wrestling-dashboard/"
-             data-preview="pixel/wrestling_pixel.png">
+             data-external="https://warner-wvez.github.io/wrestling-dashboard/">
           <div class="venture-title">Wrestling Dashboard</div>
           <div class="venture-cat">Match tracking</div>
           <button class="venture-icon-btn" data-action="open-venture">
             <img src="pixel/tribune_pixel.png" class="venture-icon" alt="Wrestling Dashboard">
+            <img data-src="pixel/wrestling_pixel.png" class="venture-preview" alt="" aria-hidden="true">
           </button>
           <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Tracks match results, card history, and title lineages across promotions in a single filterable view. No digging through fan wikis or Wikipedia tables. Built for anyone who wants to see the data, not just the narrative. <a href="https://github.com/warner-wvez/wrestling-dashboard" target="_blank" rel="noopener">Source on GitHub</a>.</div>
+          <div class="venture-desc">Spoiler-safe chronological watch companion for WWE 2001-2026. 19,000+ matches sourced with 3,000+ events.</div>
         </div>
 
+        <div class="venture-slide"
+             data-external="https://github.com/warner-wvez/yc-knowledge-base">
+          <div class="venture-title">Y Combinator Brain</div>
+          <div class="venture-cat">Startup network graph</div>
+          <button class="venture-icon-btn" data-action="open-venture">
+            <img src="pixel/soldier_pixelv3.png" class="venture-icon" alt="Y Combinator Brain">
+            <img data-src="pixel/ycbrain_pixel.webp" class="venture-preview" alt="" aria-hidden="true">
+          </button>
+          <div class="click-cue">(click to see)</div>
+          <div class="venture-desc">Maps the entire YC library via scraped transcripts and articles, connecting every company, founder, and piece of advice into an explorable brain.</div>
+        </div>
+
+       </div>
       </div>
     </section>
 
@@ -1255,23 +1276,15 @@
   <div class="progress-dots" id="progress-dots" role="tablist" aria-label="Page navigation">
     <button class="progress-dot active" data-state="0" aria-label="Home"></button>
     <button class="progress-dot" data-state="1" aria-label="About"></button>
-    <button class="progress-dot" data-state="2" aria-label="Venture 1: JOBZE"></button>
-    <button class="progress-dot" data-state="3" aria-label="Venture 2: RECON"></button>
-    <button class="progress-dot" data-state="4" aria-label="Venture 3: FLIPPR"></button>
-    <button class="progress-dot" data-state="5" aria-label="Venture 4: Content Recipe"></button>
-    <button class="progress-dot" data-state="6" aria-label="Venture 5: Wrestling Dashboard"></button>
-    <button class="progress-dot" data-state="7" aria-label="Services"></button>
-    <button class="progress-dot" data-state="8" aria-label="Photography"></button>
-    <button class="progress-dot" data-state="9" aria-label="Contact"></button>
+    <button class="progress-dot" data-state="2" aria-label="Ventures"></button>
+    <button class="progress-dot" data-state="3" aria-label="Services"></button>
+    <button class="progress-dot" data-state="4" aria-label="Photography"></button>
+    <button class="progress-dot" data-state="5" aria-label="Contact"></button>
   </div>
 
   <footer class="foot">
     &copy; WVEZ Solutions LLC &middot; Chicago
   </footer>
-
-  <div class="hover-preview" id="hover-preview">
-    <img id="hover-preview-img" src="" alt="">
-  </div>
 
   <div class="photo-hover-preview" id="photo-hover-preview">
     <img id="photo-hover-preview-img" src="" alt="">
@@ -1320,20 +1333,16 @@
 
   <script>
     /* ==========================================================
-       10-STATE NAVIGATION MAP
-       States 0-9 in order: Home, About, V1, V2, V3, V4, V5, Services, Photography, Contact
+       6-STATE NAVIGATION MAP
+       States 0-5 in order: Home, About, Ventures (all on one page), Services, Photography, Contact
        ========================================================== */
     const STATE_MAP = [
-      { panel: 'hero',        venture: -1 },  // 0 Home
-      { panel: 'about',       venture: -1 },  // 1 About
-      { panel: 'ventures',    venture:  0 },  // 2 Venture 1 — JOBZE
-      { panel: 'ventures',    venture:  1 },  // 3 Venture 2 — RECON
-      { panel: 'ventures',    venture:  2 },  // 4 Venture 3 — FLIPPR
-      { panel: 'ventures',    venture:  3 },  // 5 Venture 4 — Content Recipe
-      { panel: 'ventures',    venture:  4 },  // 6 Venture 5 — Wrestling Dashboard
-      { panel: 'services',    venture: -1 },  // 7 Services
-      { panel: 'photography', venture: -1 },  // 8 Photography
-      { panel: 'contact',     venture: -1 },  // 9 Contact
+      { panel: 'hero'        },  // 0 Home
+      { panel: 'about'       },  // 1 About
+      { panel: 'ventures'    },  // 2 Ventures — all six on one page
+      { panel: 'services'    },  // 3 Services
+      { panel: 'photography' },  // 4 Photography
+      { panel: 'contact'     },  // 5 Contact
     ];
 
     const TOTAL_STATES = STATE_MAP.length;
@@ -1353,35 +1362,21 @@
     function navigateTo(stateIndex) {
       if (stateIndex < 0 || stateIndex >= TOTAL_STATES) return;
       currentState = stateIndex;
-      const { panel, venture } = STATE_MAP[stateIndex];
-      const isVenture = venture >= 0;
+      const { panel } = STATE_MAP[stateIndex];
 
       // Show correct panel
       panels.forEach(p => p.classList.toggle('active', p.id === panel));
 
-      // Show correct venture slide when inside ventures
-      if (isVenture) {
-        slides.forEach((s, i) => s.classList.toggle('active', i === venture));
-        hidePreview();
-      }
-
       // Arrow visibility: hide at edges
       globalPrev.classList.toggle('edge-hidden', stateIndex === 0);
       globalNext.classList.toggle('edge-hidden', stateIndex === TOTAL_STATES - 1);
-
-      // Venture labels on arrows only while in venture states
-      globalPrev.classList.toggle('show-labels', isVenture);
-      globalNext.classList.toggle('show-labels', isVenture);
 
       // Sync progress dots
       progressDots.forEach((d, i) => d.classList.toggle('active', i === stateIndex));
 
       // Sync sidebar active state
       sidebarBtns.forEach(b => {
-        const g = parseInt(b.dataset.goto);
-        // Ventures button (goto=2) is active for states 2-6
-        const active = (g === stateIndex) || (g === 2 && stateIndex >= 2 && stateIndex <= 6);
-        b.classList.toggle('active', active);
+        b.classList.toggle('active', parseInt(b.dataset.goto) === stateIndex);
       });
     }
 
@@ -1426,24 +1421,20 @@
     sidebarOverlay.addEventListener('click', closeSidebar);
 
     /* ==========================================================
-       HOVER PREVIEW — instant snap in/out
+       VENTURE HOVER PREVIEWS — in-place, lazy-loaded
        ========================================================== */
-    const hoverPreview    = document.getElementById('hover-preview');
-    const hoverPreviewImg = document.getElementById('hover-preview-img');
-
-    function showPreview(src) {
-      hoverPreviewImg.src = src;
-      hoverPreview.classList.add('visible');
-    }
-    function hidePreview() {
-      hoverPreview.classList.remove('visible');
-    }
-
-    document.querySelectorAll('.venture-icon-btn').forEach(btn => {
-      const slide = btn.closest('.venture-slide');
-      const src = slide.dataset.preview;
-      btn.addEventListener('mouseenter', () => showPreview(src));
-      btn.addEventListener('mouseleave', hidePreview);
+    /* Venture hover previews render in place per cell via CSS (.venture-preview).
+       The image itself is loaded lazily on first hover so the page never downloads
+       preview art the visitor may never look at (and mobile never downloads it at all). */
+    document.querySelectorAll('.venture-preview').forEach(img => {
+      const btn = img.closest('.venture-icon-btn');
+      if (!btn) return;
+      btn.addEventListener('mouseenter', () => {
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          img.removeAttribute('data-src');
+        }
+      });
     });
 
     /* ==========================================================
@@ -1457,18 +1448,21 @@
     const projectTitle = document.getElementById('project-title');
     const projectMeta  = document.getElementById('project-meta');
 
+    let currentProjectIndex = 0;
+
     function openVenture(slideIndex) {
       const slide = slides[slideIndex];
       if (slide.dataset.external) {
         window.open(slide.dataset.external, '_blank', 'noopener');
         return;
       }
+      if (!slide.dataset.url) return;   // no embedded demo (e.g. Y Combinator Brain)
+      currentProjectIndex = slideIndex;
       projectTitle.textContent = slide.dataset.title || '';
       projectMeta.textContent  = slide.dataset.meta  || '';
       projectFrame.src = slide.dataset.url;
       projectView.classList.add('open');
       projectView.setAttribute('aria-hidden', 'false');
-      hidePreview();
     }
 
     function closeVenture() {
@@ -1488,13 +1482,11 @@
     projectClose.addEventListener('click', closeVenture);
 
     function stepProject(dir) {
-      // currentState is already a venture state (2-6); find the next with an iframe
-      const ventureOffset = currentState - 2; // 0-4
-      let i = ventureOffset;
+      // Cycle to the next/previous venture that has an embedded demo iframe.
+      let i = currentProjectIndex;
       for (let step = 0; step < slides.length; step++) {
         i = (i + dir + slides.length) % slides.length;
-        if (!slides[i].dataset.external) {
-          navigateTo(2 + i);
+        if (slides[i].dataset.url && !slides[i].dataset.external) {
           openVenture(i);
           return;
         }
