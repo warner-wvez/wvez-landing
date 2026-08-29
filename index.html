@@ -474,7 +474,7 @@
       padding: 0;
     }
 
-    /* One page, all ventures in a 3x2 grid. Auto-margins center the grid
+    /* One page, ventures laid out as a 2-over-3 pyramid. Auto-margins center it
        when it fits and stay overflow-safe (no top clipping) when it doesn't. */
     .ventures-stage {
       width: 100%;
@@ -485,13 +485,21 @@
 
     .ventures-grid {
       margin: auto;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      column-gap: 3.5rem;
+      display: flex;
+      flex-direction: column;
       row-gap: 1.75rem;
       width: 100%;
       max-width: 1200px;
       padding: 1.25rem 1.5rem;
+    }
+
+    /* Two centered rows (2 over 3) stack into a symmetrical pyramid: each
+       row is centered independently, so the narrower top row sits centered
+       above the wider bottom row. */
+    .ventures-row {
+      display: flex;
+      justify-content: center;
+      column-gap: 3.5rem;
     }
 
     .venture-slide {
@@ -503,9 +511,12 @@
       justify-content: flex-start;
       padding: 0;
       text-align: center;
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: 21rem;
     }
 
-    /* Fixed title height so every icon starts on the same line across all six cells. */
+    /* Fixed title height so every icon starts on the same line across all five cells. */
     .venture-title {
       font-size: 0.95rem;
       font-weight: 600;
@@ -937,15 +948,15 @@
         white-space: normal;
       }
 
-      /* ventures: stack the 3x2 grid into a single scrolling column */
+      /* ventures: stack the pyramid rows into a single scrolling column */
       .ventures-stage { height: auto; overflow: visible; display: block; }
       .ventures-grid {
-        grid-template-columns: 1fr;
         row-gap: 3rem;
         max-width: 440px;
         padding: 1rem 1.5rem;
       }
-      .venture-slide { padding: 0; position: static; inset: auto; }
+      .ventures-row { flex-direction: column; row-gap: 3rem; }
+      .venture-slide { padding: 0; position: static; inset: auto; flex-basis: auto; max-width: 100%; }
       .venture-title { min-height: 0; margin-bottom: 0.35rem; }
       .venture-icon-btn { height: auto; }
 
@@ -1068,82 +1079,78 @@
       <div class="ventures-stage">
        <div class="ventures-grid">
 
-        <div class="venture-slide"
-             data-external="https://jobze.io">
-          <div class="venture-title">JOBZE</div>
-          <div class="venture-cat">Job search assistant</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/875_pixelv3.png" class="venture-icon" alt="JOBZE">
-            <img data-src="pixel/875_pixelv3.png" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc"> Slack-based job-suite. In beta at <a href="https://jobze.io" target="_blank" rel="noopener">jobze.io</a>.</div>
+        <div class="ventures-row ventures-row-top">
+
+         <div class="venture-slide"
+              data-url="/recon/"
+              data-title="WVEZ RECON"
+              data-meta="Competitive intelligence">
+           <div class="venture-title">RECON</div>
+           <div class="venture-cat">Competitive intelligence</div>
+           <button class="venture-icon-btn" data-action="open-venture">
+             <img src="pixel/willis_pixelv3.png" class="venture-icon" alt="RECON">
+             <img data-src="pixel/recon_pixel.png" class="venture-preview" alt="" aria-hidden="true">
+           </button>
+           <div class="click-cue">(click to see)</div>
+           <div class="venture-desc">Pulls live inventory & pricing from competitor stores on a custom hourly schedule.</div>
+         </div>
+
+         <div class="venture-slide"
+              data-url="/flippr/"
+              data-title="WVEZ FLIPPR"
+              data-meta="Resale arbitrage">
+           <div class="venture-title">FLIPPR</div>
+           <div class="venture-cat">Resale arbitrage</div>
+           <button class="venture-icon-btn" data-action="open-venture">
+             <img src="pixel/aon_pixelv3.png" class="venture-icon" alt="FLIPPR">
+             <img data-src="pixel/flippr_pixel.png" class="venture-preview" alt="" aria-hidden="true">
+           </button>
+           <div class="click-cue">(click to see)</div>
+           <div class="venture-desc">Scans eBay every 5min across 35+ product categories with sold comps. Only sends buy alert when profiting after fees & shipping.</div>
+         </div>
+
         </div>
 
-        <div class="venture-slide"
-             data-url="/recon/"
-             data-title="WVEZ RECON"
-             data-meta="Competitive intelligence">
-          <div class="venture-title">RECON</div>
-          <div class="venture-cat">Competitive intelligence</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/willis_pixelv3.png" class="venture-icon" alt="RECON">
-            <img data-src="pixel/recon_pixel.png" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Pulls live inventory & pricing from competitor stores on a custom hourly schedule.</div>
-        </div>
+        <div class="ventures-row ventures-row-bottom">
 
-        <div class="venture-slide"
-             data-url="/flippr/"
-             data-title="WVEZ FLIPPR"
-             data-meta="Resale arbitrage">
-          <div class="venture-title">FLIPPR</div>
-          <div class="venture-cat">Resale arbitrage</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/aon_pixelv3.png" class="venture-icon" alt="FLIPPR">
-            <img data-src="pixel/flippr_pixel.png" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scans eBay every 5min across 35+ product categories with sold comps. Only sends buy alert when profiting after fees & shipping.</div>
-        </div>
+         <div class="venture-slide"
+              data-url="/crp/"
+              data-title="WVEZ Content Recipe"
+              data-meta="Content auditing">
+           <div class="venture-title">Content Recipe</div>
+           <div class="venture-cat">Content auditing</div>
+           <button class="venture-icon-btn" data-action="open-venture">
+             <img src="pixel/crain_pixelv3.png" class="venture-icon" alt="Content Recipe">
+             <img data-src="pixel/crp_pixel.png" class="venture-preview" alt="" aria-hidden="true">
+           </button>
+           <div class="click-cue">(click to see)</div>
+           <div class="venture-desc">Scrapes creator's Insta, TikTok, YT, or any social. Analysis ran on first 10s of every vid to deliver full engagement breakdown.</div>
+         </div>
 
-        <div class="venture-slide"
-             data-url="/crp/"
-             data-title="WVEZ Content Recipe"
-             data-meta="Content auditing">
-          <div class="venture-title">Content Recipe</div>
-          <div class="venture-cat">Content auditing</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/crain_pixelv3.png" class="venture-icon" alt="Content Recipe">
-            <img data-src="pixel/crp_pixel.png" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Scrapes creator's Insta, TikTok, YT, or any social. Analysis ran on first 10s of every vid to deliver full engagement breakdown.</div>
-        </div>
+         <div class="venture-slide"
+              data-external="https://warner-wvez.github.io/wrestling-dashboard/">
+           <div class="venture-title">Wrestling Dashboard</div>
+           <div class="venture-cat">Match tracking</div>
+           <button class="venture-icon-btn" data-action="open-venture">
+             <img src="pixel/tribune_pixel.png" class="venture-icon" alt="Wrestling Dashboard">
+             <img data-src="pixel/wrestling_pixel.png" class="venture-preview" alt="" aria-hidden="true">
+           </button>
+           <div class="click-cue">(click to see)</div>
+           <div class="venture-desc">Spoiler-safe chronological watch companion for WWE 2001-2026. 19,000+ matches sourced with 3,000+ events.</div>
+         </div>
 
-        <div class="venture-slide"
-             data-external="https://warner-wvez.github.io/wrestling-dashboard/">
-          <div class="venture-title">Wrestling Dashboard</div>
-          <div class="venture-cat">Match tracking</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/tribune_pixel.png" class="venture-icon" alt="Wrestling Dashboard">
-            <img data-src="pixel/wrestling_pixel.png" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Spoiler-safe chronological watch companion for WWE 2001-2026. 19,000+ matches sourced with 3,000+ events.</div>
-        </div>
+         <div class="venture-slide"
+              data-external="https://github.com/warner-wvez/yc-knowledge-base">
+           <div class="venture-title">Y Combinator Brain</div>
+           <div class="venture-cat">Startup network graph</div>
+           <button class="venture-icon-btn" data-action="open-venture">
+             <img src="pixel/soldier_pixelv3.png" class="venture-icon" alt="Y Combinator Brain">
+             <img data-src="pixel/ycbrain_pixel.webp" class="venture-preview" alt="" aria-hidden="true">
+           </button>
+           <div class="click-cue">(click to see)</div>
+           <div class="venture-desc">Maps the entire YC library via scraped transcripts and articles, connecting every company, founder, and piece of advice into an explorable brain.</div>
+         </div>
 
-        <div class="venture-slide"
-             data-external="https://github.com/warner-wvez/yc-knowledge-base">
-          <div class="venture-title">Y Combinator Brain</div>
-          <div class="venture-cat">Startup network graph</div>
-          <button class="venture-icon-btn" data-action="open-venture">
-            <img src="pixel/soldier_pixelv3.png" class="venture-icon" alt="Y Combinator Brain">
-            <img data-src="pixel/ycbrain_pixel.webp" class="venture-preview" alt="" aria-hidden="true">
-          </button>
-          <div class="click-cue">(click to see)</div>
-          <div class="venture-desc">Maps the entire YC library via scraped transcripts and articles, connecting every company, founder, and piece of advice into an explorable brain.</div>
         </div>
 
        </div>
@@ -1339,7 +1346,7 @@
     const STATE_MAP = [
       { panel: 'hero'        },  // 0 Home
       { panel: 'about'       },  // 1 About
-      { panel: 'ventures'    },  // 2 Ventures — all six on one page
+      { panel: 'ventures'    },  // 2 Ventures — all five on one page
       { panel: 'services'    },  // 3 Services
       { panel: 'photography' },  // 4 Photography
       { panel: 'contact'     },  // 5 Contact
@@ -1438,7 +1445,7 @@
     });
 
     /* ==========================================================
-       OPEN VENTURE — JOBZE opens external; others load iframe
+       OPEN VENTURE — external links open a new tab; others load iframe
        ========================================================== */
     const projectView  = document.getElementById('project-view');
     const projectClose = document.getElementById('project-close');
