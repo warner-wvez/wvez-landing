@@ -4,3 +4,14 @@
 .idea/
 node_modules/
 *.log
+
+# Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# Obsidian
+.obsidian/
+
+# Specs, plans and handoffs stay local
+docs/superpowers/
