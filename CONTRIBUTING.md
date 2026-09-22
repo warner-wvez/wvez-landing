@@ -9,11 +9,14 @@ python3 -m http.server 8000
 ```
 
 Then open http://localhost:8000. That serves the landing page and the three demos
-exactly as they are. It does not render the blog: those pages are built by Jekyll
-on GitHub's side, so `/blog` and `/feed.xml` are checked on the live site after a
-push.
+exactly as they are. It does not run Jekyll, so anything under `_layouts`, `_posts` or
+`_drafts` will not render locally.
 
 ## Writing a post
+
+The blog is built but switched off: `blog.html` carries `published: false` and the feed
+plugin is commented out in `_config.yml`, so `/blog` and `/feed.xml` are not live. Until
+that changes, drafts go in `_drafts/` and need no date in the filename.
 
 1. Add a file to `_posts/` named `YYYY-MM-DD-slug.md`.
 2. Start it with front matter:
@@ -28,8 +31,9 @@ description: One line. This shows on the index and in the RSS feed.
 
 3. Write the body in markdown. Push.
 
-GitHub builds it and the post appears at `https://wvez.org/blog/slug/` in about a
-minute. The index at `/blog/` and the feed at `/feed.xml` update themselves.
+Once the blog is on, GitHub builds it and the post appears at
+`https://wvez.org/blog/slug/` in about a minute, with the index at `/blog/` and the feed
+at `/feed.xml` updating themselves.
 
 Images for a post go in `assets/posts/`, referenced as `/assets/posts/name.jpg`.
 

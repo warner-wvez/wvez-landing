@@ -6,11 +6,12 @@ lang: en-US
 
 permalink: /blog/:title/
 
-plugins:
-  - jekyll-feed
-
-feed:
-  path: feed.xml
+# Turned off with the blog. Uncomment both blocks to publish the feed again.
+# plugins:
+#   - jekyll-feed
+#
+# feed:
+#   path: feed.xml
 
 exclude:
   - README.md

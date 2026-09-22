@@ -30,11 +30,18 @@ Rejected along the way: a hand written Python build script with its own tests an
 workflow to run it. It worked on paper and was about 150 lines of my code doing a job
 GitHub already does for free.
 
-The RSS feed ships now because it costs nothing. Email subscriptions are deliberately not
-here yet: Buttondown is free to 100 subscribers but charges 9 dollars a month for the RSS
-to email feature, and I would rather price that properly than default to a vendor.
+An RSS feed comes free with the plugin and turns on with the blog. Email subscriptions are
+a separate decision and are deliberately not here: Buttondown is free to 100 subscribers but
+charges 9 dollars a month for the RSS to email feature, and I would rather price that
+properly than default to a vendor.
 
-**Still open:** where writing belongs in the site navigation. Nothing links to /blog yet.
+**Still open:** where writing belongs in the site's navigation.
+
+Until that is settled the blog is switched off rather than merely unlinked. `blog.html`
+carries `published: false` and the feed plugin is commented out, so `/blog` and `/feed.xml`
+return 404 and nothing is indexed under a layout I may still change. The machinery is all
+here and turning it on is three edits. An unlinked page is still a public page, and I would
+rather not have search engines find a half decided version of this.
 
 ## The demo URLs do not move
 
