@@ -1,0 +1,23 @@
+{% comment %}
+An aside in a box. Use it like this, inside a post:
+
+  {% capture notice %}
+  **New here?** Text of the aside, in markdown.
+  {% endcapture %}
+  {% include notice.html content=notice %}
+{% endcomment %}
+<aside class="notice" markdown="0">
+  <style>
+    .notice {
+      padding: 1rem 1.15rem;
+      background: #f4f4f4;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      margin: 1.75rem 0;
+    }
+    .notice > *:first-child { margin-top: 0; }
+    .notice > *:last-child { margin-bottom: 0; }
+    .notice p + p { margin-top: 0.7rem; }
+  </style>
+  {{ include.content | markdownify }}
+</aside>

@@ -1,0 +1,24 @@
+title: WVEZ Solutions
+description: Hard Problems. EZ Solutions. Automation studio based in Chicago.
+url: https://wvez.org
+author: Warner Varnado
+lang: en-US
+
+permalink: /blog/:title/
+
+plugins:
+  - jekyll-feed
+
+feed:
+  path: feed.xml
+
+exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - CODE_OF_CONDUCT.md
+  - SECURITY.md
+  - CHANGELOG.md
+  - LICENSE
+  - docs
+  - .githooks
+  - .github

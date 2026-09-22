@@ -169,7 +169,15 @@
       color: var(--muted);
       text-align: left;
     }
+    .sidebar-nav a.sidebar-link {
+      font-size: 0.62rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: left;
+    }
     .sidebar-nav button:hover,
+    .sidebar-nav a.sidebar-link:hover,
     .sidebar-nav button.active { color: var(--fg); }
 
     /* ===========================================================
@@ -1026,6 +1034,7 @@
       <button data-goto="2">Ventures</button>
       <button data-goto="3">Services</button>
       <button data-goto="4">Photography</button>
+      <a class="sidebar-link" href="/blog/">Writing</a>
       <button data-goto="5">Contact</button>
     </nav>
   </div>
