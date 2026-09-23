@@ -1,3 +1,7 @@
+---
+# Front matter only so Jekyll can render the Writing panel from _posts.
+# The rest of this file passes through untouched.
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -352,6 +356,61 @@
       transition: color 0.08s steps(2);
     }
     .proof-item:hover { color: var(--muted); }
+
+    /* ===========================================================
+       WRITING — index of posts, grows over time
+       =========================================================== */
+    .writing-list {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+    .writing-year {
+      font-size: 0.55rem;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      color: var(--muted);
+      margin-bottom: 1.1rem;
+    }
+    .writing-year + .writing-year,
+    .writing-item + .writing-year { margin-top: 2rem; }
+    .writing-item {
+      display: block;
+      padding: 0.3rem 0 0.9rem;
+      text-align: left;
+      transition: color 0.08s steps(2);
+    }
+    .writing-item-top {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    .writing-item-title {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--fg);
+    }
+    .writing-item:hover .writing-item-title { color: var(--muted); }
+    .writing-item-date {
+      font-size: 0.55rem;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      margin-left: auto;
+    }
+    .writing-item-desc {
+      font-size: 0.72rem;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+    .writing-empty { font-size: 0.85rem; color: var(--muted); }
 
     /* ===========================================================
        SERVICES — paired service menu
@@ -1025,8 +1084,9 @@
       <button data-goto="1">About</button>
       <button data-goto="2">Ventures</button>
       <button data-goto="3">Services</button>
-      <button data-goto="4">Photography</button>
-      <button data-goto="5">Contact</button>
+      <button data-goto="4">Writing</button>
+      <button data-goto="5">Photography</button>
+      <button data-goto="6">Contact</button>
     </nav>
   </div>
 
@@ -1216,6 +1276,30 @@
       </div>
     </section>
 
+    <!-- WRITING -->
+    <section class="panel" id="writing">
+      <div class="panel-label">Writing</div>
+      <div class="writing-list">
+        {% if site.posts.size == 0 %}
+          <div class="writing-empty">Nothing published yet.</div>
+        {% else %}
+          {% assign by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+          {% for group in by_year %}
+            <div class="writing-year">{{ group.name }}</div>
+            {% for post in group.items %}
+              <a class="writing-item" href="{{ post.url }}">
+                <span class="writing-item-top">
+                  <span class="writing-item-title">{{ post.title }}</span>
+                  <span class="writing-item-date">{{ post.date | date: "%b %-d" }}</span>
+                </span>
+                {% if post.description %}<span class="writing-item-desc">{{ post.description }}</span>{% endif %}
+              </a>
+            {% endfor %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </section>
+
     <section class="panel" id="photography">
       <div class="panel-label">Photography</div>
       <div class="photo-layout">
@@ -1285,8 +1369,9 @@
     <button class="progress-dot" data-state="1" aria-label="About"></button>
     <button class="progress-dot" data-state="2" aria-label="Ventures"></button>
     <button class="progress-dot" data-state="3" aria-label="Services"></button>
-    <button class="progress-dot" data-state="4" aria-label="Photography"></button>
-    <button class="progress-dot" data-state="5" aria-label="Contact"></button>
+    <button class="progress-dot" data-state="4" aria-label="Writing"></button>
+    <button class="progress-dot" data-state="5" aria-label="Photography"></button>
+    <button class="progress-dot" data-state="6" aria-label="Contact"></button>
   </div>
 
   <footer class="foot">
@@ -1348,8 +1433,9 @@
       { panel: 'about'       },  // 1 About
       { panel: 'ventures'    },  // 2 Ventures — all five on one page
       { panel: 'services'    },  // 3 Services
-      { panel: 'photography' },  // 4 Photography
-      { panel: 'contact'     },  // 5 Contact
+      { panel: 'writing'     },  // 4 Writing — index of posts, each opens its own page
+      { panel: 'photography' },  // 5 Photography
+      { panel: 'contact'     },  // 6 Contact
     ];
 
     const TOTAL_STATES = STATE_MAP.length;
@@ -1385,9 +1471,27 @@
       sidebarBtns.forEach(b => {
         b.classList.toggle('active', parseInt(b.dataset.goto) === stateIndex);
       });
+
+      // Keep the URL pointing at the section you are on, so it can be linked
+      // and so a post page can send you back here. replaceState, not push, so
+      // the back button still leaves the site instead of walking the panels.
+      const slug = stateIndex === 0 ? ' ' : '#' + panel;
+      history.replaceState(null, '', stateIndex === 0 ? location.pathname : slug);
+    }
+
+    // Open on the panel named in the URL, e.g. wvez.org/#writing
+    function panelIndexFromHash() {
+      const id = location.hash.replace('#', '');
+      if (!id) return 0;
+      const i = STATE_MAP.findIndex(s => s.panel === id);
+      return i === -1 ? 0 : i;
     }
 
     // Arrow clicks
+    // Land on the panel the URL asks for, and follow it if it changes
+    navigateTo(panelIndexFromHash());
+    window.addEventListener('hashchange', () => navigateTo(panelIndexFromHash()));
+
     globalPrev.addEventListener('click', () => navigateTo(currentState - 1));
     globalNext.addEventListener('click', () => navigateTo(currentState + 1));
 

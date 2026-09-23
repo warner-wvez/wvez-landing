@@ -1,7 +1,7 @@
 # wvez.org
 
 The site for WVEZ Solutions, a one person automation studio in Chicago. It is the
-portfolio and three interactive demos of workflows I have built.
+portfolio, three interactive demos of workflows I have built, and a blog.
 
 ![The Ventures panel of wvez.org, showing five projects as pixel art Chicago towers](assets/readme-home.jpg)
 
@@ -13,6 +13,7 @@ Live:
 | [wvez.org/recon](https://wvez.org/recon) | RECON, competitive inventory and pricing surveillance |
 | [wvez.org/flippr](https://wvez.org/flippr) | FLIPPR, eBay resale arbitrage scanning |
 | [wvez.org/crp](https://wvez.org/crp) | Content Recipe, creator content auditing |
+| [wvez.org/#writing](https://wvez.org/#writing) | Writing, with an [RSS feed](https://wvez.org/feed.xml) |
 
 ## Stack
 
@@ -32,18 +33,19 @@ python3 -m http.server 8000
 That serves the landing page and the three demos exactly as they are. It does not run
 Jekyll, so anything under `_layouts` or `_posts` will not render locally.
 
-## The blog, which is built but switched off
+## Where writing lives
 
-There is a working Jekyll blog in this repository that nothing publishes yet. `blog.html`
-carries `published: false` and the feed plugin is commented out in `_config.yml`, so
-`/blog` and `/feed.xml` are not on the live site. Drafts sit in `_drafts/`.
+Writing is the fifth panel of the site, between Services and Photography, and it is the
+index: one row per post, newest first, grouped by year. Clicking a row opens that post as
+its own page at `/blog/<slug>`, which scrolls normally instead of living in the panel deck.
 
-Turning it on is three edits: delete the `published: false` line from `blog.html`,
-uncomment the two blocks in `_config.yml`, and move a draft into `_posts/` with a dated
-filename. It is off because I have not decided where writing belongs in the site's
-navigation.
+`index.html` carries Jekyll front matter for exactly one reason: so that panel can be
+rendered from `_posts/`. Everything else in the file passes through untouched.
 
-## Publishing a post, once it is on
+Every section is now linkable by hash, so `/#writing`, `/#ventures` and the rest all open
+on that panel. `/blog` redirects to `/#writing`.
+
+## Publishing a post
 
 Add a file to `_posts/` named `YYYY-MM-DD-slug.md`:
 
@@ -56,8 +58,8 @@ description: One line. This shows on the index and in the RSS feed.
 ```
 
 Write the body in markdown, then push. The post appears at `wvez.org/blog/slug/` in
-about a minute, and the index and the feed update themselves. While the blog is off,
-keep the file in `_drafts/` instead, where it needs no date in the filename.
+about a minute, and the Writing panel and the feed update themselves. A post you are not
+ready to publish goes in `_drafts/`, where it needs no date in the filename.
 
 When a build fails, GitHub emails the error and keeps serving the last good version of
 the site. To read the error:
@@ -73,10 +75,10 @@ index.html          the site
 crp/ flippr/ recon/ the demos, one file each, URLs are frozen
 assets/             images, video, pixel art, the two 3D models
 _posts/             published blog posts, one markdown file each
-_drafts/            written but not published
+_drafts/            written but not published, no date needed in the name
 _layouts/           the blog's shell and post template
 _includes/          custom components, currently just the aside box
-blog.html           the writing index, currently published: false
+blog.html           redirects /blog to the Writing panel
 docs/decisions.md   why the site is built this way
 ```
 

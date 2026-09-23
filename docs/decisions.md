@@ -35,13 +35,33 @@ a separate decision and are deliberately not here: Buttondown is free to 100 sub
 charges 9 dollars a month for the RSS to email feature, and I would rather price that
 properly than default to a vendor.
 
-**Still open:** where writing belongs in the site's navigation.
+## Writing is the fifth panel, and the panel is the index
 
-Until that is settled the blog is switched off rather than merely unlinked. `blog.html`
-carries `published: false` and the feed plugin is commented out, so `/blog` and `/feed.xml`
-return 404 and nothing is indexed under a layout I may still change. The machinery is all
-here and turning it on is three edits. An unlinked page is still a public page, and I would
-rather not have search engines find a half decided version of this.
+2026-09-23
+
+Writing sits between Services and Photography in the panel deck, and that panel is the post
+index: one row per post, grouped by year, newest first. Clicking a row opens the post as its
+own page at `/blog/<slug>`, which scrolls normally. `/blog` redirects to `/#writing`.
+
+The three portfolio sites I looked at all treat writing as a top-level destination placed
+early, never as a widget scattered on the home page: andrewl.ee has it second of three,
+tmb.sh second of four, wustep.me as a top-level link. A panel is the version of that which
+fits a deck.
+
+The Photography panel already proved the pattern here: a panel that is a dense list, where
+clicking an item opens the content. Writing copies it.
+
+Making it a panel costs one thing. `index.html` now carries Jekyll front matter so the panel
+can be rendered from `_posts/`. It was safe to add because the file contains no `{{` or `{%`
+anywhere, so nothing in the hand written HTML or JavaScript collides with Liquid. Everything
+outside the Writing panel passes through untouched.
+
+The panel will look sparse for a while. That is accepted: it fills as posts accumulate, and
+a page that grows is not the same thing as a screen with a permanent hole in it.
+
+Adding the panel also added hash routing, so `/#writing`, `/#ventures` and every other
+section can be linked directly. It uses `replaceState`, not `pushState`, so the back button
+still leaves the site rather than walking back through panels.
 
 ## The demo URLs do not move
 
