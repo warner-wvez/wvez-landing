@@ -410,7 +410,6 @@
       color: var(--muted);
       margin-top: 0.25rem;
     }
-    .writing-empty { font-size: 0.85rem; color: var(--muted); }
 
     /* ===========================================================
        SERVICES — paired service menu
@@ -1280,9 +1279,7 @@
     <section class="panel" id="writing">
       <div class="panel-label">Writing</div>
       <div class="writing-list">
-        {% if site.posts.size == 0 %}
-          <div class="writing-empty">Nothing published yet.</div>
-        {% else %}
+        {% if site.posts.size > 0 %}
           {% assign by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
           {% for group in by_year %}
             <div class="writing-year">{{ group.name }}</div>
