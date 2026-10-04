@@ -617,7 +617,7 @@ const PHASES = [
     </table></div>
   </div>
   <div class="np" id="t3b">
-    <div class="ph-desc" style="margin-bottom:8px">Marketplace fees <strong>13.13%</strong> + payment processing <strong>2.99% + $0.49</strong> + $12 outbound shipping. Min $20 profit, min 15% ROI.</div>
+    <div class="ph-desc" style="margin-bottom:8px">Marketplace fees <strong>13.13%</strong> + payment processing <strong>2.99% + $0.49</strong> + $12 outbound shipping. Min $45 profit, min 20% ROI.</div>
     <div class="inv-wrap"><table class="inv-tbl">
       <thead><tr><th>Model</th><th>Buy</th><th>Sold Median</th><th>Net Profit</th><th>ROI</th></tr></thead>
       <tbody>
@@ -765,7 +765,7 @@ const WF_STAGES = [
   { n:'05', t:'Alert' },
 ];
 const WF_NODES = [
-  { id:'trigger',  t:'trigger',  kind:'Trigger',  icon:'mouse-pointer-click', name:'Execute Workflow',  x:6,  y:50, stage:0, from:[] },
+  { id:'trigger',  t:'trigger',  kind:'Trigger',  icon:'calendar-clock',      name:'Manual or Scheduled',  x:6,  y:50, stage:0, from:[] },
   { id:'token',    t:'http',     kind:'HTTP',     icon:'globe',               name:'Get eBay Token',    x:6,  y:78, stage:0, from:['trigger'], strong:true },
   { id:'keywords', t:'code',     kind:'Code',     icon:'braces',              name:'Keyword List',      x:18, y:50, stage:1, from:['trigger'] },
   { id:'loop',     t:'merge',    kind:'Loop',     icon:'repeat',              name:'Keyword Loop',      x:30, y:50, stage:1, from:['keywords'] },
