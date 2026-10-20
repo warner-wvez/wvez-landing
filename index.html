@@ -792,29 +792,24 @@
     }
     .project-view.open { display: block; }
 
+    /* Previous / next demo: in the same spot, size and grey as the site's own arrows
+       (.global-nav), flush to the edges with the triangle 1.5rem in. Every demo keeps at
+       least 40px clear on each side above 768px wide, so the button stops short of that:
+       the padding on its inner side is trimmed, the triangle itself does not move. */
     .project-nav {
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
       z-index: 601;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 0.35rem;
-      padding: 1rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
+      font-size: 0.75rem;
+      line-height: 1;
       color: var(--muted);
     }
-    .project-nav:hover { color: var(--fg); }
-    .project-nav.prev { left: 0.5rem; }
-    .project-nav.next { right: 0.5rem; }
-    .project-nav .triangle {
-      font-size: 0.8rem;
-      margin-top: 0.4rem;
-      letter-spacing: 0;
-    }
+    .project-nav:hover { color: #f5f5f5; }
+    .project-nav.prev { left: 0; padding: 1rem 0 1rem 1.5rem; }
+    .project-nav.next { right: 0; padding: 1rem 1.5rem 1rem 0; }
 
     .project-frame {
       display: block;
@@ -899,11 +894,11 @@
 
       /* demo viewer arrows: collapse the "Previous/Next project" labels to a
          compact triangle on each edge so they stop crowding the demo */
-      .project-nav { padding: 0.9rem 0.45rem; gap: 0; }
-      .project-nav span:not(.triangle) { display: none; }
-      .project-nav .triangle { font-size: 1.15rem; margin-top: 0; }
-      .project-nav.prev { left: 0; }
-      .project-nav.next { right: 0; }
+      /* Phones: the demos' margins are 16 to 20px, too narrow, so the arrows move to a
+         44px strip under the demo instead of sitting on it. */
+      .project-frame { height: calc(100% - 44px); }
+      .project-nav { top: auto; bottom: 0; transform: none; width: 64px; height: 44px; justify-content: center; font-size: 1.05rem; }
+      .project-nav.prev, .project-nav.next { padding: 0; }
 
       .progress-dots { bottom: 3.25rem; }
 
@@ -1010,7 +1005,7 @@
              <img data-src="/assets/pixel/recon-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
-           <div class="venture-desc">Pulls live inventory & pricing from competitor stores on a custom hourly schedule.</div>
+           <div class="venture-desc">Pulls live inventory & pricing from competitor stores 3x a day, then flags gaps & revenue opportunities.</div>
          </div>
 
          <div class="venture-slide"
@@ -1024,7 +1019,7 @@
              <img data-src="/assets/pixel/flippr-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
-           <div class="venture-desc">Scans eBay every 5min across 35+ product categories with sold comps. Only sends buy alert when profiting after fees & shipping.</div>
+           <div class="venture-desc">Scans eBay every 5min across numerous product categories, pricing each listing vs. 60 sold comps. Buy alerts only sent when there's profit after all calculated fees.</div>
          </div>
 
         </div>
@@ -1204,11 +1199,9 @@
 
   <div class="project-view" id="project-view" aria-hidden="true">
     <button class="project-nav prev" id="project-prev" aria-label="Previous project">
-      <span>Previous</span><span>project</span>
       <span class="triangle">&#9664;</span>
     </button>
     <button class="project-nav next" id="project-next" aria-label="Next project">
-      <span>Next</span><span>project</span>
       <span class="triangle">&#9654;</span>
     </button>
     <iframe class="project-frame" id="project-frame" src="about:blank" title="Project"></iframe>

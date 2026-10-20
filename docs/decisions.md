@@ -14,6 +14,18 @@ one turns out to be wrong, the fix is a new entry that says so, not an edit to t
   top edge and falls to rest with a bounce, so the switch announces itself without a
   label. Readers who ask for reduced motion get it already hanging.
 
+## The demo viewer's arrows stay off the demos
+
+2026-10-20
+
+The previous and next buttons said "Previous project" and "Next project" and sat at the
+screen edges, on top of a demo's content on narrower screens. They are now a triangle
+each, in the same spot, size and grey as the site's own arrows: flush to the edge with the
+triangle 1.5rem in. Every demo keeps at least 40px clear on each side above 768px wide, so
+the button has no padding on its inner side and ends before that margin does, checked at
+ten widths from 1920 down to 769. At 768px and below the margin is only 16 to 20px, so the
+arrows move to a 44px strip under the demo instead of sitting on it.
+
 ## The home page logo shows in under a second
 
 2026-10-20
