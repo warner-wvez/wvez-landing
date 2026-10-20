@@ -1,0 +1,26 @@
+{% comment %}
+A list of workflows on the left and their diagrams on the right. Clicking a
+bullet shows its diagram. Write the list in a capture, then name one diagram
+per top-level bullet, in order. Leave a name empty for a bullet with none:
+
+  {% capture flows %}
+  - **Job hunt**: what it does
+  - **eBay flipping**: what it does
+  {% endcapture %}
+  {% include workflow-split.html list=flows names="job-hunt,ebay-flipping" %}
+
+It stays inside the text column, so the diagrams are drawn small; "View larger"
+opens one full size. On phones the diagram drops under the list. post.js wires it.
+{% endcomment %}
+{%- assign wf_names = include.names | split: "," -%}
+<div class="wf-split">
+<div class="wf-split-text">
+{{ include.list | markdownify }}
+</div>
+<div class="wf-split-panel">
+{%- for n in wf_names %}{% assign wf_name = n | strip %}{% if wf_name != "" %}
+<div class="wf-pane" data-wf="{{ forloop.index0 }}" hidden><iframe src="/assets/blog/workflows/{{ wf_name }}.html?canvas" title="{{ wf_name }}, workflow diagram" height="260" scrolling="no"></iframe></div>
+{%- endif %}{% endfor %}
+<button type="button" class="wf-larger">View larger</button>
+</div>
+</div>

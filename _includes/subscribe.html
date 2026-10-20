@@ -1,0 +1,24 @@
+{%- comment -%}
+  The email signup box. Words and the Brevo address live under `subscribe:` in
+  _config.yml. `spot` names where the box sits, so GoatCounter can tell the boxes
+  apart: {% include subscribe.html spot="after-post" %}
+  Without JavaScript the form still posts straight to Brevo.
+{%- endcomment -%}
+{%- assign s = site.subscribe -%}
+<section class="subscribe">
+  <p class="subscribe-line"><span>{{ s.line }}</span></p>
+  <form class="subscribe-form" method="POST" action="{{ s.action }}" data-spot="{{ include.spot }}"
+        data-success="{{ s.success | escape }}" data-note="{{ s.success_note | escape }}" data-invalid="{{ s.invalid | escape }}"
+        data-empty="{{ s.empty | escape }}" data-error="{{ s.error | escape }}">
+    <label class="subscribe-hide" for="subscribe-{{ include.spot }}">Email address</label>
+    <input id="subscribe-{{ include.spot }}" type="email" name="EMAIL" autocomplete="email" placeholder="Email address" required>
+    <button type="submit">{{ s.button }}</button>
+    <!-- Brevo's bot trap: people never see this field, so it stays empty. -->
+    <input class="subscribe-hide" type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="locale" value="en">
+    <input type="hidden" name="html_type" value="simple">
+  </form>
+  <p class="subscribe-msg" role="status" aria-live="polite"></p>
+</section>
+<script src="/assets/blog/subscribe.js" defer></script>
+<script src="/assets/blog/subscribe-art.js" defer></script>

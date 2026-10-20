@@ -25,7 +25,9 @@ Each demo is a single self contained file. They run entirely in the browser, cal
 real service, and the numbers they display are invented.
 
 Visits are counted with [GoatCounter](https://wvez.goatcounter.com): one script tag at the
-bottom of every page, demos included, no cookies. See `docs/decisions.md`.
+bottom of every page, demos included, no cookies. Email signups at the end of each post
+go to Brevo through the site's own box, with no Brevo logo on the page. See
+`docs/decisions.md`.
 
 ## Running it
 
@@ -64,6 +66,9 @@ Write the body in markdown, then push. The post appears at `wvez.org/blog/slug/`
 about a minute, and the Writing panel and the feed update themselves. A post you are not
 ready to publish goes in `_drafts/`, where it needs no date in the filename.
 
+Post pages also carry a Notion style section outline, link previews that play on hover,
+hover definitions for words, and inline workflow diagrams. [CONTRIBUTING.md](CONTRIBUTING.md) shows how to use each.
+
 When a build fails, GitHub emails the error and keeps serving the last good version of
 the site. To read the error:
 
@@ -77,10 +82,11 @@ gh api repos/warner-wvez/wvez-landing/pages/builds/latest --jq '{status,error:.e
 index.html          the site
 crp/ flippr/ recon/ the demos, one file each, URLs are frozen
 assets/             images, video, pixel art, the two 3D models
+assets/blog/        the post page script, workflow diagrams, and each post's media
 _posts/             published blog posts, one markdown file each
 _drafts/            written but not published, no date needed in the name
 _layouts/           the blog's shell and post template
-_includes/          custom components, currently just the aside box
+_includes/          custom components: the aside box and four ways to show workflow diagrams
 blog.html           redirects /blog to the Writing panel
 docs/decisions.md   why the site is built this way
 ```

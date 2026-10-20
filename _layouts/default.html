@@ -18,14 +18,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   {%- feed_meta -%}
+  <script src="/assets/blog/theme.js"></script>
 
   <style>
     /* Same rules as the landing page: no borders, no fades, black text only. */
     :root {
       --bg: #ffffff;
       --fg: #000000;
-      --muted: #888888;
+      --muted: #707070;   /* darkest grey that still reads as grey: 4.5:1 on --fill, the WCAG AA bar */
+      --fill: #f4f4f4;
       --font: "IBM Plex Mono", monospace;
+    }
+
+    /* Dark mode is the same page inverted. The bulb's glass is the only colour. */
+    :root[data-theme="dark"] {
+      --bg: #000000;
+      --fg: #ffffff;
+      --fill: #1a1a1a;
+      --muted: #888888;   /* #707070 fails on black; #888 is 4.9:1 on --fill */
+      color-scheme: dark;
     }
 
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,7 +83,7 @@
     main {
       flex: 1 0 auto;
       width: 100%;
-      max-width: 44rem;
+      max-width: 47rem; /* 43rem (688px) of text plus 2rem a side */
       margin: 0 auto;
       padding: 1.5rem 2rem 4rem;
       display: flex;
@@ -96,8 +107,44 @@
 
     footer.foot a:hover { color: var(--fg); }
 
+    /* Light switch: a pixel-art dot on a string that swings, hanging from the
+       top of the window in line with the section rail. Pull it or tap it.
+       The canvas is drawn at half size and scaled up so every pixel shows. */
+    nav.top { padding-right: 4.5rem; }
+    .pull-switch {
+      position: fixed;
+      top: 0;
+      right: 4px;
+      z-index: 150;
+      width: 96px;
+      height: 104px;
+      pointer-events: none;
+    }
+    .pull-switch canvas {
+      display: block;
+      width: 96px;
+      height: 104px;
+      image-rendering: pixelated;
+    }
+    .pull-dot {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      border: 0;
+      background: none;
+      cursor: grab;
+      touch-action: none;
+      pointer-events: auto;
+    }
+    .pull-dot.grabbing { cursor: grabbing; }
+    .pull-dot:focus-visible { outline: 1px solid var(--fg); outline-offset: 0; }
+
     @media (max-width: 640px) {
       nav.top, footer.foot { padding: 0 1.25rem; }
+      nav.top { padding-right: 3.75rem; }
       main { padding: 1.25rem 1.25rem 3rem; }
       .brand { font-size: 0.65rem; letter-spacing: 0.15em; }
       footer.foot { font-size: 0.5rem; letter-spacing: 0.18em; }

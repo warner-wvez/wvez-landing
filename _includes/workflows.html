@@ -1,0 +1,21 @@
+{% comment %}
+Several workflow diagrams in one block, one tab each, so a reader can skip all
+of them in one scroll:
+
+  {% include workflows.html names="job-hunt,ebay-flipping" labels="Job hunt,eBay flipping" %}
+
+names are files in assets/blog/workflows/ without .html; labels are the tab
+names, in the same order. post.js switches the tabs and sizes each frame.
+{% endcomment %}
+{%- assign wf_names = include.names | split: "," -%}
+{%- assign wf_labels = include.labels | split: "," -%}
+<figure class="wf-embed wf-set">
+  <div class="wf-tabs" role="tablist" aria-label="Workflow examples">
+    {%- for n in wf_names %}
+    <button type="button" role="tab" class="wf-tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ wf_labels[forloop.index0] | default: n | strip }}</button>
+    {%- endfor %}
+  </div>
+  {%- for n in wf_names %}
+  <div class="wf-pane" role="tabpanel"{% unless forloop.first %} hidden{% endunless %}><iframe src="/assets/blog/workflows/{{ n | strip }}.html" title="{{ wf_labels[forloop.index0] | default: n | strip }}, workflow diagram" height="380" scrolling="no"></iframe></div>
+  {%- endfor %}
+</figure>

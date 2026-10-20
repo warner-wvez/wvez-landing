@@ -1,0 +1,24 @@
+{% comment %}
+One workflow in a grid: its name, its diagram, then its text. Put the cards inside
+a wf-grid block and write each card's text in a capture:
+
+  <div class="wf-grid">
+  {% capture text %}
+  - First line
+  - Second line
+  {% endcapture %}
+  {% include workflow-card.html name="job-hunt" title="Job hunt" text=text %}
+  </div>
+
+The grid shows two cards a row with gridlines between them, and it is the one block
+allowed wider than the text column (up to 1000px, centred on it). On phones it is one
+card a row. "View larger" opens the diagram full size; post.js wires it.
+{% endcomment %}
+<div class="wf-card">
+<p class="wf-card-name">{{ include.title }}</p>
+<figure class="wf-embed"><iframe src="/assets/blog/workflows/{{ include.name }}.html?canvas&amp;bare" title="{{ include.title }}, workflow diagram" height="220" scrolling="no"></iframe></figure>
+<button type="button" class="wf-larger">View larger</button>
+<div class="wf-card-text">
+{{ include.text | markdownify }}
+</div>
+</div>

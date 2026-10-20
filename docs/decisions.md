@@ -3,6 +3,63 @@
 Why the site is built the way it is. Newest first. A decision here is settled, so if
 one turns out to be wrong, the fix is a new entry that says so, not an edit to the old one.
 
+## Posts get a way back, and the switch drops in
+
+2026-10-20
+
+- **"All writing" sits above the date** on every post, centred like the rest of the
+  header, in full black so it reads as the thing to click. The link at the bottom stays.
+  Both open the Writing section (`/#writing`).
+- **The light switch drops down when a post opens.** The string starts bunched at the
+  top edge and falls to rest with a bounce, so the switch announces itself without a
+  label. Readers who ask for reduced motion get it already hanging.
+
+## Each post shows its reading time next to the date
+
+2026-10-20
+
+The date line reads `SEPTEMBER 24, 2026 · 13 MIN READ`. Readers decide whether to
+commit at the top of a post, so that is where it goes. The post layout counts the words
+on every build and divides by 238 a minute, the average adult silent reading speed for
+nonfiction (Brysbaert, 2019), rounded up. Clips and diagrams
+are not counted. Keeping the number in Notion was offered and turned down: it would go
+stale the first time a post changed length.
+
+## Email signups go to Brevo through a box the site draws itself
+
+2026-10-19
+
+Readers get new posts by email: one field, one button, after every post. RSS stays as
+the small footer link for people who already use it, but most readers know an email
+box and not a feed.
+
+- **The box is the site's own HTML** (`_includes/subscribe.html`), styled like the
+  rest of the post, with no provider logo on the page. It sends the address to a Brevo
+  form the same way Brevo's own script does, and shows Warner's own messages in place.
+- **Brevo, free plan.** About 100,000 contacts and 300 emails a day. Its emails carry a
+  small Brevo logo, which is the price of free. Kit was the first pick (2026-10-07) and
+  was dropped: its free plan requires Kit branding on the form and shows other
+  newsletters after a signup. Resend was the no-logo option, free only to 1,000
+  contacts and needing a small server of its own. Mailchimp's free plan stops at 250
+  contacts, and beehiiv's box is its own widget.
+- **One step.** No "confirm your email" link to click. Brevo sends the welcome email
+  (its "simple confirmation" email) the moment someone signs up.
+- **No text messages.** US carriers require paid registration for any texting service.
+- **Popups and a sidebar box are possible later** with the same include. A popup would
+  appear once, only after most of the post is read, because Google ranks pages lower
+  on phones when a popup covers the post on arrival. A box on one side breaks the
+  site's symmetry.
+
+- **A moving ascii brick wall sits behind the box**, faint, with the words on a solid
+  strip so it never runs through them. It is the "rotozoomer" piece from ascii.rest
+  (MIT), copied into `assets/blog/subscribe-art.js` with its license rather than
+  loaded from ascii.rest, so the page calls no extra site and the grid can fill any
+  box size. It plays only while the box is on screen, and holds still for readers
+  who ask their device for reduced motion. The "tunnel" piece was tried first and
+  swapped out the same day.
+
+This replaces the 2026-09-22 note that left email subscriptions undecided.
+
 ## Visits are counted with GoatCounter
 
 2026-10-19
@@ -17,6 +74,86 @@ free alternative; GoatCounter was picked for its per-page counts and referrers.
 - **No cookie banner.** Nothing is stored on the visitor's device.
 - **Local previews do not count.** GoatCounter skips localhost by default.
 - **RSS readers cannot be counted.** Feed requests go straight to GitHub Pages.
+
+## Post text goes up to 18px
+
+2026-10-14
+
+The first post read as mostly empty space. Measured against eleven other posts at a
+1440px screen, the margins were normal (52% of the width empty, against a middle value of
+54%). The text was not: 15.2px monospace at line spacing 1.75 was the smallest and loosest
+of the group, and fit 62 characters a line where the others fit about 76. Long-form
+formatting guides ask for 16px at least and 18 to 20px for long posts.
+
+- **Body text 18px, line spacing 1.6, on desktop.** About 55 characters a line, inside the
+  50 to 75 that reads comfortably. The font stays IBM Plex Mono.
+- **16px on phones.** Monospace at 18px fits only about 30 characters on a phone line.
+- **Everything else scales with it.** Title 40px (about 2.2 times the body), section
+  headings 24px, boxes 17px, captions and the workflow cards in step.
+- **Dividers stay.** Cutting them was offered and declined.
+
+## A grid of workflow cards is the one block wider than the text column
+
+2026-10-14
+
+The first post lists four workflows, each with a diagram. Clicking a bullet to see its
+diagram (the 2026-10-05 layout) hid three of the four at any time, and drew each diagram
+at half size. Three layouts that show everything at once were built and compared: a table
+(text left, diagram right), a stack (each diagram full width, its text under it) and a
+2 x 2 grid of cards. The grid won, at 1000px wide.
+
+- **Wider than the column, on purpose, for this block only.** At 688px each card is
+  311px, too small to read a node's name. At 1000px each card is about 470px. The text
+  around the grid keeps the 688px column, so the edges still line up everywhere else.
+  The grid is centred on the column, never narrower than it, and stops short of the
+  outline at the right edge. This replaces the 2026-10-05 rule that no block leaves the
+  column.
+- **Gridlines, the one place with borders.** A 1px grey line between cards and around
+  the grid, so each workflow reads as its own box. The rest of the site keeps no borders.
+- **Text split into short lines, words unchanged.** One sentence, or one step of a long
+  sentence, per bullet, with sub-workflows under a bold label. Only the colon after each
+  workflow's name is gone, because the name became the card's title.
+
+## Post pages get Notion's outline, hover previews and live diagrams, still on Jekyll
+
+2026-10-05
+
+Posts are drafted in Notion and should read like a Notion page on the site: the outline
+of lines at the right edge, links to clips and images that play on hover, and the
+workflow diagrams working inside the post rather than as screenshots. None of it needed
+a new stack. It is one script, `assets/blog/post.js`, and some CSS in the post layout,
+and with the script missing every page still reads as plain HTML.
+
+- **Diagrams are frames, not pasted HTML.** Each diagram is a complete page with its own
+  styles and script. Inside a frame they cannot collide with the post's CSS, and the
+  same file works on its own. The script sizes each frame to its diagram, so a frame
+  never scrolls by itself.
+- **Video previews are local mp4 files, not YouTube embeds.** A YouTube embed shows
+  YouTube's title, channel, logo and buttons over the clip, and none of that can be
+  turned off. An mp4 plays in a plain box that matches the site, starts at once, and
+  holds only the seconds the post is about. YouTube still works as a fallback for a link
+  with no mp4.
+- **Sound needs one click first.** Browsers block sound until a reader has clicked
+  something on the page, and hovering does not count. A clip plays silently until then
+  and offers "Click for sound". There is no way around this rule.
+- **No colours.** Notion's blue and grey callouts both become the grey box, because the
+  site is black and white.
+- **Dark mode is the page inverted, switched by a pixel-art dot on a string.** The pull-cord
+  idea comes from GIMMIE. It starts in the reader's system setting and remembers a choice.
+  The lit dot is yellow because the home page's rule is "pixel art as only colour"; nothing
+  else on the page gains a colour. Switching is instant. The string is simulated (gravity,
+  a little stretch, a capped fling) and drawn at 2px per pixel, so it moves like a real cord
+  and still reads as pixel art. A bulb came first and was swapped for the plainer dot.
+- **One centred column, 688px.** The title, text, boxes, images and diagrams share the
+  same left and right edge, with the title centred above them. This is the measure
+  wustep.me uses for its posts. The first version capped the text narrower than the title
+  and let diagrams run wider, which pushed the text left of centre and made every edge
+  jump. A list of workflows set beside its diagrams follows the same rule: the diagram is
+  drawn at about half size inside the column, and "View larger" opens it full size. A
+  wider block was tried first and broke the edges.
+
+`_config.yml` now sets the post layout explicitly. GitHub Pages already did this through a
+plugin, so the live site does not change, but a plain local Jekyll build now matches it.
 
 ## The blog is markdown in this repository, rendered by Jekyll
 

@@ -1,0 +1,9 @@
+{% comment %}
+A workflow diagram from assets/blog/workflows/, shown inside a post:
+
+  {% include workflow.html name="job-hunt" title="Job-hunt Slack bot" %}
+
+Each diagram is its own page, so its styles and script cannot touch the post.
+post.js sizes the frame to the diagram; height is only the size before that runs.
+{% endcomment %}
+<figure class="wf-embed"><iframe src="/assets/blog/workflows/{{ include.name }}.html" title="{{ include.title | default: include.name }}, workflow diagram" height="{{ include.height | default: 380 }}" scrolling="no"></iframe></figure>

@@ -6,6 +6,27 @@ lang: en-US
 
 permalink: /blog/:title/
 
+# GitHub Pages sets this through a plugin; saying it here makes a local build match.
+defaults:
+  - scope:
+      type: posts
+    values:
+      layout: post
+
+# The email signup box (_includes/subscribe.html). Signups go to the Brevo form
+# "Blog after post", which saves them to the list "Blog Subscribers" and sends the
+# welcome email. Every box on the site reads its words from here.
+subscribe:
+  action: https://2004979b.sibforms.com/serve/MUIFAC0sAOt4FLUmZ08zDmQmVHDFjEBd1_eV97gniJaRRcADDERyq7jp5pcTNOOEJ-FDlT0Dfy1pTRY3ijRUSow5-Efi_vnK_-4gDOJBurZDJytodBImF0nfqyoon_104ZxG1sydQtJeVQs_hECfsTytJB0CQ-cOAY6DPLDlEPO2aCKW6o3QPqT4nee-M4YPKDK860MaDJBFno8N8g==
+  line: "Subscribe for updates on Warner’s Corner"
+  button: Subscribe
+  success: Your subscription was successful (wow thank you lol) - Warner
+  # Shown on its own line under the thank-you line.
+  success_note: Check your inbox and spam for a confirmation email
+  invalid: The info you provided was invalid. Review the field format and try again. - Warner
+  empty: this can't be left blank you goof - Warner
+  error: Your subscription could not be saved. Please try again.
+
 plugins:
   - jekyll-feed
 

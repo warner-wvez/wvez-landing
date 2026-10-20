@@ -2,7 +2,22 @@
 layout: default
 ---
 <style>
-  .post-head { margin-bottom: 2.5rem; }
+  /* One centred column. The title, text, boxes, images and diagrams all
+     share the same left and right edge, so nothing sits off centre. */
+  .post-head { margin-bottom: 3rem; text-align: center; }
+
+  /* Back to the Writing section, above the date. Same small caps as the date,
+     in full black so it reads as the one thing to click. */
+  .post-back {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--fg);
+  }
+  .post-back:hover { color: var(--muted); }
 
   .post-date {
     font-size: 0.6rem;
@@ -10,33 +25,42 @@ layout: default
     letter-spacing: 0.3em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
   }
 
   .post-title {
-    font-size: 1.45rem;
+    font-size: 2.5rem;
     font-weight: 600;
-    letter-spacing: 0.01em;
-    line-height: 1.25;
+    letter-spacing: 0;
+    line-height: 1.3;
+    text-wrap: balance;
   }
 
-  .post-body { font-size: 0.9rem; line-height: 1.7; max-width: 68ch; }
-  .post-body > * + * { margin-top: 1.1rem; }
+  @media (max-width: 640px) { .post-title { font-size: 1.75rem; } }
+
+  /* Body text 18px (16px on phones, where 18px monospace fits only about 30 characters
+     a line). Long-form guides ask for 16px at least and 18 to 20px for long posts. */
+  .post-body { font-size: 1.125rem; line-height: 1.6; }
+  @media (max-width: 640px) { .post-body { font-size: 1rem; } }
+  .post-body > * + * { margin-top: 1.15rem; }
+
+  .post-body h2, .post-body h3 { scroll-margin-top: 1.5rem; line-height: 1.35; }
 
   .post-body h2 {
-    font-size: 0.95rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    margin-top: 2.25rem;
+    letter-spacing: 0;
+    margin-top: 3rem;
   }
 
   .post-body h3 {
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-top: 1.75rem;
+    letter-spacing: 0.02em;
+    margin-top: 2rem;
   }
+
+  .post-body h2 + *, .post-body h3 + * { margin-top: 0.75rem; }
 
   .post-body a { text-decoration: underline; text-underline-offset: 0.2em; }
   .post-body a:hover { color: var(--muted); }
@@ -62,27 +86,309 @@ layout: default
     font-size: 0.78rem;
     line-height: 1.55;
     padding: 0.9rem 1rem;
-    background: #f4f4f4;
+    background: var(--fill);
     overflow-x: auto;
   }
 
-  .post-body code { font-size: 0.82rem; background: #f4f4f4; padding: 0.05em 0.3em; }
+  .post-body code { font-size: 0.95rem; background: var(--fill); padding: 0.05em 0.3em; }
   .post-body pre code { background: none; padding: 0; font-size: inherit; }
 
   .post-body hr { border: 0; border-top: 1px solid var(--muted); margin: 2.5rem 0; }
 
   .notice {
     padding: 1rem 1.15rem;
-    background: #f4f4f4;
-    font-size: 0.82rem;
+    background: var(--fill);
+    font-size: 1.0625rem;
     line-height: 1.6;
   }
   .notice > *:first-child { margin-top: 0; }
   .notice > *:last-child { margin-bottom: 0; }
   .notice p + p { margin-top: 0.7rem; }
+  .notice > * + * { margin-top: 0.7rem; }
+  .post-body .notice img, .post-body .notice figure { margin: 0; }
+  /* Phones: headings and boxes step down with the 16px body text. */
+  @media (max-width: 640px) {
+    .post-body h2 { font-size: 1.3rem; }
+    .notice { font-size: 0.95rem; }
+  }
+
+  /* Images with a caption, and Notion's side by side columns. */
+  .post-body figure { margin: 1.75rem 0; }
+  .post-body figure img { margin: 0; }
+  .post-body figcaption {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .post-body figcaption a:hover { color: var(--fg); }
+
+  .cols { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 1rem; }
+  .cols > * { margin: 0; }
+  @media (max-width: 520px) { .cols { grid-template-columns: 1fr; } }
+
+  /* Workflow diagrams, the same width as the text. */
+  .post-body > .wf-embed { margin: 2rem 0; }
+  .wf-embed iframe, .wf-split iframe { display: block; width: 100%; border: 0; }
+
+  /* Several diagrams in one block, one tab each. */
+  .wf-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-bottom: 1rem; }
+  .wf-tab {
+    font: inherit;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+  }
+  .wf-tab:hover { color: var(--fg); }
+  .wf-tab[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+  .wf-pane[hidden] { display: none; }
+
+  /* Workflow bullets on the left, the picked one's diagram on the right, inside
+     the text column like everything else. The diagram is drawn small there;
+     "View larger" opens it full size. */
+  .post-body > .wf-split {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .wf-split-text { font-size: 0.85rem; line-height: 1.7; }
+  .wf-split-text > ul, .wf-split-text > ol { margin: 0; }
+  .wf-split-panel { position: sticky; top: 1.5rem; }
+  .wf-split .wf-pick { cursor: pointer; padding: 0.5rem 0.6rem; margin-left: -0.6rem; }
+  .wf-split .wf-pick:hover > strong:first-child { text-decoration: underline; text-underline-offset: 0.2em; }
+  .wf-split .wf-pick[aria-pressed="true"] { background: var(--fill); }
+  .wf-split .wf-pick:focus-visible { outline: 1px solid var(--fg); outline-offset: 2px; }
+  .wf-larger {
+    margin-top: 0.75rem;
+    font: inherit;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--fg);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+  .wf-larger:hover { color: var(--muted); }
+  @media (max-width: 640px) {
+    .post-body > .wf-split { display: block; }
+    .wf-split-panel { position: static; margin-top: 1.25rem; }
+  }
+
+  /* Workflows in a grid: each card has a name, a diagram and the text split into short
+     lines, two cards a row with gridlines between them. It is the one block wider than
+     the text column: up to 1000px, centred on it, never narrower than the column, and
+     clear of the outline at the right edge. The grey shows through 1px gaps. */
+  .post-body > .wf-grid {
+    --wf-grid-w: max(100%, min(1000px, calc(100vw - 10rem)));
+    width: var(--wf-grid-w);
+    margin: 2rem 0 2rem calc((100% - var(--wf-grid-w)) / 2);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    padding: 1px;
+    background: var(--muted);
+  }
+  .wf-card { min-width: 0; padding: 1rem; background: var(--bg); }
+  .post-body .wf-card-name { margin: 0 0 0.75rem; font-size: 1rem; font-weight: 700; line-height: 1.4; }
+  .post-body .wf-card .wf-embed { margin: 0; }
+  .wf-card .wf-larger { margin-top: 0.5rem; }
+  .wf-card-text { margin-top: 1rem; font-size: 0.92rem; line-height: 1.6; }
+  .post-body .wf-card-text ul { list-style: none; margin: 0; padding: 0; }
+  .post-body .wf-card-text li { position: relative; margin: 0; padding-left: 1rem; }
+  .post-body .wf-card-text li + li { margin-top: 0.5rem; }
+  .wf-card-text li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 4px;
+    height: 4px;
+    background: var(--fg);
+  }
+  .post-body .wf-card-text p { margin: 0.9rem 0 0.4rem; font-weight: 700; }
+  .post-body .wf-card-text > :first-child { margin-top: 0; }
+  @media (max-width: 640px) {
+    .post-body > .wf-grid { width: auto; margin-left: 0; grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* Full size diagram in a window over the post. The page behind is dimmed and
+     stays where it was; the window closes with its x or Esc. */
+  .wf-viewer {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: flex;
+    padding: 2rem;
+    background: rgba(0, 0, 0, 0.45);
+    overflow-y: auto;
+  }
+  .wf-viewer[hidden] { display: none; }
+  :root[data-theme="dark"] .wf-viewer { background: rgba(0, 0, 0, 0.75); }
+  .wf-viewer-window {
+    position: relative;
+    width: min(1000px, 100%);
+    margin: auto;
+    padding: 3rem 1.5rem 1.5rem;
+    background: var(--bg);
+  }
+  :root[data-theme="dark"] .wf-viewer-window { background: var(--fill); }
+  .wf-viewer iframe { display: block; width: 100%; border: 0; }
+
+  /* Images open in the same window, sized to the picture, caption underneath. */
+  .post-body img.zoomable { cursor: zoom-in; }
+  .post-body img.zoomable:focus-visible { outline: 1px solid var(--fg); outline-offset: 3px; }
+  .wf-viewer-window.is-image { width: auto; max-width: 100%; padding: 3rem 1.25rem 1.25rem; }
+  .wf-viewer-window.is-image figure { margin: 0; }
+  .wf-viewer-window.is-image img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: calc(100vh - 9rem);
+    margin: 0 auto;
+  }
+  .wf-viewer-window.is-image figcaption {
+    margin-top: 0.6rem;
+    max-width: 60ch;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .wf-viewer-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font: inherit;
+    font-size: 1.75rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--fg);
+    background: none;
+    border: 0;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+  }
+  .wf-viewer-close:hover { color: var(--muted); }
+  @media (max-width: 640px) {
+    .wf-viewer { padding: 1rem; }
+    .wf-viewer-window { padding: 2.75rem 1rem 1rem; }
+  }
+
+  /* Links that preview on hover get a dotted underline. */
+  .post-body a.has-preview { text-decoration-style: dotted; text-decoration-thickness: 1.5px; }
+
+  .pv {
+    position: absolute;
+    z-index: 200;
+    padding: 0.5rem;
+    background: var(--fill);
+  }
+  .pv[hidden] { display: none; }
+  .pv-media { cursor: default; }
+  .pv-image .pv-media img { display: block; max-width: min(20rem, 80vw); max-height: 15rem; width: auto; height: auto; }
+  /* A local clip keeps its own shape (a 4:3 clip stays 4:3); 16:9 only until it loads. */
+  .pv-video .pv-media video { display: block; width: min(20rem, 80vw); aspect-ratio: auto 16 / 9; height: auto; background: #000; }
+  .pv-youtube .pv-media iframe { display: block; width: min(20rem, 80vw); aspect-ratio: 16 / 9; height: auto; background: #000; border: 0; }
+  .pv-youtube .pv-media .pv-yt { width: min(20rem, 80vw); aspect-ratio: 16 / 9; background: #000; }
+  .pv-audio { width: min(16rem, 80vw); padding: 0.6rem 0 0.2rem; }
+  .pv-audio audio { display: none; }
+  .pv-bar { height: 2px; background: var(--bg); }
+  .pv-bar span { display: block; height: 100%; width: 0; background: var(--fg); }
+  .pv-cap {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-top: 0.45rem;
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .pv-credit {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .pv-credit:hover { color: var(--fg); }
+  .pv-credit[hidden] { display: none; }
+  .pv-image .pv-cap, .pv-define .pv-cap { display: none; }
+  /* A definition: the word in bold, then the text, small like a footnote. */
+  .pv-def { width: min(17rem, 80vw); padding: 0.15rem 0.25rem 0; font-size: 0.78rem; line-height: 1.55; }
+  .pv-def p { margin: 0 0 0.45rem; }
+  .pv-def p:last-child { margin-bottom: 0; }
+  .pv-def .pv-word { font-weight: 600; margin-bottom: 0.2rem; }
+  .pv-define .pv-credit { margin: 0.45rem 0.25rem 0.1rem; }
+  .pv-sound { font: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; }
+  .pv-sound:hover { color: var(--muted); }
+  .pv-sound[hidden] { display: none; }
+  .pv-video .pv-media, .pv-youtube .pv-media { cursor: pointer; }
+
+  /* Section rail: Notion's outline. One line per heading, the current one
+     black. Hovering or tabbing in swaps the lines for the list. Placed where
+     Notion puts it: first line 174px from the top of the window, 16px lines
+     12px apart, ending 20px from the right edge. */
+  .toc {
+    position: fixed;
+    right: 1.25rem;
+    top: calc(174px - 0.75rem);
+    z-index: 100;
+  }
+  .toc-lines {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    padding: 0.75rem 0 0.75rem 1.25rem;
+  }
+  .toc-line { display: block; height: 2px; width: 1rem; background: var(--muted); }
+  .toc-line.l3 { width: 0.6rem; }
+  .toc-line.on { background: var(--fg); }
+  .toc-panel {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 15rem;
+    max-height: calc(100vh - 174px);
+    overflow-y: auto;
+    padding: 0.9rem 1.1rem;
+    background: var(--fill);
+    list-style: none;
+    font-size: 0.7rem;
+    line-height: 1.45;
+  }
+  .toc-panel li + li { margin-top: 0.55rem; }
+  .toc-panel li.l3 { padding-left: 0.85rem; }
+  .toc-panel a { display: block; color: var(--muted); }
+  .toc-panel a:hover, .toc-panel li.on a { color: var(--fg); }
+  .toc-panel li.on a { font-weight: 500; }
+  .toc:hover .toc-panel, .toc:focus-within .toc-panel { display: block; }
+  .toc:hover .toc-lines, .toc:focus-within .toc-lines { visibility: hidden; }
+  @media (max-width: 1000px) { .toc { display: none; } }
 
   .post-foot {
     margin-top: 3.5rem;
+    text-align: center;
     font-size: 0.6rem;
     font-weight: 500;
     letter-spacing: 0.3em;
@@ -91,11 +397,99 @@ layout: default
   }
 
   .post-foot a:hover { color: var(--fg); }
+
+  /* The email signup box after the post: one line, one field, one button,
+     centred in the column. Same grey fill as the notice boxes. */
+  .subscribe {
+    position: relative;
+    overflow: hidden;
+    margin-top: 3.5rem;
+    padding: 1.75rem 1.5rem;
+    background: var(--fill);
+    text-align: center;
+  }
+  /* The moving ascii brick wall behind it (assets/blog/subscribe-art.js), drawn
+     faint so the words and the field stay easy to read. */
+  .subscribe-art {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    font-family: var(--font);
+    font-size: 12px;
+    line-height: 14.4px;   /* a cell twice as tall as it is wide, as the piece expects */
+    white-space: pre;
+    text-align: left;
+    color: var(--muted);
+    opacity: 0.45;
+    pointer-events: none;
+    user-select: none;
+  }
+  .subscribe > :not(.subscribe-art) { position: relative; }
+  .subscribe-line { margin: 0 0 1rem; font-size: 1.0625rem; line-height: 1.6; }
+  .subscribe-form { display: flex; gap: 0.5rem; max-width: 30rem; margin: 0 auto; }
+  .subscribe-form input[type="email"] {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    font-size: 1rem;   /* 16px or more, so phones do not zoom in on tap */
+    color: var(--fg);
+    background: var(--bg);
+    border: 0;
+    border-radius: 0;
+    padding: 0.7rem 0.85rem;
+  }
+  .subscribe-form input::placeholder { color: var(--muted); opacity: 1; }
+  .subscribe-form input:focus-visible { outline: 1px solid var(--fg); outline-offset: 0; }
+  .subscribe-form button {
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--fg);
+    border: 0;
+    border-radius: 0;
+    padding: 0 1.25rem;
+    cursor: pointer;
+  }
+  .subscribe-form button:hover { background: var(--muted); }
+  .subscribe-form button:disabled { cursor: progress; }
+  .subscribe-msg { margin: 1rem auto 0; font-size: 0.95rem; line-height: 1.6; white-space: pre-line; }
+  /* Words sit on a strip of the box's own grey, so the moving wall never runs through them. */
+  .subscribe-line span, .subscribe-msg {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.15rem 0.6rem;
+    background: var(--fill);
+  }
+  .subscribe-msg { display: table; }
+  .subscribe-msg:empty, .subscribe [hidden] { display: none; }
+  .subscribe-done .subscribe-msg { margin: 0; }
+  .subscribe-hide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  @media (max-width: 640px) {
+    .subscribe { padding: 1.5rem 1rem; }
+    .subscribe-line { font-size: 0.95rem; }
+    .subscribe-form { flex-direction: column; }
+    .subscribe-form button { padding: 0.85rem; }
+  }
 </style>
 
 <article>
   <header class="post-head">
-    <div class="post-date">{{ page.date | date: "%B %-d, %Y" }}</div>
+    <a class="post-back" href="/#writing">&larr; All writing</a>
+    {%- comment -%} Reading time: words in the post at 238 a minute (the average
+        adult silent reading speed for nonfiction, Brysbaert 2019), rounded up. {%- endcomment -%}
+    {%- assign words = content | strip_html | number_of_words -%}
+    {%- assign minutes = words | plus: 237 | divided_by: 238 -%}
+    <div class="post-date">{{ page.date | date: "%B %-d, %Y" }} &middot; {{ minutes }} min read</div>
     <h1 class="post-title">{{ page.title }}</h1>
   </header>
 
@@ -103,7 +497,12 @@ layout: default
     {{ content }}
   </div>
 
+  {% include subscribe.html spot="after-post" %}
+
   <div class="post-foot">
     <a href="/#writing">All writing</a>
   </div>
 </article>
+
+<script type="application/json" id="post-previews">{{ page.previews | jsonify }}</script>
+<script src="/assets/blog/post.js" defer></script>
