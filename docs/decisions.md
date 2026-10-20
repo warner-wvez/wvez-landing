@@ -3,6 +3,21 @@
 Why the site is built the way it is. Newest first. A decision here is settled, so if
 one turns out to be wrong, the fix is a new entry that says so, not an edit to the old one.
 
+## Visits are counted with GoatCounter
+
+2026-10-19
+
+The blog needs a count of who reads it, and the site has no server to keep logs (GitHub
+Pages shows none). GoatCounter's hosted service is free for personal sites and small
+businesses, sets no cookies, and needs one script tag. Cloudflare Web Analytics was the
+free alternative; GoatCounter was picked for its per-page counts and referrers.
+
+- **Every page carries it**: the landing page, the post layout, and the three demos. The
+  dashboard is wvez.goatcounter.com.
+- **No cookie banner.** Nothing is stored on the visitor's device.
+- **Local previews do not count.** GoatCounter skips localhost by default.
+- **RSS readers cannot be counted.** Feed requests go straight to GitHub Pages.
+
 ## The blog is markdown in this repository, rendered by Jekyll
 
 2026-09-22

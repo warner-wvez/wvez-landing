@@ -24,6 +24,9 @@ Hosted on GitHub Pages, which also builds the blog with Jekyll when it is turned
 Each demo is a single self contained file. They run entirely in the browser, call no
 real service, and the numbers they display are invented.
 
+Visits are counted with [GoatCounter](https://wvez.goatcounter.com): one script tag at the
+bottom of every page, demos included, no cookies. See `docs/decisions.md`.
+
 ## Running it
 
 ```bash
