@@ -14,6 +14,29 @@ one turns out to be wrong, the fix is a new entry that says so, not an edit to t
   top edge and falls to rest with a bounce, so the switch announces itself without a
   label. Readers who ask for reduced motion get it already hanging.
 
+## The home page logo shows in under a second
+
+2026-10-20
+
+On a throttled 4G phone connection the spinning logo took about 9.5 seconds to appear,
+and about 1.9 seconds on fast wifi. Now a still of it shows at about 0.3 seconds and the
+3D logo is spinning by about 0.8 seconds (0.4 on wifi). Three changes did it:
+
+- **The model is about 89% smaller**, 1.4MB to 162KB. It has no textures, so the texture
+  coordinates and tangents in the file were never used; the rest is meshopt compression,
+  which keeps the clearcoat and glow that give it the chrome look. Rendered side by side at
+  the same angle, the two differ in well under 1% of pixels. The decoder it needs
+  (`assets/meshopt_decoder.js`, MIT, 29KB) is served from this site.
+- **The rest of the page stops crowding it out.** About 8MB of images loaded at once: the
+  Ventures and Contact icons (the X, GitHub and LinkedIn ones are 470 to 870KB each) and the
+  photo hover previews. All of them now wait until the logo has loaded, then download
+  straight away, icons first, so they are still ready before anyone hovers: on wifi the
+  icons by about 1.5 seconds and all 24 previews by about 2.2. The model download starts in
+  the page head, at high priority.
+- **A still image holds its place** (`assets/logo-hero-still.webp`, 20KB) until the 3D logo
+  is ready. The spin now starts face on, at 90 degrees, so the still and the first frame
+  match; it used to start edge on. If the model changes, the still has to be re-rendered.
+
 ## The demos show the monogram in text, not a 3D pendant
 
 2026-10-20

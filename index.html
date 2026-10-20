@@ -21,6 +21,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+  <!-- The home page logo is compressed (meshopt); model-viewer needs to know where its
+       decoder is before it starts. The model download starts here too, alongside the
+       viewer library instead of after it. -->
+  <script>self.ModelViewerElement = { meshoptDecoderLocation: '/assets/meshopt_decoder.js' };</script>
+  <link rel="preload" href="/assets/logo-hero.glb" as="fetch" type="model/gltf-binary" crossorigin fetchpriority="high">
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
   <style>
@@ -214,6 +219,7 @@
     }
 
     .wvez-3d-hero model-viewer {
+      display: block;   /* sized even before its script loads, so the still image shows at once */
       width: min(480px, 90vw);
       height: min(480px, 80vh);
       outline: none;
@@ -223,6 +229,10 @@
       --progress-bar-color: transparent;
       --progress-mask: transparent;
     }
+
+    /* cover, centred: the logo spans the box's width in both the still and the 3D view,
+       on a phone's shorter box as well as the tall desktop one */
+    .hero-still { display: block; width: 100%; height: 100%; object-fit: cover; }
 
     @media (max-width: 768px) {
       .wvez-3d-hero model-viewer {
@@ -959,7 +969,10 @@
           interaction-prompt="none"
           shadow-intensity="0"
           exposure="1"
-          camera-orbit="0deg 90deg auto">
+          camera-orbit="90deg 90deg auto">
+          <!-- A still of the logo at this same angle (face on), shown the moment the page opens and
+               swapped for the spinning 3D logo once it has loaded. -->
+          <img slot="poster" class="hero-still" src="/assets/logo-hero-still.webp" alt="" width="400" height="960">
         </model-viewer>
       </div>
     </section>
@@ -993,7 +1006,7 @@
            <div class="venture-title">RECON</div>
            <div class="venture-cat">Competitive intelligence</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/willis-pixelv3.png" class="venture-icon" alt="RECON">
+             <img src="/assets/pixel/willis-pixelv3.png" class="venture-icon" alt="RECON" loading="lazy">
              <img data-src="/assets/pixel/recon-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1007,7 +1020,7 @@
            <div class="venture-title">FLIPPR</div>
            <div class="venture-cat">Resale arbitrage</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/aon-pixelv3.png" class="venture-icon" alt="FLIPPR">
+             <img src="/assets/pixel/aon-pixelv3.png" class="venture-icon" alt="FLIPPR" loading="lazy">
              <img data-src="/assets/pixel/flippr-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1025,7 +1038,7 @@
            <div class="venture-title">Content Recipe</div>
            <div class="venture-cat">Content auditing</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/crain-pixelv3.png" class="venture-icon" alt="Content Recipe">
+             <img src="/assets/pixel/crain-pixelv3.png" class="venture-icon" alt="Content Recipe" loading="lazy">
              <img data-src="/assets/pixel/crp-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1037,7 +1050,7 @@
            <div class="venture-title">Wrestling Dashboard</div>
            <div class="venture-cat">Match tracking</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/tribune-pixel.png" class="venture-icon" alt="Wrestling Dashboard">
+             <img src="/assets/pixel/tribune-pixel.png" class="venture-icon" alt="Wrestling Dashboard" loading="lazy">
              <img data-src="/assets/pixel/wrestling-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1049,7 +1062,7 @@
            <div class="venture-title">Y Combinator Brain</div>
            <div class="venture-cat">Startup network graph</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/soldier-pixelv3.png" class="venture-icon" alt="Y Combinator Brain">
+             <img src="/assets/pixel/soldier-pixelv3.png" class="venture-icon" alt="Y Combinator Brain" loading="lazy">
              <img data-src="/assets/pixel/ycbrain-pixel.webp" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1133,13 +1146,13 @@
         <a href="mailto:warner@wvez.org" class="email">warner@wvez.org</a>
         <div class="social-icons">
           <a href="https://www.linkedin.com/in/warner-varnado-549b391a2" target="_blank" rel="noopener" class="social-icon" aria-label="LinkedIn">
-            <img src="/assets/pixel/linkedin-pixel.png" alt="LinkedIn">
+            <img src="/assets/pixel/linkedin-pixel.png" alt="LinkedIn" loading="lazy">
           </a>
           <a href="https://github.com/warner-wvez" target="_blank" rel="noopener" class="social-icon" aria-label="GitHub">
-            <img src="/assets/pixel/github-pixel.png" alt="GitHub">
+            <img src="/assets/pixel/github-pixel.png" alt="GitHub" loading="lazy">
           </a>
           <a href="https://x.com/WarnerVeeEZ" target="_blank" rel="noopener" class="social-icon" aria-label="X">
-            <img src="/assets/pixel/x-pixel.png" alt="X">
+            <img src="/assets/pixel/x-pixel.png" alt="X" loading="lazy">
           </a>
         </div>
       </div>
@@ -1525,15 +1538,23 @@
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       const preloadHoverImages = () => {
         const urls = new Set();
+        // The section icons first (Ventures, Contact), so they are ready before anyone gets there.
+        document.querySelectorAll('img[loading="lazy"]').forEach(i => urls.add(i.getAttribute('src')));
         document.querySelectorAll('.venture-preview[data-src]').forEach(i => urls.add(i.dataset.src));
         document.querySelectorAll('.photo-item[data-src]').forEach(i => urls.add(i.dataset.src));
         urls.forEach(src => { const img = new Image(); img.decoding = 'async'; img.src = src; });
       };
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(preloadHoverImages, { timeout: 3000 });
-      } else {
-        window.addEventListener('load', preloadHoverImages);
-      }
+      // Wait for the 3D logo first (or 8 seconds, whichever comes first): on a phone
+      // connection these images would otherwise crowd it out. Then everything warms up
+      // straight away, with no idle wait.
+      let warmed = false;
+      const warm = () => {
+        if (warmed) return; warmed = true;
+        preloadHoverImages();
+      };
+      const heroModel = document.querySelector('.wvez-3d-hero model-viewer');
+      if (heroModel) heroModel.addEventListener('load', warm, { once: true });
+      setTimeout(warm, 8000);
     }
   </script>
 
