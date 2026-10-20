@@ -14,7 +14,7 @@ exactly as they are. It does not run Jekyll, so anything under `_layouts`, `_pos
 
 ## Writing a post
 
-Writing is the fifth panel of the site. The panel is the index and each post opens as its
+Writing is the fourth panel of the site. The panel is the index and each post opens as its
 own page. A post you are not ready to publish goes in `_drafts/`, where it needs no date in
 the filename.
 

@@ -14,6 +14,16 @@ one turns out to be wrong, the fix is a new entry that says so, not an edit to t
   top edge and falls to rest with a bounce, so the switch announces itself without a
   label. Readers who ask for reduced motion get it already hanging.
 
+## The What I Solve section is gone
+
+2026-10-20
+
+The services menu ("What I Solve", need on the left and what gets built on the right)
+came out at Warner's request. The site is six panels now: Home, About, Ventures,
+Writing, Photography, Contact. The menu, the dots and the panel order lost one entry
+each, and Writing moved from fifth to fourth. An old `/#services` link opens Home,
+since an unknown section name falls back to the first panel.
+
 ## Each post shows its reading time next to the date
 
 2026-10-20

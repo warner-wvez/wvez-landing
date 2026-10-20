@@ -40,7 +40,7 @@ Jekyll, so anything under `_layouts` or `_posts` will not render locally.
 
 ## Where writing lives
 
-Writing is the fifth panel of the site, between Services and Photography, and it is the
+Writing is the fourth panel of the site, between Ventures and Photography, and it is the
 index: one row per post, newest first, grouped by year. Clicking a row opens that post as
 its own page at `/blog/<slug>`, which scrolls normally instead of living in the panel deck.
 

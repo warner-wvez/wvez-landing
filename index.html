@@ -262,7 +262,7 @@
     }
 
     /* ===========================================================
-       SERVICES / CONTACT — centered text
+       CONTACT — centered text
        =========================================================== */
     .panel-label {
       font-size: 0.6rem;
@@ -412,91 +412,6 @@
     }
 
     /* ===========================================================
-       SERVICES — paired service menu
-       =========================================================== */
-    .service-menu {
-      width: 100%;
-      max-width: 620px;
-      display: grid;
-      grid-template-columns: max-content 1.25rem max-content;
-      column-gap: 0.75rem;
-      row-gap: 1.25rem;
-      justify-content: center;
-      margin: 0 auto;
-    }
-
-    .service-menu-header,
-    .service-menu-row {
-      display: grid;
-      grid-template-columns: subgrid;
-      grid-column: 1 / -1;
-      align-items: baseline;
-    }
-
-    .service-menu-header {
-      margin-bottom: 0.75rem;
-    }
-
-    .service-menu-header .service-menu-label:first-child {
-      grid-column: 1;
-    }
-
-    .service-menu-header .service-menu-label:last-child {
-      grid-column: 3;
-    }
-
-    .service-menu-label {
-      font-size: 0.55rem;
-      font-weight: 500;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-align: left;
-    }
-
-    .service-menu-line {
-      font-family: var(--font);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.045em;
-      line-height: 1.35;
-      color: var(--fg);
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    .service-menu-connector {
-      font-family: var(--font);
-      font-size: 0.72rem;
-      font-weight: 400;
-      letter-spacing: 0;
-      color: var(--muted);
-      opacity: 0.7;
-      text-align: center;
-    }
-
-    #contact .tagline-big {
-      font-size: 1.1rem;
-      line-height: 1.5;
-      margin-bottom: 2rem;
-    }
-    #contact .email {
-      font-size: 1.35rem;
-      font-weight: 500;
-      letter-spacing: 0.03em;
-      display: inline-block;
-      padding-bottom: 2px;
-    }
-    #contact .email:hover { color: var(--muted); }
-    #contact .loc {
-      font-size: 0.62rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 1.5rem;
-    }
-
-    /* ===========================================================
        CONTACT — tightened spacing + social icon row
        =========================================================== */
     #contact .email {
@@ -641,7 +556,7 @@
       margin-top: 0.9rem;
       color: #222;
     }
-    .venture-desc a {
+    .venture-desc a, .about-col a {
       border-bottom: 1px solid var(--fg);
       padding-bottom: 1px;
     }
@@ -688,7 +603,7 @@
     }
 
     /* ===========================================================
-       9-DOT PROGRESS INDICATOR — always visible
+       PROGRESS DOTS — always visible
        =========================================================== */
     .progress-dots {
       position: fixed;
@@ -856,28 +771,16 @@
     /* ===========================================================
        EXPANDED PORTFOLIO VIEW
        =========================================================== */
+    /* The demo fills the screen, with no title bar of its own: the demo's
+       "< Ventures" button and the Escape key close it. */
     .project-view {
       position: fixed;
       inset: 0;
-      background: var(--bg);
+      background: #000;
       z-index: 500;
       display: none;
-      flex-direction: column;
     }
-    .project-view.open { display: flex; }
-
-    .project-close {
-      position: fixed;
-      top: 1rem;
-      right: 1.5rem;
-      z-index: 601;
-      font-size: 2rem;
-      line-height: 1;
-      font-weight: 300;
-      color: var(--fg);
-      padding: 0.4rem 0.6rem;
-    }
-    .project-close:hover { color: var(--muted); }
+    .project-view.open { display: block; }
 
     .project-nav {
       position: fixed;
@@ -903,30 +806,12 @@
       letter-spacing: 0;
     }
 
-    .project-header {
-      flex-shrink: 0;
-      padding: 1.25rem 6rem 0.75rem;
-      text-align: center;
-    }
-    .project-title {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      margin-bottom: 0.3rem;
-    }
-    .project-meta {
-      font-size: 0.6rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
     .project-frame {
-      flex: 1;
+      display: block;
       width: 100%;
+      height: 100%;
       border: 0;
-      background: var(--bg);
+      background: #000;   /* the demos are black pages; no white flash while one loads */
     }
 
     /* ===========================================================
@@ -970,42 +855,6 @@
       .photo-divider { display: none; }
       .photo-col-proof { min-width: 0; }
 
-      .service-menu {
-        max-width: 420px;
-        grid-template-columns: 1fr;
-        column-gap: 0;
-        row-gap: 1rem;
-      }
-
-      .service-menu-header {
-        display: none;
-      }
-
-      .service-menu-row {
-        grid-template-columns: 1fr;
-        row-gap: 0.25rem;
-        padding-bottom: 0.55rem;
-      }
-
-      .service-menu-connector {
-        display: none;
-      }
-
-      .service-menu-row .service-menu-line:first-child {
-        color: var(--muted);
-        font-size: 0.62rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        white-space: normal;
-      }
-
-      .service-menu-row .service-menu-line:last-child {
-        font-size: 0.82rem;
-        letter-spacing: 0.045em;
-        color: var(--fg);
-        white-space: normal;
-      }
-
       /* ventures: stack the pyramid rows into a single scrolling column */
       .ventures-stage { height: auto; overflow: visible; display: block; }
       .ventures-grid {
@@ -1037,8 +886,6 @@
       .brand { font-size: 0.65rem; letter-spacing: 0.15em; }
 
       #hero h1 { font-size: 2rem; }
-      .project-header { padding: 2.5rem 1rem 0.5rem; }
-      .project-close { font-size: 1.6rem; top: 0.5rem; right: 0.75rem; }
 
       /* demo viewer arrows: collapse the "Previous/Next project" labels to a
          compact triangle on each edge so they stop crowding the demo */
@@ -1082,10 +929,9 @@
       <button data-goto="0">Home</button>
       <button data-goto="1">About</button>
       <button data-goto="2">Ventures</button>
-      <button data-goto="3">Services</button>
-      <button data-goto="4">Writing</button>
-      <button data-goto="5">Photography</button>
-      <button data-goto="6">Contact</button>
+      <button data-goto="3">Writing</button>
+      <button data-goto="4">Photography</button>
+      <button data-goto="5">Contact</button>
     </nav>
   </div>
 
@@ -1122,14 +968,14 @@
       <div class="panel-label">About</div>
       <div class="about-columns">
         <div class="about-col">
-          <p>Hello. I'm Warner, running WVEZ Solutions out of Chicago.</p>
-          <p>I design and build insight systems, data pipelines, and custom applications for businesses, creators, and students.</p>
+          <p>Hello. I'm Warner, and this is my portfolio page.</p>
+          <p>I design and build all kinds of insight systems, data pipelines, and custom applications for small businesses, creators, and students.</p>
           <p>I also ship my own stuff. Things I care about or find cool.</p>
         </div>
         <div class="about-divider"></div>
         <div class="about-col">
-          <p>Everything on this site was built by me. Backend to frontend, scraper to production. No templates, wrappers, or "worry" about tokens.</p>
-          <p>I love building technical problem solvers and learning through every step of the process.</p>
+          <p>Everything you see on this site was designed by me.</p>
+          <p>I love spending my free time building technical problem solvers and <a href="#writing">writing</a>.</p>
         </div>
       </div>
     </section>
@@ -1213,65 +1059,6 @@
         </div>
 
        </div>
-      </div>
-    </section>
-
-    <section class="panel" id="services">
-      <div class="panel-label">What I Solve</div>
-
-      <div class="service-menu">
-        <div class="service-menu-header">
-          <div class="service-menu-label">Need</div>
-          <div class="service-menu-label">I Build</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">save time</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">automations</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">track competitors</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">scrapers + monitors</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">see the numbers</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">dashboards</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">launch something</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">landing pages</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">look more legit</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">brand revamps</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">make the brand memorable</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">logo systems</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">add motion / depth</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">3D web assets</div>
-        </div>
-
-        <div class="service-menu-row">
-          <div class="service-menu-line">turn an idea into product</div>
-          <div class="service-menu-connector">&rarr;</div>
-          <div class="service-menu-line">front-to-back MVP</div>
-        </div>
       </div>
     </section>
 
@@ -1360,15 +1147,14 @@
 
   </main>
 
-  <!-- 9-DOT PROGRESS INDICATOR — always visible -->
+  <!-- PROGRESS DOTS — always visible -->
   <div class="progress-dots" id="progress-dots" role="tablist" aria-label="Page navigation">
     <button class="progress-dot active" data-state="0" aria-label="Home"></button>
     <button class="progress-dot" data-state="1" aria-label="About"></button>
     <button class="progress-dot" data-state="2" aria-label="Ventures"></button>
-    <button class="progress-dot" data-state="3" aria-label="Services"></button>
-    <button class="progress-dot" data-state="4" aria-label="Writing"></button>
-    <button class="progress-dot" data-state="5" aria-label="Photography"></button>
-    <button class="progress-dot" data-state="6" aria-label="Contact"></button>
+    <button class="progress-dot" data-state="3" aria-label="Writing"></button>
+    <button class="progress-dot" data-state="4" aria-label="Photography"></button>
+    <button class="progress-dot" data-state="5" aria-label="Contact"></button>
   </div>
 
   <footer class="foot">
@@ -1404,7 +1190,6 @@
   </div>
 
   <div class="project-view" id="project-view" aria-hidden="true">
-    <button class="project-close" id="project-close" aria-label="Close">&times;</button>
     <button class="project-nav prev" id="project-prev" aria-label="Previous project">
       <span>Previous</span><span>project</span>
       <span class="triangle">&#9664;</span>
@@ -1413,26 +1198,21 @@
       <span>Next</span><span>project</span>
       <span class="triangle">&#9654;</span>
     </button>
-    <div class="project-header">
-      <div class="project-title" id="project-title"></div>
-      <div class="project-meta" id="project-meta"></div>
-    </div>
     <iframe class="project-frame" id="project-frame" src="about:blank" title="Project"></iframe>
   </div>
 
   <script>
     /* ==========================================================
        6-STATE NAVIGATION MAP
-       States 0-5 in order: Home, About, Ventures (all on one page), Services, Photography, Contact
+       States 0-5 in order: Home, About, Ventures (all on one page), Writing, Photography, Contact
        ========================================================== */
     const STATE_MAP = [
       { panel: 'hero'        },  // 0 Home
       { panel: 'about'       },  // 1 About
       { panel: 'ventures'    },  // 2 Ventures — all five on one page
-      { panel: 'services'    },  // 3 Services
-      { panel: 'writing'     },  // 4 Writing — index of posts, each opens its own page
-      { panel: 'photography' },  // 5 Photography
-      { panel: 'contact'     },  // 6 Contact
+      { panel: 'writing'     },  // 3 Writing — index of posts, each opens its own page
+      { panel: 'photography' },  // 4 Photography
+      { panel: 'contact'     },  // 5 Contact
     ];
 
     const TOTAL_STATES = STATE_MAP.length;
@@ -1549,12 +1329,9 @@
        OPEN VENTURE — external links open a new tab; others load iframe
        ========================================================== */
     const projectView  = document.getElementById('project-view');
-    const projectClose = document.getElementById('project-close');
     const projectPrev  = document.getElementById('project-prev');
     const projectNext  = document.getElementById('project-next');
     const projectFrame = document.getElementById('project-frame');
-    const projectTitle = document.getElementById('project-title');
-    const projectMeta  = document.getElementById('project-meta');
 
     let currentProjectIndex = 0;
 
@@ -1566,8 +1343,7 @@
       }
       if (!slide.dataset.url) return;   // no embedded demo (e.g. Y Combinator Brain)
       currentProjectIndex = slideIndex;
-      projectTitle.textContent = slide.dataset.title || '';
-      projectMeta.textContent  = slide.dataset.meta  || '';
+      projectFrame.title = slide.dataset.title || 'Project';   // the window has no visible title, so screen readers get it here
       projectFrame.src = slide.dataset.url;
       projectView.classList.add('open');
       projectView.setAttribute('aria-hidden', 'false');
@@ -1587,7 +1363,11 @@
       });
     });
 
-    projectClose.addEventListener('click', closeVenture);
+
+    // A demo's "< Ventures" button, or Escape pressed inside a demo, asks to close the viewer.
+    window.addEventListener('message', (e) => {
+      if (e.origin === location.origin && e.data && e.data.type === 'wvez:close-project') closeVenture();
+    });
 
     function stepProject(dir) {
       // Cycle to the next/previous venture that has an embedded demo iframe.
