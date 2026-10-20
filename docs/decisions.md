@@ -14,6 +14,67 @@ one turns out to be wrong, the fix is a new entry that says so, not an edit to t
   top edge and falls to rest with a bounce, so the switch announces itself without a
   label. Readers who ask for reduced motion get it already hanging.
 
+## The demos show the monogram in text, not a 3D pendant
+
+2026-10-20
+
+The spinning 3D pendant at the top right of RECON, FLIPPR and Content Recipe is now the
+round WVEZ monogram drawn in IBM Plex Mono characters (the demos' own font), in the same
+box (125px, 200px on Content Recipe), with a shine that crosses it every five seconds. It
+follows the "polar" piece from ascii.rest (MIT, license in `assets/demo-monogram.js`):
+each cell holds the character whose shape best matches the logo's edge, and 8 where it is
+solid. The art comes from the logo's white letter faces; the black outlines between them
+stay empty, which is what keeps the letters apart at this size. The demos no longer load
+the 3D viewer library or the pendant model, the shine pauses off screen, and it holds
+still for reduced motion. Phones still hide the logo, as before. The generator
+(`make.py`) lives in the local preview kit, outside this repository, like the diagrams'.
+
+## The demo workflow builders show less chrome
+
+2026-10-20
+
+In RECON, FLIPPR and Content Recipe, the workflow builder lost its green "Active" badge
+(the title now leads the header), the node and connection counts with their coloured dots
+in the footer (the "Tap Add Node · N nodes left" hint stays, centred), and the "Full n8n
+workflow · N nodes · V1.0" caption under the builder. The counting code that fed those
+labels went with them.
+
+RECON's five small round nodes (the models, tool and loader that hang off the Agent and
+the two memory nodes) now show a label card on hover or keyboard focus, styled like a
+full node: the type in small caps over the name. It replaces the browser's own tooltip,
+which was slow to appear and looked nothing like the builder. Near the right edge the card
+opens leftward so it stays inside the canvas. Two layout overlaps were fixed the same day:
+"Semantic Memory - Insert" in RECON now sits on the row of the node that feeds it, and the
+eight Content Recipe steps are spaced evenly so "Data Output" and "Clear Binary" no
+longer touch.
+
+## Each demo leads back to Ventures
+
+2026-10-20
+
+The button at the top left of every demo said `< WVEZ.ORG` and loaded the live home page
+from the top, so a reader who opened RECON from Ventures lost their place. It now says
+`< VENTURES`. Inside the home page's project viewer, it and the Escape key close the
+viewer and leave the reader on Ventures with no reload (the demo sends the home page a
+`wvez:close-project` message). Opened on its own page, the button goes to `/#ventures`.
+The link is relative now, so the local preview no longer jumps to the live site.
+
+The viewer itself lost its white title bar (the demo's name and category, which the demo
+already shows in large type) and its X button, since `< VENTURES` and Escape do the same
+job. The demo fills the screen. Showing it as a smaller window over Ventures was tried the
+same day and turned down.
+
+## The demos lost their background videos
+
+2026-10-20
+
+RECON, FLIPPR and Content Recipe each played a 4K stock clip behind the page, grey and
+dimmed, loaded from an outside file host. They came out at Warner's request, with their
+style rules and the script that forced them to play on phones. A faint tiled texture
+(`beanstalk-dark.png`) went too: the file was never in the repo, so every demo asked for
+it and got a 404. The backdrop is now plain black, and the demos load nothing from outside
+the site apart from fonts and the visit counter.
+
 ## The What I Solve section is gone
 
 2026-10-20

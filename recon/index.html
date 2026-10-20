@@ -17,10 +17,8 @@
 body{background:var(--bg);font-family:var(--mono);color:var(--fg);-webkit-font-smoothing:antialiased;padding-bottom:120px;position:relative}
 
 /* texture overlay */
-body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.07;z-index:0;pointer-events:none}
 
 /* background video */
-#bg-video{position:fixed;top:0;left:0;width:100vw;height:100vh;object-fit:cover;z-index:0;pointer-events:none;filter:grayscale(100%) brightness(0.3) contrast(1.3);opacity:0.5}
 .hero,.flow-sec,.story-sec,.demo-sec,.bk-sec,.sum-sec{position:relative;z-index:1}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
@@ -52,8 +50,6 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .wf-shell{position:relative;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,rgba(11,11,11,.92),rgba(4,4,4,.96))}
 .wf-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--border)}
 .wf-head-l{display:flex;align-items:center;gap:12px;min-width:0}
-.wf-badge-active{display:inline-flex;align-items:center;gap:7px;font-size:8.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#6de18d;border:1px solid rgba(109,225,141,.4);background:rgba(109,225,141,.1);border-radius:40px;padding:4px 11px;white-space:nowrap}
-.wf-badge-active::before{content:'';width:5px;height:5px;border-radius:50%;background:#6de18d;box-shadow:0 0 8px #6de18d;animation:pulse 2s infinite}
 .wf-head-ttl{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .wf-head-r{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .wf-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:transparent;border:1px solid var(--border2);border-radius:8px;padding:0 12px;height:34px;cursor:pointer;transition:color .18s,border-color .18s,background .18s}
@@ -77,6 +73,15 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .wf-node.is-mini{width:34px;height:34px;padding:0;border-radius:50%;justify-content:center}
 .wf-node.is-mini .wf-kind,.wf-node.is-mini .wf-name{display:none}
 .wf-node.is-mini .wf-icon{width:20px;height:20px;border:none;background:transparent}
+/* Hover label for the small round nodes: the same card, type and name as a full node,
+   shown above the circle while it is hovered or focused. */
+.wf-node.is-mini{cursor:default}
+.wf-node.is-mini:hover,.wf-node.is-mini:focus-visible{z-index:10;border-color:var(--muted);outline:none}
+.wf-tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);display:none;flex-direction:column;align-items:center;gap:4px;padding:6px 9px;border:1px solid var(--border2);border-radius:9px;background:rgba(17,17,17,.97);box-shadow:0 8px 18px rgba(0,0,0,.4);white-space:nowrap;pointer-events:none}
+.wf-tip.is-right{left:auto;right:-6px;transform:none;align-items:flex-end}
+.wf-node.is-mini:hover .wf-tip,.wf-node.is-mini:focus-visible .wf-tip{display:flex}
+.wf-tip-kind{font-size:6px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);line-height:1}
+.wf-tip-name{font-size:8px;font-weight:600;line-height:1.18;letter-spacing:-.01em;color:var(--fg)}
 .wf-icon{width:22px;height:22px;flex-shrink:0;border-radius:6px;border:1px solid;display:flex;align-items:center;justify-content:center}
 .wf-icon svg{width:12px;height:12px;stroke-width:2}
 .wf-kind{font-size:6px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);line-height:1}
@@ -92,13 +97,8 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .t-db .wf-icon{color:#9effdf;border-color:rgba(84,211,169,.65);background:rgba(84,211,169,.18)}
 .t-memory .wf-icon{color:#c6b5ff;border-color:rgba(196,168,255,.65);background:rgba(196,168,255,.18)}
 .t-intel .wf-icon{color:#9fc7ff;border-color:rgba(128,184,255,.65);background:rgba(128,184,255,.18)}
-.wf-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.3)}
-.wf-foot-l{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.wf-stat{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-.wf-dot{width:6px;height:6px;border-radius:50%}
-.wf-dot.ok{background:#6de18d;box-shadow:0 0 7px rgba(109,225,141,.7)}
-.wf-dot.pr{background:#9fc7ff;box-shadow:0 0 7px rgba(159,199,255,.6)}
-.wf-foot-r{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.wf-foot{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:11px 16px;border-top:1px solid var(--border);background:rgba(0,0,0,.3)}
+.wf-foot-r{font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);text-align:center}
 /* mobile vertical stack */
 .wf-stack{display:none;flex-direction:column;padding:12px 13px 16px}
 .wf-stage{display:flex;flex-direction:column}
@@ -127,7 +127,6 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .wf-scard.t-db{border-left-color:#9effdf}
 .wf-scard.t-memory{border-left-color:#c6b5ff}
 .wf-scard.t-intel{border-left-color:#9fc7ff}
-.flow-cap{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-top:10px;text-align:center}
 
 /* WHY I BUILT THIS */
 .story-sec{padding:72px 40px 0;max-width:1160px;margin:0 auto}
@@ -182,7 +181,6 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 
 /* output panel */
 .demo-out{display:flex;flex-direction:column;overflow:hidden;background:var(--bg);position:relative}
-.demo-out::before{content:'';position:absolute;inset:0;background:url('beanstalk-dark.png') repeat;opacity:0.09;z-index:0;pointer-events:none}
 .demo-prog{height:2px;background:var(--border);flex-shrink:0}
 .demo-prog-fill{height:100%;background:var(--fg);width:0;transition:width .6s ease}
 .demo-idle{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;opacity:.25;padding:40px;position:relative;z-index:1}
@@ -307,7 +305,7 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
   .hero-sub{font-size:13px;max-width:100%}
   .stats{flex-wrap:wrap;width:100%}
   .stat{min-width:0;flex:1}
-  model-viewer#hero-logo{display:none}
+  #hero-logo{display:none}
 
   .flow-sec{padding:0 20px}
   .wf-spatial{display:none}
@@ -315,7 +313,6 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
   .wf-legend{display:none}
   .wf-canvas{max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .wf-head{padding:12px 14px}
-  .wf-foot-l{gap:14px}
 
   .story-strip{grid-template-columns:1fr}
   .story-sec,.demo-sec,.bk-sec,.sum-sec{padding-top:48px}
@@ -358,12 +355,21 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
 .back-btn:hover{color:#f5f5f5}
 </style>
 <script src="https://unpkg.com/lucide@latest"></script>
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-<a href="https://wvez.org" target="_top" class="back-btn">&lt; WVEZ.ORG</a>
+<a href="/#ventures" target="_top" class="back-btn">&lt; VENTURES</a>
+<script>
+  // Inside the site's project viewer, "< Ventures" and the Escape key close the viewer
+  // and leave the reader on Ventures, with no reload. Opened on its own page, the link
+  // goes to the Ventures section of the home page.
+  (function () {
+    if (window.top === window) return;
+    var close = function () { try { window.parent.postMessage({ type: 'wvez:close-project' }, location.origin); } catch (e) {} };
+    document.querySelector('.back-btn').addEventListener('click', function (e) { e.preventDefault(); close(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+</script>
 <!-- BACKGROUND VIDEO -->
-<video id="bg-video" muted loop playsinline webkit-playsinline autoplay preload="auto" src="https://pub-2b72d9c0a9f649e99699874d22247129.r2.dev/16392053-uhd_3840_2160_24fps.mp4"></video>
 
 <!-- HERO -->
 <div class="hero">
@@ -373,16 +379,7 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
       <div class="hero-tag">Know competitor inventory whenever you feel like it.</div>
       <p class="hero-sub">An automated workflow that captures live inventory snapshots to flag discrepancies and revenue opportunity instantly. Never manually audit shelves again.</p>
     </div>
-    <model-viewer
-      id="hero-logo"
-      src="/assets/logo-pendant.glb"
-      camera-orbit="90deg 90deg auto"
-      field-of-view="26deg"
-      exposure="1.15"
-      disable-zoom
-      interaction-prompt="none"
-      style="position:absolute;right:110px;top:-24px;width:125px;height:125px;background:transparent;"
-    ></model-viewer>
+    <pre id="hero-logo" class="demo-monogram" role="img" aria-label="WVEZ monogram" style="position:absolute;right:110px;top:-24px;width:125px;height:125px;"></pre>
     <div class="hero-right">
       <div class="stats">
         <div class="stat"><div class="sn">27</div><div class="sl">Nodes</div></div>
@@ -399,7 +396,6 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
   <div class="wf-shell">
     <div class="wf-head">
       <div class="wf-head-l">
-        <span class="wf-badge-active">Active</span>
         <span class="wf-head-ttl">RECON Workflow Builder</span>
       </div>
       <div class="wf-head-r">
@@ -425,14 +421,9 @@ body::after{content:'';position:fixed;inset:0;background:url('beanstalk-dark.png
       <div class="wf-stack" id="wfStack"></div>
     </div>
     <div class="wf-foot" role="status" aria-live="polite">
-      <div class="wf-foot-l">
-        <span class="wf-stat"><span class="wf-dot ok"></span><span id="wfNodeCount">1</span>&nbsp;<span id="wfNodeLbl">Node</span></span>
-        <span class="wf-stat"><span class="wf-dot pr"></span><span id="wfConnCount">0</span>&nbsp;<span id="wfConnLbl">Connections</span></span>
-      </div>
       <div class="wf-foot-r" id="wfHint">Tap Add Node to build the flow</div>
     </div>
   </div>
-  <p class="flow-cap">Full n8n workflow · 27 nodes · WVEZ RECON V1.0</p>
 </div>
 
 <!-- WHY I BUILT THIS -->
@@ -905,27 +896,6 @@ function ft(store, cat, btn) {
     row.style.display = (cat==='ALL'||row.dataset.cat===cat) ? '' : 'none';
   });
 }
-// ─── LOGO SWAY ANIMATION ────────────────────────────────────
-const heroLogo = document.getElementById('hero-logo');
-const frontAzimuth = 90;
-const amplitude = 14;
-const period = 5000;
-const polar = 90;
-
-function animateLogo(now) {
-  const phase = (now / period) * Math.PI * 2;
-  const sinVal = Math.sin(phase);
-  const azimuth = frontAzimuth + sinVal * amplitude;
-  heroLogo.setAttribute('camera-orbit', `${azimuth.toFixed(2)}deg ${polar}deg auto`);
-  requestAnimationFrame(animateLogo);
-}
-
-if (heroLogo) {
-  heroLogo.addEventListener('load', () => {
-    requestAnimationFrame(animateLogo);
-  });
-}
-
 function toggleStory(el) {
   const expand = el.querySelector('.ss-expand');
   if (el.classList.contains('open')) {
@@ -982,13 +952,13 @@ const WF_NODES = [
   { id:'archcomp',  t:'drive',   kind:'Drive',    icon:'triangle',            name:'Archive Competitor Run',          x:94, y:22, stage:4, from:['expcomp'] },
   { id:'archclient',t:'drive',   kind:'Drive',    icon:'triangle',            name:'Archive Client Run',              x:94, y:40, stage:4, from:['expclient'] },
   { id:'agent',     t:'intel',   kind:'Agent',    icon:'bot',                 name:'Market Intelligence Agent',       x:72, y:58, stage:6, from:['hist'] },
-  { id:'gemini',    t:'intel',   kind:'Model',    icon:'sparkles',            name:'Gemini 2.5 Pro',                  x:72, y:76, stage:6, from:['agent'], mini:true, dashed:true },
-  { id:'revenue',   t:'intel',   kind:'Tool',     icon:'percent',             name:'Revenue Gap Calculator',          x:83, y:76, stage:6, from:['agent'], mini:true, dashed:true },
+  { id:'gemini',    t:'intel',   kind:'Model',    icon:'sparkles',            name:'Gemini 2.5 Pro',                  x:66, y:92, stage:6, from:['agent'], mini:true, dashed:true },
+  { id:'revenue',   t:'intel',   kind:'Tool',     icon:'percent',             name:'Revenue Gap Calculator',          x:73, y:92, stage:6, from:['agent'], mini:true, dashed:true },
   { id:'semret',    t:'memory',  kind:'Memory',   icon:'zap',                 name:'Semantic Memory - Retrieve',      x:94, y:58, stage:5, from:['agent'] },
   { id:'embret',    t:'intel',   kind:'Model',    icon:'brain',               name:'Embedding Model - Retrieve',      x:94, y:76, stage:5, from:['semret'], mini:true, dashed:true },
-  { id:'semins',    t:'memory',  kind:'Memory',   icon:'zap',                 name:'Semantic Memory - Insert',        x:83, y:84, stage:5, from:['vector'] },
-  { id:'embins',    t:'intel',   kind:'Model',    icon:'brain',               name:'Embedding Model - Insert',        x:83, y:92, stage:5, from:['semins'], mini:true, dashed:true },
-  { id:'loader',    t:'memory',  kind:'Loader',   icon:'file-text',           name:'Default Data Loader',             x:94, y:92, stage:5, from:['semins'], mini:true, dashed:true },
+  { id:'semins',    t:'memory',  kind:'Memory',   icon:'zap',                 name:'Semantic Memory - Insert',        x:83, y:76, stage:5, from:['vector'] },
+  { id:'embins',    t:'intel',   kind:'Model',    icon:'brain',               name:'Embedding Model - Insert',        x:80, y:92, stage:5, from:['semins'], mini:true, dashed:true },
+  { id:'loader',    t:'memory',  kind:'Loader',   icon:'file-text',           name:'Default Data Loader',             x:87, y:92, stage:5, from:['semins'], mini:true, dashed:true },
 ];
 const WF_SVGNS = 'http://www.w3.org/2000/svg';
 let wfPlaced = 0;
@@ -1001,8 +971,11 @@ function wfAddSpatial(n, animate) {
   node.style.top = n.y + '%';
   if (!animate) node.style.animation = 'none';
   if (n.mini) {
-    node.title = n.name;
-    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>';
+    // A label card on hover or focus says what the icon is (near the right edge it opens leftward).
+    node.tabIndex = 0;
+    node.setAttribute('aria-label', n.kind + ': ' + n.name);
+    node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
+      '<div class="wf-tip' + (n.x >= 85 ? ' is-right' : '') + '" aria-hidden="true"><div class="wf-tip-kind">' + n.kind + '</div><div class="wf-tip-name">' + n.name + '</div></div>';
   } else {
     node.innerHTML = '<div class="wf-icon"><i data-lucide="' + n.icon + '"></i></div>' +
       '<div class="wf-kind">' + n.kind + '</div><div class="wf-name">' + n.name + '</div>';
@@ -1054,14 +1027,6 @@ function wfPlace(i, animate) {
 }
 
 function wfMeta() {
-  const placed = WF_NODES.slice(0, wfPlaced);
-  const ids = new Set(placed.map(function(n){ return n.id; }));
-  let conns = 0;
-  placed.forEach(function(n){ n.from.forEach(function(f){ if (ids.has(f)) conns++; }); });
-  document.getElementById('wfNodeCount').textContent = wfPlaced;
-  document.getElementById('wfNodeLbl').textContent = wfPlaced === 1 ? 'Node' : 'Nodes';
-  document.getElementById('wfConnCount').textContent = conns;
-  document.getElementById('wfConnLbl').textContent = conns === 1 ? 'Connection' : 'Connections';
   const add = document.getElementById('wfAdd');
   const hint = document.getElementById('wfHint');
   if (wfPlaced >= WF_NODES.length) {
@@ -1119,25 +1084,6 @@ function wfInit() { wfBuildTo(1); }
       rootMargin: "0px 0px -50px 0px"
     });
     sectionsToAnimate.forEach(el => observer.observe(el));
-    // Force background video play on mobile (iOS Safari autoplay workaround)
-    const bgVideo = document.getElementById('bg-video');
-    if (bgVideo) {
-      const tryPlay = () => {
-        const p = bgVideo.play();
-        if (p !== undefined) {
-          p.catch(() => {
-            const forcePlay = () => {
-              bgVideo.play();
-              document.removeEventListener('touchstart', forcePlay);
-              document.removeEventListener('scroll', forcePlay);
-            };
-            document.addEventListener('touchstart', forcePlay, { once: true });
-            document.addEventListener('scroll', forcePlay, { once: true });
-          });
-        }
-      };
-      tryPlay();
-    }
 
     lucide.createIcons();
     if (typeof wfInit === 'function') wfInit();
@@ -1145,5 +1091,6 @@ function wfInit() { wfBuildTo(1); }
 </script>
   <!-- Visit counts: GoatCounter, no cookies. Dashboard at wvez.goatcounter.com -->
   <script data-goatcounter="https://wvez.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script src="/assets/demo-monogram.js" defer></script>
 </body>
 </html>
