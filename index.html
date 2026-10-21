@@ -282,6 +282,10 @@
       color: var(--muted);
       margin-bottom: 2rem;
     }
+    /* A link in a label, like Subscribe next to Writing: full black so it reads
+       as something to click. */
+    .panel-label a { color: var(--fg); }
+    .panel-label a:hover { color: var(--muted); }
 
     .panel-body {
       max-width: 620px;
@@ -1095,7 +1099,7 @@
 
     <!-- WRITING -->
     <section class="panel" id="writing">
-      <div class="panel-label">Writing</div>
+      <div class="panel-label">Writing &middot; <a href="/subscribe/">Subscribe</a></div>
       <div class="writing-list">
         {% if site.posts.size > 0 %}
           {% assign by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
