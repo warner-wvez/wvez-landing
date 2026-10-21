@@ -220,15 +220,18 @@ the four messages, and the note under the thank-you line) and the Brevo form add
 all live under `subscribe:` in `_config.yml`. Change them there and every box on the
 site follows.
 
+The box also has a page of its own at `/subscribe/` (`subscribe.html`), with the three
+newest posts listed under it. That is the link to share when asking people to sign up.
+
 To put a box somewhere else, add `{% include subscribe.html spot="NAME" %}` with a
 short `NAME` for the spot. GoatCounter records each signup as an event called
-`subscribe-NAME`, so the spots can be compared. A page outside the post layout also
-needs the box's CSS, which lives in `_layouts/post.html`.
+`subscribe-NAME`, so the spots can be compared: `subscribe-after-post` and
+`subscribe-page` so far. The box's CSS lives in the include, so it works on any page.
 
 The moving brick wall behind the box is `assets/blog/subscribe-art.js`, a copy of the
 "rotozoomer" piece from ascii.rest under the MIT License. Another ascii.rest piece can
 replace it: swap the piece's code in that file and keep the player below it. Keep the license text at the top of that
-file. Its look (size, colour, how faint) is the `.subscribe-art` rule in the post layout.
+file. Its look (size, colour, how faint) is the `.subscribe-art` rule in `_includes/subscribe.html`.
 
 The welcome email lives in Brevo, not here. The form "Blog after post" (Marketing,
 Forms) picks which email to send under its Settings step; the email itself is edited

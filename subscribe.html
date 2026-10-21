@@ -1,0 +1,63 @@
+---
+title: Subscribe
+description: Subscribe for updates on Warner’s Corner
+permalink: /subscribe/
+layout: default
+---
+<style>
+  /* The signup box on its own page, with the latest posts under it so a
+     reader can see what they are signing up for. The list matches the
+     Writing panel on the home page. */
+  .subscribe-page .subscribe { margin-top: 0; }
+
+  .sub-latest { margin-top: 2.5rem; }
+  .sub-label {
+    margin-bottom: 1rem;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .sub-item { display: block; padding: 0.3rem 0 0.9rem; }
+  .sub-item-top { display: flex; align-items: baseline; gap: 1rem; }
+  .sub-item-title { font-size: 0.95rem; font-weight: 500; letter-spacing: 0.05em; }
+  .sub-item:hover .sub-item-title { color: var(--muted); }
+  .sub-item-date {
+    margin-left: auto;
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .sub-item-desc {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+</style>
+
+<div class="subscribe-page">
+  {% include subscribe.html spot="page" %}
+
+  {%- if site.posts.size > 0 %}
+  <section class="sub-latest">
+    <div class="sub-label">Latest writing</div>
+    {%- for post in site.posts limit: 3 %}
+    <a class="sub-item" href="{{ post.url }}">
+      <span class="sub-item-top">
+        <span class="sub-item-title">{{ post.title }}</span>
+        <span class="sub-item-date">{{ post.date | date: "%b %-d" }}</span>
+      </span>
+      {%- if post.description %}
+      <span class="sub-item-desc">{{ post.description }}</span>
+      {%- endif %}
+    </a>
+    {%- endfor %}
+  </section>
+  {%- endif %}
+</div>
