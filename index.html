@@ -520,10 +520,11 @@
       margin-bottom: 1rem;
     }
 
-    /* Fixed-height icon stage keeps icons and the click cue perfectly aligned. */
+    /* Fixed-height icon stage keeps icons and the click cue perfectly aligned.
+       Icons stand on its bottom edge so the buildings in a row share a ground line. */
     .venture-icon-btn {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
       height: 112px;
       cursor: pointer;
@@ -532,12 +533,35 @@
       position: relative;
     }
 
-    .venture-icon {
-      height: 100px;
-      width: auto;
-      display: block;
+    /* Venture icons are pixel art made of plain elements: one <i> per pixel on a CSS
+       grid, --px wide and tall. The first letter in each <i>'s class is its colour; no
+       class is see-through. Each icon lives in _includes/pixel/. */
+    .pixel-icon {
+      display: grid;
+      grid-template-columns: repeat(var(--cols), var(--px));
+      grid-auto-rows: var(--px);
     }
-    #ventures .venture-icon { height: 100px; }
+    .pixel-icon .k { color: #1E1C1A; }
+    .pixel-icon .d { color: #3E3E3C; }
+    .pixel-icon .m { color: #76736C; }
+    .pixel-icon .l { color: #B2ACA0; }
+    .pixel-icon .c { color: #E6E0D2; }
+    .pixel-icon .g { color: #5A8A1E; }
+    .pixel-icon .h { color: #3F6A14; }
+    .pixel-icon .o { color: #B8603F; }
+    .pixel-icon .p { color: #D98A6A; }
+    .pixel-icon .n { color: #36455F; }
+    .pixel-icon .a { color: #C4DAD8; }
+    .pixel-icon .q { color: #7FA0A6; }
+    .pixel-icon .e { color: #6E3628; }
+    /* At zoom levels like 110% a pixel's edge lands partway across a screen pixel and the
+       page shows through as a hairline. So each pixel also paints 1px past its right and
+       bottom edges, under the next pixel. r and b mark pixels with nothing to their right
+       or below, which stop at their own edge so the outline stays crisp. */
+    .pixel-icon i[class] { background: currentColor; box-shadow: 1px 0 currentColor, 0 1px currentColor; }
+    .pixel-icon i.r { box-shadow: 0 1px currentColor; }
+    .pixel-icon i.b { box-shadow: 1px 0 currentColor; }
+    .pixel-icon i.r.b { box-shadow: none; }
     .venture-icon-btn:hover .venture-icon { visibility: hidden; }
 
     /* Hover preview appears in place, over its own venture icon, at a reduced size.
@@ -883,7 +907,6 @@
         margin-top: 1.5rem;
       }
 
-      #ventures .venture-icon { height: 130px; }
       .venture-preview { display: none !important; }
       .venture-icon-btn:hover .venture-icon { visibility: visible; }
 
@@ -1001,7 +1024,7 @@
            <div class="venture-title">RECON</div>
            <div class="venture-cat">Competitive intelligence</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/willis-pixelv3.png" class="venture-icon" alt="RECON" loading="lazy">
+             {% include pixel/willis-tower.html %}
              <img data-src="/assets/pixel/recon-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1015,7 +1038,7 @@
            <div class="venture-title">FLIPPR</div>
            <div class="venture-cat">Resale arbitrage</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/aon-pixelv3.png" class="venture-icon" alt="FLIPPR" loading="lazy">
+             {% include pixel/aon-center.html %}
              <img data-src="/assets/pixel/flippr-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1033,7 +1056,7 @@
            <div class="venture-title">Content Recipe</div>
            <div class="venture-cat">Content auditing</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/crain-pixelv3.png" class="venture-icon" alt="Content Recipe" loading="lazy">
+             {% include pixel/crain-building.html %}
              <img data-src="/assets/pixel/crp-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1045,7 +1068,7 @@
            <div class="venture-title">Wrestling Dashboard</div>
            <div class="venture-cat">Match tracking</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/tribune-pixel.png" class="venture-icon" alt="Wrestling Dashboard" loading="lazy">
+             {% include pixel/tribune-tower.html %}
              <img data-src="/assets/pixel/wrestling-pixel.png" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
@@ -1057,7 +1080,7 @@
            <div class="venture-title">Y Combinator Brain</div>
            <div class="venture-cat">Startup network graph</div>
            <button class="venture-icon-btn" data-action="open-venture">
-             <img src="/assets/pixel/soldier-pixelv3.png" class="venture-icon" alt="Y Combinator Brain" loading="lazy">
+             {% include pixel/soldier-field.html %}
              <img data-src="/assets/pixel/ycbrain-pixel.webp" class="venture-preview" alt="" aria-hidden="true">
            </button>
            <div class="click-cue">(click to see)</div>
