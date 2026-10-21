@@ -3,6 +3,22 @@
 Why the site is built the way it is. Newest first. A decision here is settled, so if
 one turns out to be wrong, the fix is a new entry that says so, not an edit to the old one.
 
+## The monogram joins the post bar, and Writing becomes the way back
+
+2026-10-21
+
+- **The WVEZ monogram sits in the centre of the bar at the top of every post**, between
+  the name and Writing: the same text drawing and shine as the demos, in a 48px box
+  whose middle is 70% of the way down the 52px bar, so it hangs a little below it. It
+  is placed over the bar, which does not grow, so the name and the post start where
+  they did before. Dark mode uses the demos' greys; light mode uses the same greys
+  inverted, so the shine darkens on white the way it brightens on black. The script
+  zeroes its own letter spacing, which the posts' body text sets and which pushed the
+  art past its box. The demos look the same as before.
+- **Writing, at the right of the bar, is now the link back to the Writing section**, in
+  full black like the name. It replaces the "All writing" link above the date from
+  2026-10-20. The link at the bottom stays.
+
 ## Posts get a way back, and the switch drops in
 
 2026-10-20

@@ -4,20 +4,7 @@ layout: default
 <style>
   /* One centred column. The title, text, boxes, images and diagrams all
      share the same left and right edge, so nothing sits off centre. */
-  .post-head { margin-bottom: 3rem; text-align: center; }
-
-  /* Back to the Writing section, above the date. Same small caps as the date,
-     in full black so it reads as the one thing to click. */
-  .post-back {
-    display: inline-block;
-    margin-bottom: 1.25rem;
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--fg);
-  }
-  .post-back:hover { color: var(--muted); }
+  .post-head { margin-bottom: 1.5rem; text-align: center; }
 
   .post-date {
     font-size: 0.6rem;
@@ -61,6 +48,12 @@ layout: default
   }
 
   .post-body h2 + *, .post-body h3 + * { margin-top: 0.75rem; }
+
+  /* A centred line: `{: .center}` on the line after it in the post. `.small`
+     sets it at three quarters of the body text's size (13.5px, 12px on phones). */
+  .post-body .center { text-align: center; }
+  .post-body .small { font-size: 0.84375rem; }
+  @media (max-width: 640px) { .post-body .small { font-size: 0.75rem; } }
 
   .post-body a { text-decoration: underline; text-underline-offset: 0.2em; }
   .post-body a:hover { color: var(--muted); }
@@ -484,7 +477,6 @@ layout: default
 
 <article>
   <header class="post-head">
-    <a class="post-back" href="/#writing">&larr; All writing</a>
     {%- comment -%} Reading time: words in the post at 238 a minute (the average
         adult silent reading speed for nonfiction, Brysbaert 2019), rounded up. {%- endcomment -%}
     {%- assign words = content | strip_html | number_of_words -%}

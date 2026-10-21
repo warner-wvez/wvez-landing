@@ -83,8 +83,10 @@ stiffness, speed limit). Diagrams follow the switch, including ones already open
 Each time a post opens, the string starts bunched at the top edge and drops to rest with
 a small bounce; readers who ask their device for reduced motion see it already hanging.
 
-Every post has an "All writing" link at the top, above the date, and another at the
-bottom. Both go back to the Writing section of the home page.
+The bar at the top of every post reads WVEZ Solutions on the left, the WVEZ monogram from
+the demos in the centre (drawn by `assets/demo-monogram.js`), and Writing on the right.
+Writing and the "All writing" link at the bottom both go back to the Writing section of
+the home page.
 
 ### Images
 
@@ -244,6 +246,7 @@ Posts are drafted in Notion. These are the conversions:
 | Columns | `<div class="cols">` |
 | Image with caption | `<figure>` with `<figcaption>`, file saved to `assets/blog/<slug>/` |
 | Quote | `>` |
+| Centred text | the line as written, then `{: .center}` on the next line (`{: .center .small}` for three quarters size) |
 | Divider | `---` |
 | Blank to fill in, like `____` | `\_\_\_\_`, or markdown reads it as italics |
 | Link to a clip or image | the same link, plus a `previews:` entry when it should play a local mp4 |

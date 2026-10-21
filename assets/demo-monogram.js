@@ -1,5 +1,5 @@
 /* The WVEZ monogram drawn in text, with a shine crossing it every few seconds, in place
-   of the spinning 3D pendant at the top of each demo.
+   of the spinning 3D pendant at the top of each demo, and over the title of each post.
 
    The art is the round monogram (favicon-512.png) drawn the way ascii.rest draws its
    company logos: each cell holds the IBM Plex Mono character whose shape best matches
@@ -50,7 +50,9 @@
   var HALF = 5;       // half the band's width, in cells
   var LEAN = 0.9;     // cells it shifts left a row down, so it leans like a slash
   var SOLID = '8dbqpPYOo0';                  // what the shine turns to slashes
-  var INK = '#b3b3b3', GLOW = '#e8ebef', PEAK = '#ffffff';   // ascii.rest's greys for a dark page
+  // ascii.rest's greys for a dark page. A page can set its own through --monogram-ink,
+  // --monogram-glow and --monogram-peak (the posts do, for light mode).
+  var INK = 'var(--monogram-ink,#b3b3b3)', GLOW = 'var(--monogram-glow,#e8ebef)', PEAK = 'var(--monogram-peak,#ffffff)';
 
   // The band crosses the logo's ink, edge to edge, rather than the whole box.
   var lo = Infinity, hi = -Infinity;
@@ -84,10 +86,11 @@
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // As a style rule rather than inline, so a page's own rules (the demos hide the logo on
-  // phones) still win.
+  // phones) still win. Letter spacing is zeroed because the fit below assumes 0.6em cells
+  // and the posts' body text is spaced out.
   var css = document.createElement('style');
   css.textContent = '.demo-monogram{display:flex;align-items:center;justify-content:center;margin:0;' +
-    "font-family:'IBM Plex Mono',monospace;color:" + INK + ';white-space:pre;overflow:hidden;user-select:none;pointer-events:none}';
+    "font-family:'IBM Plex Mono',monospace;letter-spacing:0;color:" + INK + ';white-space:pre;overflow:hidden;user-select:none;pointer-events:none}';
   document.head.appendChild(css);
 
   [].forEach.call(document.querySelectorAll('.demo-monogram'), function (box) {

@@ -28,6 +28,11 @@
       --muted: #707070;   /* darkest grey that still reads as grey: 4.5:1 on --fill, the WCAG AA bar */
       --fill: #f4f4f4;
       --font: "IBM Plex Mono", monospace;
+      /* The monogram's greys: the demos' dark-page greys inverted, so the shine
+         darkens on white the way it brightens on black. */
+      --monogram-ink: #4c4c4c;
+      --monogram-glow: #171410;
+      --monogram-peak: #000000;
     }
 
     /* Dark mode is the same page inverted. The bulb's glass is the only colour. */
@@ -36,6 +41,9 @@
       --fg: #ffffff;
       --fill: #1a1a1a;
       --muted: #888888;   /* #707070 fails on black; #888 is 4.9:1 on --fill */
+      --monogram-ink: #b3b3b3;   /* the demos' own greys */
+      --monogram-glow: #e8ebef;
+      --monogram-peak: #ffffff;
       color-scheme: dark;
     }
 
@@ -72,13 +80,29 @@
       text-transform: uppercase;
     }
 
+    /* The WVEZ monogram from the demos (assets/demo-monogram.js), centred across
+       the bar and sitting a little low in it, its middle 70% of the way down. It
+       is placed over the bar rather than in it, so the bar, the name and the post
+       all stay where they were. */
+    nav.top { position: relative; }
+    nav.top .nav-mark {
+      position: absolute;
+      left: 50%;
+      top: 70%;
+      width: 3rem;
+      height: 3rem;
+      transform: translate(-50%, -50%);
+    }
+
+    /* Back to the Writing section. Full black like the name, so it reads as
+       something to click. */
     .nav-here {
       font-size: 0.6rem;
       font-weight: 500;
       letter-spacing: 0.3em;
       text-transform: uppercase;
-      color: var(--muted);
     }
+    .nav-here:hover { color: var(--muted); }
 
     main {
       flex: 1 0 auto;
@@ -155,7 +179,8 @@
 
   <nav class="top">
     <a class="brand" href="/">wvez solutions</a>
-    <span class="nav-here">{{ page.nav_label | default: "Writing" }}</span>
+    <pre class="demo-monogram nav-mark" role="img" aria-label="WVEZ monogram"></pre>
+    <a class="nav-here" href="/#writing">{{ page.nav_label | default: "Writing" }}</a>
   </nav>
 
   <main>
@@ -166,6 +191,8 @@
     <span>&copy; WVEZ Solutions LLC &middot; Chicago</span>
     <a href="/feed.xml">RSS</a>
   </footer>
+
+  <script src="/assets/demo-monogram.js" defer></script>
 
   <!-- Visit counts: GoatCounter, no cookies. Dashboard at wvez.goatcounter.com -->
   <script data-goatcounter="https://wvez.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
