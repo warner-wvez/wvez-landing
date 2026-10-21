@@ -1,6 +1,6 @@
 ---
 title: "What I learned from six months of being stupid on purpose"
-date: 2026-10-20
+date: 2026-10-21
 description: "Putting myself in situations where I knew the least allowed me to develop and learn at the fastest rate I’ve ever experienced"
 previews:
   "https://www.youtube.com/watch?v=WJngbyHgS8E":
@@ -28,6 +28,7 @@ previews:
 ---
 
 *Feeling stupid often, and in new ways*
+{: .center}
 
 <aside class="notice" markdown="1">
 This reflection isn’t only for myself, but for anyone looking to improve at feeling uncomfortable with new experiences, especially when there’s very little around to give you comfort. Whether you’re a technical or non-technical reader - I’m sure lots of people can/will relate.
@@ -35,6 +36,9 @@ This reflection isn’t only for myself, but for anyone looking to improve at fe
 I hope the lessons I speak about can help anyone looking to tackle or learn something new.
 
 - This is also the first post to my blog, where I will regularly document my thoughts and experiences as I navigate my life, projects, and career. I don’t consider myself to be an expert in any aspect.
+
+  *fully written by a human*
+  {: .center .small}
 </aside>
 
 ---
